@@ -126,10 +126,10 @@ const FinancesPage = () => {
 
                 {/* Filters */}
                 <Paper sx={{ p: 2, mb: 3 }}>
-                    <Grid container spacing={2} alignItems="center">
+                    <Grid container spacing={2}>
                         <Grid item xs={12} sm={3}>
                             <DatePicker
-                                label="Date de début"
+                                label="Date Début"
                                 value={startDate}
                                 onChange={(newValue) => setStartDate(newValue)}
                                 slotProps={{ textField: { fullWidth: true } }}
@@ -137,7 +137,7 @@ const FinancesPage = () => {
                         </Grid>
                         <Grid item xs={12} sm={3}>
                             <DatePicker
-                                label="Date de fin"
+                                label="Date Fin"
                                 value={endDate}
                                 onChange={(newValue) => setEndDate(newValue)}
                                 slotProps={{ textField: { fullWidth: true } }}
@@ -145,10 +145,11 @@ const FinancesPage = () => {
                         </Grid>
                         <Grid item xs={12} sm={3}>
                             <FormControl fullWidth>
-                                <InputLabel>Méthode de paiement</InputLabel>
+                                <InputLabel id="payment-method-label">Méthode</InputLabel>
                                 <Select
+                                    labelId="payment-method-label"
                                     value={paymentMethod}
-                                    label="Méthode de paiement"
+                                    label="Méthode"
                                     onChange={(e) => setPaymentMethod(e.target.value)}
                                 >
                                     <MenuItem value="">Tous</MenuItem>

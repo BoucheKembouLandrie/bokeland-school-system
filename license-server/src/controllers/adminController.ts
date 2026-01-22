@@ -172,3 +172,22 @@ export const uploadLogo = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Failed to upload logo' });
     }
 };
+
+export const uploadSignature = async (req: Request, res: Response) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No image uploaded' });
+        }
+
+        // Save path to config
+        await Config.upsert({ key: 'company_signature', value: `/uploads/${req.file.filename}` });
+
+        res.json({
+            message: 'Signature updated successfully',
+            signature_url: `/uploads/${req.file.filename}`
+        });
+    } catch (error) {
+        console.error('Signature upload error', error);
+        res.status(500).json({ error: 'Failed to upload signature' });
+    }
+};

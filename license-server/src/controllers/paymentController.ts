@@ -146,7 +146,11 @@ import { Config } from '../models/Config';
 export const downloadInvoice = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const payment = await Payment.findByPk(id);
+        const [payment, configLogo, configSignature] = await Promise.all([
+            Payment.findByPk(id),
+            Config.findByPk('company_logo'),
+            Config.findByPk('company_signature')
+        ]);
 
         if (!payment) {
             return res.status(404).json({ error: 'Payment not found' });
@@ -168,9 +172,9 @@ export const downloadInvoice = async (req: Request, res: Response) => {
 
         // --- HEADER ---
         // --- HEADER ---
+        // --- HEADER ---
         // Try to load logo
         try {
-            const configLogo = await Config.findByPk('company_logo');
             let logoPath = null;
 
             if (configLogo && configLogo.value) {
@@ -245,6 +249,30 @@ export const downloadInvoice = async (req: Request, res: Response) => {
         doc.font('Helvetica-Bold').fontSize(14);
         doc.text('TOTAL PAYÉ:', 300, totalTop);
         doc.text(`${Number(payment.amount).toLocaleString()} FCFA`, 400, totalTop, { width: 90, align: 'right' });
+
+        // --- SIGNATURE ---
+        // Add signature section at bottom right
+        const signatureTop = 550;
+        doc.font('Helvetica-Bold').fontSize(12).text(
+            'La Direction Générale',
+            350,
+            signatureTop,
+            { underline: true }
+        );
+
+        try {
+            let signaturePath = null;
+            if (configSignature && configSignature.value) {
+                const relativePath = configSignature.value.replace(/^\/+/, '');
+                signaturePath = path.join(__dirname, '../../public', relativePath);
+            }
+
+            if (signaturePath && fs.existsSync(signaturePath)) {
+                doc.image(signaturePath, 350, signatureTop + 20, { width: 150 });
+            }
+        } catch (e) {
+            console.error('Error loading signature:', e);
+        }
 
         // --- FOOTER ---
         doc.fontSize(10).font('Helvetica').text(

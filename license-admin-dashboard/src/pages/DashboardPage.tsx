@@ -368,6 +368,56 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
                                 </Typography>
                             </Box>
                         </Paper>
+
+                        {/* Signature Configuration */}
+                        <Paper sx={{ p: 4, mt: 3 }}>
+                            <Typography variant="h6" gutterBottom>
+                                Signature de l'Entreprise
+                            </Typography>
+                            <Box sx={{ my: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                                <img
+                                    src="http://localhost:3001/uploads/company_signature.png"
+                                    alt="Signature"
+                                    style={{ maxWidth: 200, maxHeight: 100, objectFit: 'contain', border: '1px dashed #ccc' }}
+                                    onError={(e) => (e.currentTarget.style.display = 'none')}
+                                    key={Date.now() + 'sig'} // Force refresh on re-render
+                                />
+
+                                <input
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    id="raised-button-file-signature"
+                                    type="file"
+                                    onChange={async (e) => {
+                                        if (e.target.files && e.target.files[0]) {
+                                            const file = e.target.files[0];
+                                            const formData = new FormData();
+                                            formData.append('signature', file);
+
+                                            try {
+                                                await axios.post('http://localhost:3001/api/admin/config/signature', formData, {
+                                                    headers: { 'Content-Type': 'multipart/form-data' }
+                                                });
+                                                alert('Signature mise à jour avec succès');
+                                                // Trigger re-render or reload image
+                                                fetchData();
+                                            } catch (error) {
+                                                console.error('Upload error', error);
+                                                alert('Erreur lors du téléchargement de la signature');
+                                            }
+                                        }
+                                    }}
+                                />
+                                <label htmlFor="raised-button-file-signature">
+                                    <Button variant="outlined" component="span" startIcon={<Edit />}>
+                                        Changer la Signature
+                                    </Button>
+                                </label>
+                                <Typography variant="caption" color="textSecondary">
+                                    Format: PNG (transparent recommandé). Apparaîtra au bas des reçus.
+                                </Typography>
+                            </Box>
+                        </Paper>
                     </Box>
                 )
             }

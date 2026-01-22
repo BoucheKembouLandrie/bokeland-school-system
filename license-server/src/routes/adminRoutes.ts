@@ -2,7 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { adminLogin, getAllClients, getClientStats, updateClientStatus, deleteClient, getConfig, updateConfig, uploadLogo } from '../controllers/adminController';
+import { adminLogin, getAllClients, getClientStats, updateClientStatus, deleteClient, getConfig, updateConfig, uploadLogo, uploadSignature } from '../controllers/adminController';
 import paymentRoutes from './paymentRoutes';
 
 const router = Router();
@@ -17,13 +17,8 @@ const storage = multer.diskStorage({
         cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
-        // Always name it logo.png or similar to keep it simple, or preserve extension
-        // For simplicity and knowing we want ONE logo, let's call it 'logo.png' or keep original name 
-        // to avoid browser caching issues, maybe adding timestamp? 
-        // Let's stick to a fixed name 'company_logo.png' to avoid piling up files, 
-        // OR rely on the controller to save the path. 
-        // User requested: "quand on le change, ca supprime l'endroit dans la base de donnees" (implies replacement)
-        cb(null, 'company_logo' + path.extname(file.originalname));
+        const name = file.fieldname === 'signature' ? 'company_signature' : 'company_logo';
+        cb(null, name + path.extname(file.originalname));
     }
 });
 const upload = multer({ storage });
@@ -40,6 +35,7 @@ router.delete('/clients/:id', deleteClient);
 router.get('/config', getConfig);
 router.put('/config', updateConfig);
 router.post('/config/logo', upload.single('logo'), uploadLogo);
+router.post('/config/signature', upload.single('signature'), uploadSignature);
 
 // Payment routes
 router.use('/', paymentRoutes);

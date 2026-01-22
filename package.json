@@ -1,0 +1,22 @@
+{
+    "name": "leuana-school",
+    "version": "1.0.0",
+    "description": "Système de gestion scolaire BOKELAND SCHOOL SYSTEM",
+    "private": true,
+    "scripts": {
+        "install:all": "cd backend && npm install && cd ../frontend && npm install",
+        "dev:backend": "cd backend && npm run dev",
+        "dev:frontend": "cd frontend && npm run dev",
+        "build:backend": "cd backend && npm run build",
+        "build:frontend": "cd frontend && npm run build",
+        "build:all": "npm run build:backend && npm run build:frontend"
+    },
+    "keywords": [
+        "school",
+        "management",
+        "education",
+        "bokeland"
+    ],
+    "author": "BOKELAND SCHOOL SYSTEM",
+    "license": "PROPRIETARY"
+}

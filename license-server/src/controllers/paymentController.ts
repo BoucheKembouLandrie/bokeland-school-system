@@ -268,7 +268,7 @@ export const downloadInvoice = async (req: Request, res: Response) => {
             }
 
             if (signaturePath && fs.existsSync(signaturePath)) {
-                doc.image(signaturePath, 350, signatureTop + 20, { width: 150 });
+                doc.image(signaturePath, 340, signatureTop + 20, { width: 200 });
             }
         } catch (e) {
             console.error('Error loading signature:', e);

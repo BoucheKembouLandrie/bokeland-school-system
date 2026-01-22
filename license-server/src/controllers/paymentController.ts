@@ -170,20 +170,32 @@ export const downloadInvoice = async (req: Request, res: Response) => {
 
         doc.pipe(res);
 
-        // --- HEADER ---
+        // Resolve paths first
+        let logoPath = null;
+        try {
+            if (configLogo && configLogo.value) {
+                const relativePath = configLogo.value.replace(/^\/+/, '');
+                logoPath = path.join(__dirname, '../../public', relativePath);
+            }
+        } catch (e) {
+            console.error('Error resolving logo path:', e);
+        }
+
+        // --- WATERMARK ---
+        if (logoPath && fs.existsSync(logoPath)) {
+            doc.save();
+            doc.translate(doc.page.width / 2, doc.page.height / 2);
+            doc.rotate(-45);
+            doc.opacity(0.1);
+            // Draw large centered image
+            doc.image(logoPath, -300, -150, { width: 600, align: 'center', valign: 'center' });
+            doc.restore();
+        }
+
         // --- HEADER ---
         // --- HEADER ---
         // Try to load logo
         try {
-            let logoPath = null;
-
-            if (configLogo && configLogo.value) {
-                // Remove leading slash to ensure path.join treats it as relative
-                const relativePath = configLogo.value.replace(/^\/+/, '');
-                logoPath = path.join(__dirname, '../../public', relativePath);
-                console.log('DEBUG: Attempting to load logo from:', logoPath);
-            }
-
             if (logoPath && fs.existsSync(logoPath)) {
                 doc.image(logoPath, 50, 45, { width: 150 });
                 doc.moveDown();

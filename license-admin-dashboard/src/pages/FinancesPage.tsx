@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
     Box, Typography, Paper, Grid, Card, CardContent, Table, TableBody, TableCell,
-    TableContainer, TableHead, TableRow, TextField, Button, Chip, MenuItem, Select, FormControl, InputLabel,
+    TableContainer, TableHead, TableRow, Button, Chip, MenuItem, Select, FormControl, InputLabel,
     IconButton, Tooltip
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
@@ -127,7 +127,7 @@ const FinancesPage = () => {
                 {/* Filters */}
                 <Paper sx={{ p: 2, mb: 3 }}>
                     <Grid container spacing={2}>
-                        <Grid item xs={12} sm={3}>
+                        <Grid size={{ xs: 3 }}>
                             <DatePicker
                                 label="Date Début"
                                 value={startDate}
@@ -135,7 +135,7 @@ const FinancesPage = () => {
                                 slotProps={{ textField: { fullWidth: true } }}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={3}>
+                        <Grid size={{ xs: 3 }}>
                             <DatePicker
                                 label="Date Fin"
                                 value={endDate}
@@ -143,7 +143,7 @@ const FinancesPage = () => {
                                 slotProps={{ textField: { fullWidth: true } }}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={3}>
+                        <Grid size={{ xs: 3 }}>
                             <FormControl fullWidth>
                                 <InputLabel id="payment-method-label">Méthode</InputLabel>
                                 <Select
@@ -157,13 +157,13 @@ const FinancesPage = () => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item xs={12} sm={3}>
+                        <Grid size={{ xs: 3 }}>
                             <Button
                                 variant="contained"
                                 color="primary"
                                 fullWidth
                                 onClick={fetchData}
-                                sx={{ height: 56, fontWeight: 'bold' }}
+                                sx={{ height: 56, fontWeight: 'bold', textTransform: 'none' }}
                             >
                                 Valider
                             </Button>
@@ -173,7 +173,7 @@ const FinancesPage = () => {
 
                 {/* Summary Cards */}
                 <Grid container spacing={3} sx={{ mb: 3 }}>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Card>
                             <CardContent>
                                 <Typography color="text.secondary" gutterBottom>Revenu Total</Typography>
@@ -183,7 +183,7 @@ const FinancesPage = () => {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Card>
                             <CardContent>
                                 <Typography color="text.secondary" gutterBottom>Nombre de Paiements</Typography>
@@ -191,7 +191,7 @@ const FinancesPage = () => {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Card>
                             <CardContent>
                                 <Typography color="text.secondary" gutterBottom>Paiement Moyen</Typography>
@@ -201,7 +201,7 @@ const FinancesPage = () => {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Card>
                             <CardContent>
                                 <Typography color="text.secondary" gutterBottom>Clients Actifs</Typography>
@@ -215,7 +215,7 @@ const FinancesPage = () => {
 
                 {/* Charts Section */}
                 <Grid container spacing={3} sx={{ mb: 3 }}>
-                    <Grid item xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Paper sx={{ p: 2, height: 400 }}>
                             <Typography variant="h6" gutterBottom display="flex" alignItems="center">
                                 <PieChartIcon sx={{ mr: 1 }} /> Répartition par Méthode
@@ -227,7 +227,7 @@ const FinancesPage = () => {
                                         cx="50%"
                                         cy="50%"
                                         labelLine={false}
-                                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                        label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
                                         outerRadius={120}
                                         fill="#8884d8"
                                         dataKey="value"
@@ -236,13 +236,13 @@ const FinancesPage = () => {
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Pie>
-                                    <RechartsTooltip formatter={(value: number) => value.toLocaleString() + ' FCFA'} />
+                                    <RechartsTooltip formatter={(value: any) => value.toLocaleString() + ' FCFA'} />
                                     <Legend />
                                 </PieChart>
                             </ResponsiveContainer>
                         </Paper>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Paper sx={{ p: 2, height: 400 }}>
                             <Typography variant="h6" gutterBottom display="flex" alignItems="center">
                                 <TrendingUp sx={{ mr: 1 }} /> Tendance des Revenus
@@ -252,7 +252,7 @@ const FinancesPage = () => {
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="date" />
                                     <YAxis />
-                                    <RechartsTooltip formatter={(value: number) => value.toLocaleString() + ' FCFA'} />
+                                    <RechartsTooltip formatter={(value: any) => value.toLocaleString() + ' FCFA'} />
                                     <Legend />
                                     <Line type="monotone" dataKey="amount" stroke="#82ca9d" name="Revenu" activeDot={{ r: 8 }} />
                                 </LineChart>

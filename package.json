@@ -1,5 +1,5 @@
 {
-    "name": "leuana-school",
+    "name": "bokelandschoolsystem",
     "version": "1.0.0",
     "description": "Système de gestion scolaire BOKELAND SCHOOL SYSTEM",
     "main": "electron-main.js",
@@ -15,8 +15,8 @@
         "dist": "npm run build:all && electron-builder"
     },
     "build": {
-        "appId": "com.bokeland.leuanaschool",
-        "productName": "Leuana School",
+        "appId": "com.bokeland.schoolsystem",
+        "productName": "Bokeland School System",
         "win": {
             "target": [
                 "nsis"

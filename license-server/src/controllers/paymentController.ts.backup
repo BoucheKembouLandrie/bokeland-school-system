@@ -1,0 +1,370 @@
+import { Request, Response } from 'express';
+import { Payment } from '../models/Payment';
+import { Client } from '../models/Client';
+import { Op } from 'sequelize';
+import * as campayService from '../services/campayService';
+import * as emailService from '../services/emailService';
+import * as invoiceService from '../services/invoiceService';
+import path from 'path';
+import fs from 'fs';
+
+export const getAllPayments = async (req: Request, res: Response) => {
+    console.log('\n🔍 GET ALL PAYMENTS');
+    console.log('Query params:', req.query);
+
+    try {
+        const { start_date, end_date, payment_method, status } = req.query;
+
+        const whereClause: any = {};
+
+        // Only apply date filter if both dates are provided
+        if (start_date && end_date) {
+            const startDateTime = new Date(start_date as string);
+            const endDateTime = new Date(end_date as string);
+            endDateTime.setHours(23, 59, 59, 999);
+
+            whereClause.payment_date = {
+                [Op.gte]: startDateTime,
+                [Op.lte]: endDateTime
+            };
+            console.log('📅 Date filter:', { start: startDateTime.toISOString(), end: endDateTime.toISOString() });
+        } else {
+            console.log('📅 No date filter - fetching all payments');
+        }
+
+        if (payment_method) {
+            whereClause.payment_method = payment_method;
+            console.log('💳 Payment method filter:', payment_method);
+        }
+
+        if (status) {
+            whereClause.status = status;
+        }
+
+        console.log('🔎 Where clause:', JSON.stringify(whereClause));
+
+        // Fetch all payments from database
+        const payments = await Payment.findAll({
+            where: whereClause,
+            order: [['payment_date', 'DESC']]
+        });
+
+        console.log(`✅ Found ${payments.length} payments in database`);
+
+        // Manually attach client data using a simple loop
+        const paymentsWithClients = [];
+        for (const payment of payments) {
+            try {
+                const client = await Client.findByPk(payment.client_id, {
+                    attributes: ['id', 'school_name', 'email', 'phone', 'status']
+                });
+
+                paymentsWithClients.push({
+                    ...payment.toJSON(),
+                    Client: client ? {
+                        id: client.id,
+                        school_name: client.school_name,
+                        email: client.email,
+                        phone: client.phone || '',
+                        status: client.status
+                    } : {
+                        id: payment.client_id,
+                        school_name: `Client ${payment.client_id}`,
+                        email: 'unknown@example.com',
+                        phone: '',
+                        status: 'UNKNOWN'
+                    }
+                });
+            } catch (clientError) {
+                console.error(`Error fetching client ${payment.client_id}:`, clientError);
+                // Add payment without client data
+                paymentsWithClients.push({
+                    ...payment.toJSON(),
+                    Client: {
+                        id: payment.client_id,
+                        school_name: `Client ${payment.client_id}`,
+                        email: 'error@example.com',
+                        phone: '',
+                        status: 'ERROR'
+                    }
+                });
+            }
+        }
+
+        console.log(`📤 Returning ${paymentsWithClients.length} payments with client data\n`);
+        res.json(paymentsWithClients);
+    } catch (error) {
+        console.error('Error fetching payments', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+export const getRevenueSummary = async (req: Request, res: Response) => {
+    try {
+        const { start_date, end_date } = req.query;
+
+        const whereClause: any = {
+            status: 'completed'
+        };
+
+        if (start_date && end_date) {
+            whereClause.payment_date = {
+                [Op.between]: [new Date(start_date as string), new Date(end_date as string)]
+            };
+        }
+
+        const payments = await Payment.findAll({
+            where: whereClause,
+            attributes: ['payment_method', 'amount']
+        });
+
+        const totalRevenue = payments.reduce((sum, p) => sum + parseFloat(p.amount.toString()), 0);
+        const paymentCount = payments.length;
+        const averagePayment = paymentCount > 0 ? totalRevenue / paymentCount : 0;
+
+        const methodBreakdown: { [key: string]: number } = {};
+        payments.forEach(p => {
+            methodBreakdown[p.payment_method] = (methodBreakdown[p.payment_method] || 0) + parseFloat(p.amount.toString());
+        });
+
+        res.json({
+            total_revenue: totalRevenue,
+            payment_count: paymentCount,
+            average_payment: averagePayment,
+            method_breakdown: methodBreakdown
+        });
+    } catch (error) {
+        console.error('Error calculating revenue', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// Initiate CamPay Payment
+export const initiatePayment = async (req: Request, res: Response) => {
+    try {
+        const { client_id, amount, phone_number } = req.body;
+
+        const client = await Client.findByPk(client_id);
+        if (!client) {
+            return res.status(404).json({ error: 'Client not found' });
+        }
+
+        const externalReference = `PAY-${Date.now()}-${client_id}`;
+        const description = `Abonnement Leuana School - 444 Jours`;
+
+        // 1. Create Pending Payment Record
+        const payment = await Payment.create({
+            client_id,
+            amount,
+            payment_method: 'campay',
+            status: 'pending',
+            external_reference: externalReference,
+            days_added: 444,
+            payment_date: new Date()
+        });
+
+        // 2. Call CamPay API
+        const campayResponse = await campayService.initiatePayment(
+            amount,
+            phone_number || client.phone || '237000000000', // Default fallback if needed
+            description,
+            externalReference
+        );
+
+        // 3. Update with transaction reference from CamPay if available immediately
+        if (campayResponse && campayResponse.reference) {
+            payment.transaction_id = campayResponse.reference;
+            await payment.save();
+        }
+
+        res.json({
+            success: true,
+            message: 'Payment initiated',
+            payment_token: campayResponse.token, // Used for frontend status polling if needed
+            reference: campayResponse.reference,
+            ussd_code: campayResponse.ussd_code // If applicable
+        });
+
+    } catch (error: any) {
+        console.error('Initiate Payment Error', error);
+        res.status(500).json({ error: 'Failed to initiate payment' });
+    }
+};
+
+// CamPay Webhook Handler
+export const handleWebhook = async (req: Request, res: Response) => {
+    try {
+        // Verify signature if possible (Campay doesn't always strictly enforce this via header, check payload)
+        const { status, external_reference, reference, amount } = req.body;
+
+        console.log('Webhook Received:', req.body);
+
+        const payment = await Payment.findOne({ where: { external_reference } });
+        if (!payment) {
+            return res.status(404).json({ error: 'Payment not found' });
+        }
+
+        if (payment.status === 'completed') {
+            return res.json({ message: 'Already processed' });
+        }
+
+        if (status === 'SUCCESSFUL' || status === 'completed') { // Check exact status string from Campay docs
+            payment.status = 'completed';
+            payment.transaction_id = reference;
+
+            // Generate Invoice Number: BOKELAND-YYYY-ID
+            const year = new Date().getFullYear();
+            payment.invoice_number = `BOKELAND-${year}-${payment.id.toString().padStart(3, '0')}`;
+            await payment.save();
+
+            // Extend Client Subscription
+            const client = await Client.findByPk(payment.client_id);
+            if (client) {
+                const currentEnd = new Date(client.subscription_end_date);
+                const now = new Date();
+                const baseDate = currentEnd > now ? currentEnd : now;
+                const newEnd = new Date(baseDate);
+                newEnd.setDate(newEnd.getDate() + 444);
+
+                client.subscription_end_date = newEnd;
+                client.status = 'ACTIVE';
+                await client.save();
+
+                // Generate and Send Invoice
+                try {
+                    const invoicePath = await invoiceService.generateInvoice({
+                        invoiceNumber: payment.invoice_number,
+                        date: payment.payment_date,
+                        clientName: client.school_name,
+                        clientEmail: client.email,
+                        clientPhone: client.phone,
+                        amount: parseFloat(payment.amount.toString()),
+                        description: 'Abonnement Leuana School (444 Jours)',
+                        days: 444
+                    });
+
+                    await emailService.sendInvoiceEmail(client.email, client.school_name, invoicePath);
+                } catch (emailErr) {
+                    console.error('Invoice mailing failed', emailErr);
+                }
+            }
+        } else if (status === 'FAILED') {
+            payment.status = 'failed';
+            await payment.save();
+        }
+
+        res.json({ received: true });
+    } catch (error) {
+        console.error('Webhook Error', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// Manual Payment (Admin Dashboard)
+export const createPayment = async (req: Request, res: Response) => {
+    console.log('='.repeat(80));
+    console.log('🔔 PAYMENT CREATION REQUEST RECEIVED');
+    console.log('='.repeat(80));
+    try {
+        const { client_id, amount, payment_method, days, transaction_id } = req.body;
+        console.log('DEBUG: createPayment called with:', { client_id, amount, payment_method, days });
+
+        if (!client_id || !amount) {
+            return res.status(400).json({ error: 'Client ID and amount are required' });
+        }
+
+        const client = await Client.findByPk(client_id);
+        if (!client) {
+            return res.status(404).json({ error: 'Client not found' });
+        }
+
+        // Generate Invoice Number
+        const year = new Date().getFullYear();
+
+        console.log('DEBUG: Creating Payment record...');
+        const payment = await Payment.create({
+            client_id,
+            amount,
+            payment_method: payment_method || 'manual',
+            transaction_id,
+            status: 'completed',
+            days_added: days || 444,
+            payment_date: new Date(),
+            invoice_number: `BOKELAND-MAN-${year}-${Date.now().toString().substr(-3)}`
+        });
+        console.log('DEBUG: Payment created:', payment.id);
+
+        // Fix proper ID based invoice number after creation
+        payment.invoice_number = `BOKELAND-${year}-${payment.id.toString().padStart(3, '0')}`;
+        await payment.save();
+
+        console.log('DEBUG: Updating client subscription...');
+        const currentEnd = new Date(client.subscription_end_date);
+        const now = new Date();
+        const baseDate = currentEnd > now ? currentEnd : now;
+        const newEnd = new Date(baseDate);
+        newEnd.setDate(newEnd.getDate() + (days || 444));
+
+        client.subscription_end_date = newEnd;
+        client.status = 'ACTIVE';
+        await client.save();
+        console.log('DEBUG: Client updated.');
+
+        // Generate Invoice (Optional for manual, but good to have)
+        try {
+            const invoicePath = await invoiceService.generateInvoice({
+                invoiceNumber: payment.invoice_number,
+                date: payment.payment_date,
+                clientName: client.school_name,
+                clientEmail: client.email,
+                clientPhone: client.phone,
+                amount: parseFloat(payment.amount.toString()),
+                description: `Abonnement Leuana School (${days || 444} Jours)`,
+                days: days || 444
+            });
+        } catch (err) {
+            console.error('Manual invoice gen failed', err);
+        }
+
+        console.log('✅ PAYMENT CREATED SUCCESSFULLY - ID:', payment.id);
+        console.log('='.repeat(80));
+        res.json({ success: true, payment });
+    } catch (error: any) {
+        console.log('❌ PAYMENT CREATION FAILED');
+        console.error('Error creating payment', error);
+        console.log('='.repeat(80));
+        res.status(500).json({ error: error.message || 'Internal server error' });
+    }
+};
+
+export const downloadInvoice = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const payment = await Payment.findByPk(id);
+
+        if (!payment || !payment.invoice_number) {
+            return res.status(404).json({ error: 'Invoice not found' });
+        }
+
+        const invoicePath = path.join(__dirname, '../../invoices', `${payment.invoice_number}.pdf`);
+
+        if (fs.existsSync(invoicePath)) {
+            res.download(invoicePath);
+        } else {
+            // Regenerate if missing? For now return error
+            res.status(404).json({ error: 'Invoice file missing' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Error downloading invoice' });
+    }
+};
+
+export const checkPaymentStatus = async (req: Request, res: Response) => {
+    try {
+        const { reference } = req.params;
+        const status = await campayService.checkTransactionStatus(reference);
+        res.json(status);
+    } catch (error) {
+        res.status(500).json({ error: 'Check status failed' });
+    }
+};

@@ -8,7 +8,9 @@ interface SchoolSettings {
     address: string;
     phone: string;
     email: string;
+    email: string;
     logo_url: string;
+    date_format: string;
 }
 
 interface SettingsContextType {
@@ -27,6 +29,9 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
         try {
             const response = await api.get('/settings');
             setSettings(response.data);
+            if (response.data.date_format) {
+                localStorage.setItem('date_format', response.data.date_format);
+            }
         } catch (error) {
             console.error('Error fetching settings:', error);
         } finally {

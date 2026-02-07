@@ -14,7 +14,12 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    LinearProgress
+    LinearProgress,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    InputAdornment
 } from '@mui/material';
 import { Edit, Save, Cancel, CloudDownload, CloudUpload, DeleteForever } from '@mui/icons-material';
 import api from '../services/api';
@@ -27,6 +32,7 @@ interface SchoolSettings {
     phone: string;
     email: string;
     logo_url: string;
+    date_format: string;
 }
 
 import { useSettings } from '../contexts/SettingsContext';
@@ -235,52 +241,115 @@ const Settings: React.FC = () => {
 
     if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}><CircularProgress /></Box>;
 
-    const renderFieldRow = (label: string, field: keyof SchoolSettings, value: string, index: number) => (
-        <Box
-            sx={{
-                display: 'flex',
-                alignItems: 'center',
-                py: 2,
-                borderBottom: '1px solid #e0e0e0',
-                bgcolor: index % 2 === 0 ? 'white' : '#f2f4f5'
-            }}
-        >
-            <Box sx={{ width: '250px', borderRight: '1px solid #e0e0e0', pr: 2, pl: 4 }}>
-                <Typography variant="subtitle1" fontWeight="medium">{label}</Typography>
-            </Box>
-            <Box sx={{ flexGrow: 1, px: 2 }}>
-                {editingField === field ? (
-                    <TextField
+    const renderFieldRow = (label: string, field: keyof SchoolSettings, value: string, index: number, type: 'text' | 'select' | 'phone' = 'text') => {
+
+        // Helper to render edit view based on type
+        const renderEditInput = () => {
+            if (field === 'date_format') {
+                return (
+                    <Select
                         fullWidth
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}
                         size="small"
-                        autoFocus
-                    />
-                ) : (
-                    <Typography variant="body1">{value || '-'}</Typography>
-                )}
+                    >
+                        <MenuItem value="dd/mm/yyyy">dd/mm/yyyy</MenuItem>
+                        <MenuItem value="mm/dd/yyyy">mm/dd/yyyy</MenuItem>
+                    </Select>
+                );
+            }
+
+            if (field === 'phone') {
+                // Parse existing value if needed, or simple text for now with country selector helper?
+                // Request said: "ask to select country to identify country code and then write number"
+                return (
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <FormControl size="small" sx={{ width: 120 }}>
+                            <Select
+                                defaultValue="+237"
+                                onChange={(e) => {
+                                    // Prepend code if not present? 
+                                    // Actually, let's just use this to set the prefix in the main input
+                                    const code = e.target.value;
+                                    setEditValue(prev => {
+                                        // simple logic: replace old code or just prepend? 
+                                        // Let's just set the editValue to the code and let user type rest
+                                        return code + " ";
+                                    });
+                                }}
+                            >
+                                <MenuItem value="+237">🇨🇲 +237</MenuItem>
+                                <MenuItem value="+241">🇬🇦 +241</MenuItem>
+                                <MenuItem value="+242">🇨🇬 +242</MenuItem>
+                                <MenuItem value="+235">🇹🇩 +235</MenuItem>
+                                <MenuItem value="+33">🇫🇷 +33</MenuItem>
+                                <MenuItem value="+1">🇺🇸 +1</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <TextField
+                            fullWidth
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            size="small"
+                            autoFocus
+                            placeholder="+237 600000000"
+                        />
+                    </Box>
+                );
+            }
+
+            return (
+                <TextField
+                    fullWidth
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    size="small"
+                    autoFocus
+                />
+            );
+        };
+
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    py: 2,
+                    borderBottom: '1px solid #e0e0e0',
+                    bgcolor: index % 2 === 0 ? 'white' : '#f2f4f5'
+                }}
+            >
+                <Box sx={{ width: '250px', borderRight: '1px solid #e0e0e0', pr: 2, pl: 4 }}>
+                    <Typography variant="subtitle1" fontWeight="medium">{label}</Typography>
+                </Box>
+                <Box sx={{ flexGrow: 1, px: 2 }}>
+                    {editingField === field ? (
+                        renderEditInput()
+                    ) : (
+                        <Typography variant="body1">{value || '-'}</Typography>
+                    )}
+                </Box>
+                <Box sx={{ display: 'flex', gap: 1, pr: 2 }}>
+                    {editingField === field ? (
+                        <>
+                            <IconButton onClick={() => handleSaveEdit(field)} color="primary" size="small">
+                                <Save />
+                            </IconButton>
+                            <IconButton onClick={handleCancelEdit} color="error" size="small">
+                                <Cancel />
+                            </IconButton>
+                        </>
+                    ) : (
+                        <>
+                            <IconButton onClick={() => handleEditClick(field, value)} size="small" color="primary">
+                                <Edit />
+                            </IconButton>
+                        </>
+                    )}
+                </Box>
             </Box>
-            <Box sx={{ display: 'flex', gap: 1, pr: 2 }}>
-                {editingField === field ? (
-                    <>
-                        <IconButton onClick={() => handleSaveEdit(field)} color="primary" size="small">
-                            <Save />
-                        </IconButton>
-                        <IconButton onClick={handleCancelEdit} color="error" size="small">
-                            <Cancel />
-                        </IconButton>
-                    </>
-                ) : (
-                    <>
-                        <IconButton onClick={() => handleEditClick(field, value)} size="small" color="primary">
-                            <Edit />
-                        </IconButton>
-                    </>
-                )}
-            </Box>
-        </Box>
-    );
+        );
+    };
 
     return (
         <Box>
@@ -310,7 +379,7 @@ const Settings: React.FC = () => {
                     >
                         {settings?.logo_url ? (
                             <img
-                                src={`${BASE_URL}${settings.logo_url} `}
+                                src={`${BASE_URL}${settings.logo_url}`}
                                 alt="Logo"
                                 style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                             />
@@ -348,8 +417,9 @@ const Settings: React.FC = () => {
                     {renderFieldRow("Nom de l'établissement", 'school_name', settings?.school_name || '', 0)}
                     {renderFieldRow("site internet", 'website', settings?.website || '', 1)}
                     {renderFieldRow("localisation", 'address', settings?.address || '', 2)}
-                    {renderFieldRow("numero de téléphone", 'phone', settings?.phone || '', 3)}
+                    {renderFieldRow("numero de téléphone", 'phone', settings?.phone || '', 3, 'phone')}
                     {renderFieldRow("adresse email", 'email', settings?.email || '', 4)}
+                    {renderFieldRow("format de date", 'date_format', settings?.date_format || 'dd/mm/yyyy', 5, 'select')}
                 </Box>
             </Paper>
 

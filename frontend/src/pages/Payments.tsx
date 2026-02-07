@@ -110,7 +110,7 @@ const Payments: React.FC = () => {
     };
 
     // Filter students based on selected class
-    const filteredStudents = students.filter(s => s.classe_id.toString() === selectedClassId);
+    const filteredStudents = students.filter(s => s.classe_id && s.classe_id.toString() === selectedClassId);
 
     // Filter payments for the validated student
     const studentPayments = validatedStudent
@@ -118,9 +118,9 @@ const Payments: React.FC = () => {
         : [];
 
     // Calculate totals
-    const totalPaid = studentPayments.reduce((sum, p) => sum + Number(p.montant), 0);
-    const selectedClass = classes.find(c => c.id.toString() === selectedClassId);
-    const classPension = selectedClass ? Number(selectedClass.pension) : 0;
+    const totalPaid = studentPayments.reduce((sum, p) => sum + Number(p.montant || 0), 0);
+    const selectedClass = classes.find(c => c.id && c.id.toString() === selectedClassId);
+    const classPension = selectedClass ? Number(selectedClass.pension || 0) : 0;
     const remaining = Math.max(0, classPension - totalPaid);
 
     const handleValidateSelection = () => {
@@ -128,7 +128,7 @@ const Payments: React.FC = () => {
             setError('Veuillez sélectionner un élève');
             return;
         }
-        const student = students.find(s => s.id.toString() === selectedStudentId);
+        const student = students.find(s => s.id && s.id.toString() === selectedStudentId);
         setValidatedStudent(student || null);
         setError('');
         setSuccessMessage('');
@@ -224,7 +224,7 @@ const Payments: React.FC = () => {
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Autocomplete
                             options={filteredStudents}
-                            getOptionLabel={(option) => `${option.nom} ${option.prenom}`}
+                            getOptionLabel={(option) => `${option.nom || ''} ${option.prenom || ''}`}
                             value={filteredStudents.find(s => s.id.toString() === selectedStudentId) || null}
                             onChange={(_, newValue) => setSelectedStudentId(newValue ? newValue.id.toString() : '')}
                             disabled={!selectedClassId}

@@ -7,5 +7,11 @@ export const formatDate = (dateString: string | Date | undefined | null): string
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
 
-    return `${day}-${month}-${year}`;
+    const format = localStorage.getItem('date_format') || 'dd/mm/yyyy';
+
+    if (format === 'mm/dd/yyyy') {
+        return `${month}/${day}/${year}`;
+    }
+
+    return `${day}/${month}/${year}`;
 };

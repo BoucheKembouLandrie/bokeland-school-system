@@ -2,13 +2,20 @@ import { Request, Response } from 'express';
 import Student from '../models/Student';
 import Class from '../models/Class';
 import { generateMatricule } from '../utils/matriculeGenerator';
+import fs from 'fs';
+import path from 'path';
 
 export const getAllStudents = async (req: Request, res: Response) => {
+    const logPath = path.join(__dirname, '../../debug_log.txt');
     try {
+        fs.appendFileSync(logPath, `[API] getAllStudents Called at ${new Date().toISOString()}\n`);
+
         const { classe_id } = req.query;
         const schoolYearId = req.headers['x-school-year-id'];
+        fs.appendFileSync(logPath, `[API] Params - Class: ${classe_id}, Year: ${schoolYearId}\n`);
 
         if (!schoolYearId) {
+            console.warn('⚠️ [API] Missing School Year ID');
             return res.status(400).json({ message: 'School Year ID is required' });
         }
 
@@ -18,13 +25,19 @@ export const getAllStudents = async (req: Request, res: Response) => {
             whereClause.classe_id = classe_id;
         }
 
+        console.log('🔍 [API] Querying Students with:', JSON.stringify(whereClause));
         const students = await Student.findAll({
             where: whereClause,
             include: [{ model: Class, as: 'class' }]
         });
+        console.log(`✅ [API] Found ${students.length} students`);
         res.json(students);
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+    } catch (error: any) {
+        const logPath = path.join(__dirname, '../../error_log.txt');
+        const errorMessage = `[${new Date().toISOString()}] Error in getAllStudents: ${error.message}\nStack: ${error.stack}\n\n`;
+        fs.appendFileSync(logPath, errorMessage);
+        console.error('❌ [API] Error in getAllStudents:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 

@@ -8,6 +8,8 @@ class Class extends Model {
     public annee!: string;
     public pension!: number;
     public school_year_id!: number;
+    public title!: string;
+    public nom!: string;
 }
 
 Class.init(
@@ -41,6 +43,15 @@ Class.init(
                 model: 'school_years',
                 key: 'id',
             },
+        },
+        // Legacy/Missing columns found during debugging
+        title: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        nom: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
     },
     {

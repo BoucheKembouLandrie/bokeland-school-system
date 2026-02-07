@@ -208,6 +208,7 @@ const Classes: React.FC = () => {
                         <TextField
                             label="Année scolaire"
                             {...register('annee')}
+                            {...register('annee')}
                             error={!!errors.annee}
                             helperText={errors.annee?.message}
                             fullWidth

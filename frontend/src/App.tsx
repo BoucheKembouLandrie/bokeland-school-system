@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -21,9 +21,12 @@ import Administration from './pages/Administration';
 import Staff from './pages/Staff';
 import Expenses from './pages/Expenses';
 import Planning from './pages/Planning';
+import Debug from './pages/Debug';
 import DashboardLayout from './layouts/DashboardLayout';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { SchoolYearProvider } from './contexts/SchoolYearContext';
+import { LicenseProvider, useLicense } from './contexts/LicenseContext';
+import ActivationPage from './pages/ActivationPage';
 
 // User interface
 interface UserInfo {
@@ -99,54 +102,83 @@ export const useAuthContext = () => React.useContext(AuthContext);
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuthContext();
+  const { license } = useLicense();
+
+  if (license.status === 'NOT_REGISTERED') {
+    return <Navigate to="/activation" />;
+  }
+
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
 };
+
+// Global license guard
+const GlobalLicenseCheck: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { license } = useLicense();
+  const location = useLocation();
+
+  if (license.status === 'NOT_REGISTERED' && location.pathname !== '/activation') {
+    return <Navigate to="/activation" state={{ from: location }} replace />;
+  }
+
+  return <>{children}</>;
+};
+
+import UpdateNotification from './components/UpdateNotification';
+
+// ... (existing helper setup)
 
 const App: React.FC = () => {
   const auth = useAuth();
 
   return (
     <AuthContext.Provider value={auth}>
-      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
-        <SchoolYearProvider>
-          <SettingsProvider>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <Router>
-                <Routes>
-                  <Route path="/login" element={<Login />} />
-                  <Route
-                    path="/"
-                    element={
-                      <PrivateRoute>
-                        <DashboardLayout />
-                      </PrivateRoute>
-                    }
-                  >
-                    <Route index element={<Dashboard />} />
-                    <Route path="students" element={<Students />} />
-                    <Route path="classes" element={<Classes />} />
-                    <Route path="teachers" element={<Teachers />} />
-                    <Route path="subjects" element={<Subjects />} />
-                    <Route path="examens" element={<Examens />} />
-                    <Route path="grades" element={<Grades />} />
-                    <Route path="payments" element={<Payments />} />
-                    <Route path="attendance" element={<Attendance />} />
-                    <Route path="users" element={<Users />} />
-                    <Route path="settings" element={<Settings />} />
-                    <Route path="administration" element={<Administration />} />
-                    <Route path="staff" element={<Staff />} />
-                    <Route path="expenses" element={<Expenses />} />
-                    <Route path="planning" element={<Planning />} />
-                  </Route>
-                  {/* Redirect any unknown route to login */}
-                  <Route path="*" element={<Navigate to="/login" replace />} />
-                </Routes>
-              </Router>
-            </ThemeProvider>
-          </SettingsProvider>
-        </SchoolYearProvider>
-      </LocalizationProvider>
+      <LicenseProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
+          <SchoolYearProvider>
+            <SettingsProvider>
+              <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <UpdateNotification />
+                <Router>
+                  <GlobalLicenseCheck>
+                    <Routes>
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/activation" element={<ActivationPage />} />
+                      <Route
+                        path="/"
+                        element={
+                          <PrivateRoute>
+                            <DashboardLayout />
+                          </PrivateRoute>
+                        }
+                      >
+                        <Route index element={<Dashboard />} />
+                        <Route path="students" element={<Students />} />
+                        <Route path="classes" element={<Classes />} />
+                        <Route path="teachers" element={<Teachers />} />
+                        <Route path="subjects" element={<Subjects />} />
+                        <Route path="examens" element={<Examens />} />
+                        <Route path="grades" element={<Grades />} />
+                        <Route path="payments" element={<Payments />} />
+                        <Route path="attendance" element={<Attendance />} />
+                        <Route path="users" element={<Users />} />
+                        <Route path="settings" element={<Settings />} />
+                        <Route path="administration" element={<Administration />} />
+                        <Route path="staff" element={<Staff />} />
+                        <Route path="expenses" element={<Expenses />} />
+                        <Route path="planning" element={<Planning />} />
+                        <Route path="debug" element={<Debug />} />
+                      </Route>
+                      {/* Redirect any unknown route to login */}
+                      <Route path="*" element={<Navigate to="/login" replace />} />
+                    </Routes>
+                  </GlobalLicenseCheck>
+                </Router>
+              </ThemeProvider>
+            </SettingsProvider>
+          </SchoolYearProvider>
+        </LocalizationProvider>
+      </LicenseProvider>
     </AuthContext.Provider>
   );
 };

@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5005/api',
+    // Use window.location.hostname to allow access from other devices in the network
+    baseURL: `http://${window.location.hostname}:5006/api`,
 });
 
 api.interceptors.request.use((config) => {

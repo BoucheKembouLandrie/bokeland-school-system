@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import Expense from '../models/Expense';
+import Teacher from '../models/Teacher';
+import Staff from '../models/Staff';
 
 export const getAllExpenses = async (req: Request, res: Response) => {
     try {
@@ -14,8 +16,8 @@ export const getAllExpenses = async (req: Request, res: Response) => {
             where: { school_year_id: schoolYearId },
             order: [['date_depense', 'DESC']],
             include: [
-                { model: require('../models/Teacher').default, as: 'teacher' },
-                { model: require('../models/Staff').default, as: 'staffMember' }
+                { model: Teacher, as: 'teacher' },
+                { model: Staff, as: 'staffMember' }
             ]
         });
         res.json(expenses);

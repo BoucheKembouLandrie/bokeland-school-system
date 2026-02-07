@@ -4,8 +4,24 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import { sendPasswordRecoveryEmail } from '../services/emailService';
 
+import { getCachedLicenseStatus, checkLicense } from '../services/licenseService';
+
 export const login = async (req: Request, res: Response) => {
     try {
+        // --- LICENSE CHECK START ---
+        let licenseStatus = getCachedLicenseStatus();
+        if (!licenseStatus) {
+            licenseStatus = await checkLicense();
+        }
+
+        if (licenseStatus && (licenseStatus.status === 'EXPIRED' || licenseStatus.status === 'BANNED')) {
+            return res.status(403).json({
+                message: 'Accès bloqué : Abonnement expiré ou compte suspendu. Veuillez contacter le support.',
+                code: 'LICENSE_BLOCKED'
+            });
+        }
+        // --- LICENSE CHECK END ---
+
         const { username, password } = req.body;
         const user = await User.findOne({ where: { username } });
 

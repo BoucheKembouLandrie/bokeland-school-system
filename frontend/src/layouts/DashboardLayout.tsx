@@ -7,6 +7,7 @@ import SchoolYearSelector from '../components/SchoolYearSelector';
 
 import { useSettings } from '../contexts/SettingsContext';
 import { BASE_URL } from '../config';
+import LicenseUpgradeModal from '../components/LicenseUpgradeModal';
 
 const drawerWidth = 240;
 
@@ -76,7 +77,7 @@ const DashboardLayout: React.FC = () => {
             <SchoolYearSelector />
             <Toolbar sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
                 <img
-                    src={settings?.logo_url ? `${BASE_URL}${settings.logo_url}` : "/logo.jpg"}
+                    src={settings?.logo_url ? (settings.logo_url.startsWith('http') ? settings.logo_url : `${BASE_URL}${settings.logo_url}`) : "/logo.jpg"}
                     alt={settings?.school_name || "BOKELAND SCHOOL SYSTEM Management Software"}
                     style={{ width: '111px', height: '111px', objectFit: 'contain' }}
                 />
@@ -198,6 +199,7 @@ const DashboardLayout: React.FC = () => {
                 sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` }, backgroundColor: '#f5f5f5', minHeight: '100vh' }}
             >
                 <Toolbar />
+                <LicenseUpgradeModal />
                 <Outlet />
             </Box>
         </Box>

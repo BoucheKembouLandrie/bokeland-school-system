@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Typography, Box, CircularProgress, TextField, Button, Autocomplete, Dialog } from '@mui/material';
+import { Paper, Typography, Box, CircularProgress, TextField, Button, Autocomplete, Dialog, Alert } from '@mui/material';
 import { People, School, Payment, AccountBalance, Book, SupervisorAccount, CheckCircle, Settings } from '@mui/icons-material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import api from '../services/api';
@@ -10,6 +10,7 @@ import TeacherTransferModal from '../components/TeacherTransferModal';
 import StaffTransferModal from '../components/StaffTransferModal';
 import SubjectTransferModal from '../components/SubjectTransferModal';
 import ConfigTransferModal from '../components/ConfigTransferModal';
+import LicenseBanner from '../components/LicenseBanner';
 
 interface StatCardProps {
     title: string;
@@ -86,7 +87,12 @@ const Dashboard: React.FC = () => {
 
     useEffect(() => {
         const fetchStats = async () => {
-            if (!currentYear) return;
+            console.log('🔍 [Dashboard] Current Year:', currentYear);
+
+            if (!currentYear) {
+                console.warn('⚠️ [Dashboard] No school year selected! Data will not be displayed.');
+                return;
+            }
 
             setLoading(true);
             try {
@@ -98,6 +104,14 @@ const Dashboard: React.FC = () => {
                     api.get('/expenses'),
                 ]);
 
+                console.log('📊 [Dashboard] Raw Data Counts:', {
+                    students: studentsRes.data.length,
+                    classes: classesRes.data.length,
+                    teachers: teachersRes.data.length,
+                    payments: paymentsRes.data.length,
+                    expenses: expensesRes.data.length
+                });
+
                 // Filter data by the selected school year
 
                 // 1. Classes: Filter by year name (e.g. "2024-2025")
@@ -105,8 +119,21 @@ const Dashboard: React.FC = () => {
                 const yearClasses = classesRes.data.filter((c: any) => c.annee === currentYear.name);
                 const yearClassIds = yearClasses.map((c: any) => c.id);
 
+                console.log('🏫 [Dashboard] Year Filtering:', {
+                    selectedYear: currentYear.name,
+                    totalClasses: classesRes.data.length,
+                    matchingClasses: yearClasses.length,
+                    classYearsInDB: [...new Set(classesRes.data.map((c: any) => c.annee))]
+                });
+
                 // 2. Students: Filter by classes that belong to this year
                 const yearStudents = studentsRes.data.filter((s: any) => yearClassIds.includes(s.classe_id));
+
+                console.log('👨‍🎓 [Dashboard] Student Filtering:', {
+                    totalStudents: studentsRes.data.length,
+                    matchingStudents: yearStudents.length,
+                    yearClassIds
+                });
 
                 // 3. Teachers: Currently global (unless we link them to classes/years later)
                 const teachersCount = teachersRes.data.length;
@@ -291,13 +318,20 @@ const Dashboard: React.FC = () => {
                 </Box>
             </Box>
 
-            <Box sx={{ mt: 4, mb: 3 }}>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                    Bienvenue dans le système de gestion scolaire BOKELAND SCHOOL SYSTEM
-                </Typography>
-                <Typography variant="body1" color="textSecondary">
-                    Utilisez le menu de gauche pour naviguer entre les différents modules.
-                </Typography>
+
+
+            <Box sx={{ mt: 4, mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 4, flexWrap: 'wrap' }}>
+                <Box sx={{ maxWidth: '40%' }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                        Bienvenue dans le système de gestion scolaire BOKELAND SCHOOL SYSTEM
+                    </Typography>
+                    <Typography variant="body1" color="textSecondary">
+                        Utilisez le menu de gauche pour naviguer entre les différents modules.
+                    </Typography>
+                </Box>
+                <Box sx={{ flex: 1, minWidth: '500px' }}>
+                    <LicenseBanner />
+                </Box>
             </Box>
 
             {/* 4-column layout */}

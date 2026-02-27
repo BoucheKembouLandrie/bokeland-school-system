@@ -20,13 +20,15 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
         req.user = decoded;
         fs.appendFileSync(logPath, `[Auth] Token verified for user: ${JSON.stringify(decoded)}\n`);
         next();
     } catch (error: any) {
-        fs.appendFileSync(logPath, `[Auth] Invalid token: ${error.message}\n`);
-        res.status(403).json({ message: 'Invalid token.' });
+        fs.appendFileSync(logPath, `[Auth] Invalid token error: ${error.message} (Secret used: ${process.env.JWT_SECRET ? 'Env Var' : 'Fallback'})\n`);
+        // Return 401 instead of 403 for invalid token to align with standard auth flow, 
+        // though API interceptor handles both.
+        return res.status(403).json({ message: 'Invalid token.' });
     }
 };
 

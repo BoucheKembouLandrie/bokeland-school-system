@@ -59,18 +59,31 @@ export const getAttendanceByStudent = async (req: Request, res: Response) => {
 
 export const createAttendance = async (req: Request, res: Response) => {
     try {
+        console.log("=== CREATE ATTENDANCE REQUEST ===");
+        console.log("Headers:", req.headers);
+        console.log("Body:", req.body);
+
         const schoolYearId = req.headers['x-school-year-id'];
+        console.log("School Year ID from header:", schoolYearId);
+
         if (!schoolYearId) {
+            console.log("❌ Missing school_year_id header");
             return res.status(400).json({ message: 'School Year ID is required' });
         }
 
-        const attendance = await Attendance.create({
+        const payload = {
             ...req.body,
             school_year_id: schoolYearId
-        });
+        };
+        console.log("Creating attendance with payload:", payload);
+
+        const attendance = await Attendance.create(payload);
+        console.log("✅ Attendance created:", attendance.toJSON());
         res.status(201).json(attendance);
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+    } catch (error: any) {
+        console.error("❌ Error creating attendance:", error.message);
+        console.error("Stack:", error.stack);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 

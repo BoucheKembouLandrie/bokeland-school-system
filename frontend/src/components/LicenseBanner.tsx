@@ -3,10 +3,12 @@ import { Box, Button, Typography, Paper, IconButton } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useLicense } from '../contexts/LicenseContext';
 import LicenseUpgradeModal from './LicenseUpgradeModal';
+import { useTranslation } from 'react-i18next';
 
 const LicenseBanner: React.FC = () => {
     const { license, checkLicense } = useLicense();
     const [modalOpen, setModalOpen] = useState(false);
+    const { t } = useTranslation();
 
     const handleRefresh = async () => {
         await checkLicense();
@@ -65,10 +67,10 @@ const LicenseBanner: React.FC = () => {
 
                     <Box>
                         <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', display: 'block', mb: 0.2 }}>
-                            Actualisez pour vérifier votre temps • Connecté
+                            {t('licenseBanner.refreshText')}
                         </Typography>
                         <Typography variant="body1" sx={{ fontWeight: 600, color: 'text.primary', lineHeight: 1.1, display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
-                            Il vous reste
+                            {t('licenseBanner.timeLeft')}
                             <Box component="span" sx={{
                                 background: 'linear-gradient(45deg, #4481eb, #04befe)',
                                 backgroundClip: 'text',
@@ -82,7 +84,7 @@ const LicenseBanner: React.FC = () => {
                                 {license.daysRemaining !== undefined ? license.daysRemaining : '--'}
                             </Box>
                             <Box component="span" sx={{ fontSize: '0.9rem', fontWeight: 600, color: '#555' }}>
-                                jours
+                                {t('licenseBanner.days')}
                             </Box>
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
@@ -91,7 +93,7 @@ const LicenseBanner: React.FC = () => {
                                 color: license.status === 'ACTIVE' ? '#2e7d32' : license.status === 'TRIAL' ? '#e65100' : '#c62828',
                                 px: 1, py: 0.2, borderRadius: 1, fontSize: '0.7rem', fontWeight: 700, border: '1px solid currentColor'
                             }}>
-                                {license.status === 'ACTIVE' ? 'ABONNEMENT ACTIF' : license.status === 'TRIAL' ? 'MODE ESSAI' : license.status === 'EXPIRED' ? 'EXPIRÉ' : license.status}
+                                {license.status === 'ACTIVE' ? t('licenseBanner.status.active') : license.status === 'TRIAL' ? t('licenseBanner.status.trial') : license.status === 'EXPIRED' ? t('licenseBanner.status.expired') : license.status}
                             </Box>
                         </Box>
                     </Box>
@@ -100,9 +102,9 @@ const LicenseBanner: React.FC = () => {
                 {/* Right Side: CTA */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Typography variant="body2" sx={{ textAlign: 'right', fontSize: '0.8rem', color: 'text.secondary', display: { xs: 'none', md: 'block' } }}>
-                        Besoin de plus de temps ? <br />
+                        {t('licenseBanner.needTime')} <br />
                         <Box component="span" sx={{ color: 'text.primary', fontWeight: 500 }}>
-                            Prolongez dès maintenant
+                            {t('licenseBanner.extendNow')}
                         </Box>
                     </Typography>
 
@@ -128,7 +130,7 @@ const LicenseBanner: React.FC = () => {
                             }
                         }}
                     >
-                        Renouveler ici
+                        {t('licenseBanner.renewHere')}
                     </Button>
                 </Box>
             </Paper>

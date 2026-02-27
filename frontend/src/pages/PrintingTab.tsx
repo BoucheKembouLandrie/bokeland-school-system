@@ -17,678 +17,787 @@ import {
     Grid,
     IconButton,
     Checkbox,
-    CircularProgress
+    CircularProgress,
+    Tooltip,
+    Dialog,
+    AppBar,
+    Toolbar,
+    Slide
 } from '@mui/material';
+import { TransitionProps } from '@mui/material/transitions';
 import PrintIcon from '@mui/icons-material/Print';
 import CloseIcon from '@mui/icons-material/Close';
 import api from '../services/api';
-import { useSettings } from '../contexts/SettingsContext';
-import { BASE_URL } from '../config';
-import { formatDate } from '../utils/formatDate';
+import { useTranslation } from 'react-i18next';
 
-interface Class {
-    id: number;
-    libelle: string;
+// ... interfaces ...
+interface Class { id: number; libelle: string; }
+interface Evaluation { id: number; nom: string; }
+interface Student { id: number; nom: string; prenom: string; matricule: string; }
+interface SubjectGrade { matiere: string; coefficient: number; note: number; total: number; observation: string; }
+interface ReportCardData {
+    student: Student;
+    grades: SubjectGrade[];
+    stats: {
+        totalCoef: number;
+        totalPoints: number;
+        average: number;
+        rank: number;
+        totalStudents: number;
+        bestAverage: number;
+        worstAverage: number;
+        classAverage: number;
+        absences: number;
+        decision: string;
+    };
+    schoolInfo?: any;
 }
 
-interface Student {
-    id: number;
-    nom: string;
-    prenom: string;
-    classe_id?: number;
-    category?: string; // Add category
-}
-
-interface Evaluation {
-    id: number;
-    nom: string;
-    date_debut?: string; // Add dates
-    date_fin?: string;
+interface SchoolSettings {
+    school_name: string;
+    address: string;
+    phone: string;
+    email: string;
+    logo_url: string;
 }
 
 interface ExamRule {
-    category: string;
+    id: number;
     min_average: number;
     max_average: number;
-    min_absence: number;
-    max_absence: number;
-    status: string;
+    status: string; // Decision/Observation
 }
 
-interface Attendance {
-    eleve_id: number;
-    date: string;
-    motif: string;
-}
+// Helper for safe float parsing
+const safeParseFloat = (val: any) => {
+    const parsed = parseFloat(val);
+    return isNaN(parsed) ? 0 : parsed;
+};
+
+// Transition for Dialog
+const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+        children: React.ReactElement;
+    },
+    ref: React.Ref<unknown>,
+) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const PrintingTab: React.FC = () => {
-    const { settings } = useSettings();
-
-    // Data State
+    const { t } = useTranslation();
     const [classes, setClasses] = useState<Class[]>([]);
     const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
+    const [students, setStudents] = useState<Student[]>([]);
 
-    // Print Tab State
-    const [printEvaluation, setPrintEvaluation] = useState('');
-    const [printClass, setPrintClass] = useState('');
-    const [printStudents, setPrintStudents] = useState<Student[]>([]);
-    const [showPrintTable, setShowPrintTable] = useState(false);
-    const [printError, setPrintError] = useState('');
-    const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
-    const [bulkReportData, setBulkReportData] = useState<any[] | null>(null);
-    const [reportData, setReportData] = useState<any>(null);
-    const [openReportCard, setOpenReportCard] = useState(false);
+    const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
+    const [selectedEvaluationId, setSelectedEvaluationId] = useState<number | null>(null);
+    const [selectedStudentIds, setSelectedStudentIds] = useState<number[]>([]);
+
+    // Settings & Rules
+    const [schoolSettings, setSchoolSettings] = useState<SchoolSettings | null>(null);
+    const [examRules, setExamRules] = useState<ExamRule[]>([]);
+
+    // Printing state
+    const [isPrinting, setIsPrinting] = useState(false);
+    const [reportCards, setReportCards] = useState<ReportCardData[]>([]);
     const [loading, setLoading] = useState(false);
-
-    const [rules, setRules] = useState<ExamRule[]>([]);
-    const [attendances, setAttendances] = useState<Attendance[]>([]);
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        fetchClasses();
-        fetchEvaluations();
-        fetchRules();
-        fetchAttendances();
+        fetchInitialData();
     }, []);
 
-    const fetchRules = async () => {
+    useEffect(() => {
+        if (selectedClassId) {
+            fetchStudents(selectedClassId);
+            setSelectedStudentIds([]);
+        } else {
+            setStudents([]);
+        }
+    }, [selectedClassId]);
+
+    const fetchInitialData = async () => {
         try {
-            const response = await api.get('/exam-rules');
-            setRules(response.data);
+            const [classesRes, evaluationsRes, settingsRes, rulesRes] = await Promise.all([
+                api.get('/classes'),
+                api.get('/evaluations'),
+                api.get('/settings'),
+                api.get('/exam-rules')
+            ]);
+            setClasses(classesRes.data);
+            setEvaluations(evaluationsRes.data);
+            setSchoolSettings(settingsRes.data);
+            setExamRules(rulesRes.data);
         } catch (err) {
-            console.error('Error fetching rules', err);
+            console.error('Error fetching initial data:', err);
         }
     };
 
-    const fetchAttendances = async () => {
+    const fetchStudents = async (classId: number) => {
         try {
-            const response = await api.get('/attendance');
-            setAttendances(response.data);
+            const response = await api.get(`/students?classe_id=${classId}`);
+            setStudents(response.data);
         } catch (err) {
-            console.error('Error fetching attendance', err);
+            setError(t('exams.printing.messages.studentsLoadError'));
         }
     };
 
-    const fetchClasses = async () => {
-        try {
-            const response = await api.get('/classes');
-            setClasses(response.data);
-        } catch (err) {
-            console.error('Error fetching classes', err);
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            setSelectedStudentIds(students.map(s => s.id));
+        } else {
+            setSelectedStudentIds([]);
         }
     };
 
-    const fetchEvaluations = async () => {
-        try {
-            const response = await api.get('/evaluations');
-            setEvaluations(response.data);
-        } catch (err) {
-            console.error('Error fetching evaluations', err);
+    const handleSelectStudent = (id: number, checked: boolean) => {
+        if (checked) {
+            setSelectedStudentIds(prev => [...prev, id]);
+        } else {
+            setSelectedStudentIds(prev => prev.filter(sid => sid !== id));
         }
     };
 
-    const handlePrintValidate = async () => {
-        if (!printEvaluation || !printClass) {
-            setPrintError('Veuillez sélectionner une évaluation et une classe.');
+    const handleSinglePrint = (student: Student) => {
+        handlePreparePrint([student.id]);
+    };
+
+    const getObservationFromRules = (average: number) => {
+        const rule = examRules.find(r => average >= r.min_average && average < r.max_average);
+        if (!rule) {
+            // Check for exact max match (e.g. 20)
+            const exactMaxRule = examRules.find(r => average === r.max_average);
+            if (exactMaxRule) return exactMaxRule.status;
+            return "Non défini(e)";
+        }
+        return rule.status;
+    };
+
+    const calculateObservation = (note: number) => {
+        if (note >= 0 && note <= 7) return "Médiocre";
+        if (note > 7 && note <= 9.99) return "Passable";
+        if (note > 9.99 && note <= 12) return "Assez Bien";
+        if (note > 12 && note <= 16) return "Bien";
+        if (note > 16 && note <= 18) return "Très Bien";
+        if (note > 18 && note <= 20) return "Excellent";
+        return "";
+    };
+
+    const handlePreparePrint = async (targetIds?: number[]) => {
+        const idsToPrint = targetIds || selectedStudentIds;
+
+        if (!selectedClassId || !selectedEvaluationId) {
+            setError(t('exams.printing.messages.selectFields'));
             return;
         }
-        setPrintError('');
-        setLoading(true);
-        try {
-            const response = await api.get('/students');
-            const classStudents = response.data.filter((s: any) => s.classe_id === Number(printClass));
-            setPrintStudents(classStudents);
-            setShowPrintTable(true);
-        } catch (err) {
-            console.error('Error fetching students for print', err);
-            setPrintError('Erreur lors du chargement des élèves.');
-        } finally {
-            setLoading(false);
+        // Allow printing all if none selected? Usually yes, logic below handles it if empty -> all.
+        // But here we use idsToPrint. If empty, user must select or we auto-select all?
+        // Current logic: if selectedStudentIds is empty, we print NOTHING unless targetIds passed.
+        // Wait, original logic: "const idsToPrint = selectedStudentIds.length > 0 ? selectedStudentIds : students.map(s => s.id);"
+        // My previous view showed: "const idsToPrint = targetIds || selectedStudentIds;" then "if (idsToPrint.length === 0) return;"
+        // The user might expect "Select All" behavior if none selected?
+        // Let's stick to the behavior: if none selected, warn user (as per original code).
+        // BUT, wait, I want to support "Print All".
+        // Let's modify: if idsToPrint is empty, default to ALL students.
+
+        let finalIds = idsToPrint;
+        if (finalIds.length === 0) {
+            finalIds = students.map(s => s.id);
         }
-    };
 
-    const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            setSelectedStudents(printStudents.map(s => s.id));
-        } else {
-            setSelectedStudents([]);
-        }
-    };
-
-    const handleSelectStudent = (studentId: number) => {
-        setSelectedStudents(prev => {
-            if (prev.includes(studentId)) {
-                return prev.filter(id => id !== studentId);
-            } else {
-                return [...prev, studentId];
-            }
-        });
-    };
-
-    const calculateLegacyObservation = (noteStr: string): string => {
-        const note = parseFloat(noteStr);
-        if (isNaN(note)) return '';
-
-        if (note >= 0 && note <= 9.9) return 'Médiocre';
-        if (note < 10) return 'Médiocre';
-        if (note <= 12) return 'Assez bien';
-        if (note <= 14) return 'Bien';
-        if (note <= 18) return 'Très bien';
-        return 'Excellent';
-    };
-
-    const calculateDynamicObservation = (average: number, absences: number, category: string): string => {
-        // Normalize strings for comparison (ignore case and optional (e))
-        const normalize = (str: string) => str ? str.toLowerCase().replace(/\(e\)/g, '').trim() : '';
-        const targetCat = normalize(category);
-
-        const matchingRule = rules.find(rule =>
-            normalize(rule.category) === targetCat &&
-            average >= rule.min_average && average <= rule.max_average &&
-            absences >= rule.min_absence && absences <= rule.max_absence
-        );
-
-        if (matchingRule) return matchingRule.status;
-
-        return 'N/A';
-    };
-
-    const fetchReports = async (targetStudents: Student[]) => {
-        if (!printClass || !printEvaluation) {
-            setPrintError('Veuillez sélectionner une évaluation et une classe.');
-            return null;
+        if (finalIds.length === 0) {
+            setError(t('exams.printing.messages.selectStudent'));
+            return;
         }
 
         setLoading(true);
+        setError('');
+
         try {
-            const classGradesRes = await api.get(`/grades/class/${printClass}?trimestre=${printEvaluation}`);
-            const classGrades = classGradesRes.data;
-
-            const subjectsRes = await api.get('/subjects');
-            const classSubjects = subjectsRes.data.filter((s: any) => s.classe_id === Number(printClass));
-
-            // Get Evaluation Dates
-            const currentEval = evaluations.find(e => e.nom === printEvaluation);
-
-            // Calculate Absences per student
-            // Filter attendance by date range and 'absence non justifiée'
-            const activeAttendances = attendances.filter(a => {
-                if (a.motif !== 'absence non justifiée') return false;
-                if (!currentEval || !currentEval.date_debut || !currentEval.date_fin) return true; // If no dates, count all? Or none? Safe to count all or warn. Let's count all if no dates defined to avoid 0.
-                const aDate = new Date(a.date);
-                const start = new Date(currentEval.date_debut);
-                const end = new Date(currentEval.date_fin);
-                return aDate >= start && aDate <= end;
+            // Optimization: Fetch all grades for class & evaluation once
+            const allGradesRes = await api.get('/notes', {
+                params: {
+                    classe_id: selectedClassId,
+                    evaluation_id: selectedEvaluationId
+                }
             });
+            const allGrades = allGradesRes.data;
 
-            const studentAverages: { studentId: number; average: number }[] = [];
-            const gradesByStudent: { [key: number]: any[] } = {};
+            const allSubjectsRes = await api.get(`/subjects?classe_id=${selectedClassId}`);
+            const subjects: SubjectGrade[] = allSubjectsRes.data;
 
-            classGrades.forEach((g: any) => {
-                if (!gradesByStudent[g.eleve_id]) gradesByStudent[g.eleve_id] = [];
-                gradesByStudent[g.eleve_id].push(g);
-            });
+            // Find the selected evaluation to get its name for matching
+            const selectedEvaluation = evaluations.find(e => e.id === selectedEvaluationId);
+            const evaluationName = selectedEvaluation ? selectedEvaluation.nom : '';
 
-            Object.keys(gradesByStudent).forEach(studentIdStr => {
-                const sId = Number(studentIdStr);
-                const sGrades = gradesByStudent[sId];
-                let totalPoints = 0;
-                let totalCoeffs = 0;
+            // --- CALCULATE RANKS FOR ALL STUDENTS IN CLASS ---
+            const studentAverages = new Map<number, number>();
 
-                classSubjects.forEach((subj: any) => {
-                    const grade = sGrades.find((g: any) => g.matiere_id === subj.id);
-                    const coeff = subj.coefficient || 1;
-                    if (grade) {
-                        totalPoints += parseFloat(grade.note) * coeff;
-                    }
-                    totalCoeffs += coeff;
+            // We use 'students' state which contains all students in the class
+            students.forEach(stud => {
+                const studGrades = allGrades.filter((g: any) => Number(g.eleve_id) === Number(stud.id));
+
+                let totalPts = 0;
+                let totalCoef = 0;
+                subjects.forEach((sub: any) => {
+                    const gradeEntry = studGrades.find((g: any) => Number(g.matiere_id) === Number(sub.id) && String(g.trimestre) === String(evaluationName));
+                    const val = safeParseFloat(gradeEntry?.note);
+                    const coef = sub.coefficient || 1;
+                    totalPts += val * coef;
+                    totalCoef += coef;
                 });
 
-                const average = totalCoeffs > 0 ? totalPoints / totalCoeffs : 0;
-                studentAverages.push({ studentId: sId, average });
+                const avg = totalCoef > 0 ? totalPts / totalCoef : 0;
+                studentAverages.set(stud.id, avg);
             });
 
-            studentAverages.sort((a, b) => b.average - a.average);
+            // Sort by average DESC
+            const sortedStudentIds = Array.from(studentAverages.keys()).sort((a, b) => {
+                const avgA = studentAverages.get(a) || 0;
+                const avgB = studentAverages.get(b) || 0;
+                return avgB - avgA;
+            });
 
-            const reports = targetStudents.map(student => {
-                const currentStudentAvg = studentAverages.find(s => s.studentId === student.id);
-                const rank = studentAverages.findIndex(s => s.studentId === student.id) + 1;
-                const average = currentStudentAvg ? currentStudentAvg.average : 0;
+            // Map StudentID -> Rank
+            const rankMap = new Map<number, number>();
+            sortedStudentIds.forEach((sid, index) => {
+                rankMap.set(sid, index + 1);
+            });
 
-                // Calculate absences count
-                const studentAbsences = activeAttendances.filter(a => a.eleve_id === student.id).length;
+            const reports: ReportCardData[] = [];
 
-                // Determine Observation
-                // Default category if missing (should be in student object, need to ensure type has it) or fetch student details if simplified obj used
-                const category = student.category || 'Non redoublant(e)';
-                const observation = calculateDynamicObservation(average, studentAbsences, category);
+            for (const studentId of finalIds) {
+                const student = students.find(s => s.id === studentId);
+                if (!student) continue;
 
-                const studentGrades = classGrades.filter((g: any) => g.eleve_id === student.id);
-                const reportRows = classSubjects.map((subj: any) => {
-                    const grade = studentGrades.find((g: any) => g.matiere_id === subj.id);
-                    const noteVal = grade ? parseFloat(grade.note) : 0;
-                    const coeff = subj.coefficient || 1;
+                const studentGrades = allGrades.filter((g: any) => Number(g.eleve_id) === Number(studentId));
+
+                const reportGrades = subjects.map((sub: any) => {
+                    const gradeEntry = studentGrades.find((g: any) => Number(g.matiere_id) === Number(sub.id) && String(g.trimestre) === String(evaluationName));
+                    const note = safeParseFloat(gradeEntry?.note);
                     return {
-                        matiere: subj.nom,
-                        note: grade ? grade.note : 'N/A',
-                        coefficient: coeff,
-                        noteTotale: grade ? (noteVal * coeff) : 0,
-                        observation: calculateLegacyObservation(grade ? grade.note : '0') // Row observation remains standard? User circled bottom observation.
+                        matiere: sub.nom,
+                        coefficient: sub.coefficient,
+                        note: note,
+                        total: note * sub.coefficient,
+                        observation: calculateObservation(note)
                     };
                 });
 
-                return {
-                    student,
-                    evaluation: printEvaluation,
-                    rows: reportRows,
-                    average: average.toFixed(2),
-                    rank,
-                    className: classes.find(c => c.id === Number(printClass))?.libelle || '',
-                    finalObservation: observation, // Pass calculated observation
-                    absences: studentAbsences // Pass for display if needed
-                };
-            });
+                const totalCoef = reportGrades.reduce((sum, g) => sum + g.coefficient, 0);
+                const totalPoints = reportGrades.reduce((sum, g) => sum + g.total, 0);
+                const average = totalCoef > 0 ? totalPoints / totalCoef : 0;
 
-            return reports;
+                reports.push({
+                    student,
+                    grades: reportGrades,
+                    stats: {
+                        totalCoef,
+                        totalPoints,
+                        average,
+                        rank: rankMap.get(studentId) || 0,
+                        totalStudents: students.length,
+                        classAverage: 0,
+                        bestAverage: 0,
+                        worstAverage: 0,
+                        absences: 0,
+                        decision: getObservationFromRules(average)
+                    }
+                });
+            }
+
+            setReportCards(reports);
+            setIsPrinting(true);
 
         } catch (err) {
-            console.error('Error fetching report data', err);
-            setPrintError('Erreur lors de la récupération des données du bulletin.');
-            return null;
+            console.error('Error preparing print', err);
+            setError(t('exams.printing.messages.reportLoadError'));
         } finally {
             setLoading(false);
         }
     };
 
-    const handleBulkPrint = async () => {
-        if (selectedStudents.length === 0) {
-            setPrintError('Veuillez sélectionner au moins un élève.');
-            return;
-        }
-
-        const studentsToPrint = printStudents.filter(s => selectedStudents.includes(s.id));
-        const reports = await fetchReports(studentsToPrint);
-
-        if (reports && reports.length > 0) {
-            setBulkReportData(reports);
-            setReportData(null);
-            setOpenReportCard(true);
-        }
+    // Helper to construct logo URL
+    const getLogoUrl = (url?: string) => {
+        if (!url) return "/logo-bokeland-school-system.png";
+        if (url.startsWith('http')) return url;
+        // Assume relative paths are served from backend
+        // Use the same logic as api.ts to determine backend URL
+        const backendUrl = `http://${window.location.hostname}:5006`;
+        // Ensure url doesn't start with / if we append (or handle it)
+        const cleanUrl = url.startsWith('/') ? url.substring(1) : url;
+        return `${backendUrl}/${cleanUrl}`;
     };
 
-    const handlePrintClick = async (student: Student) => {
-        const reports = await fetchReports([student]);
-        if (reports && reports.length > 0) {
-            setReportData(reports[0]);
-            setBulkReportData(null);
-            setOpenReportCard(true);
-        }
+    // --- Render Report Card Preview (Modal) ---
+    const ReportCardPreview = () => {
+        return (
+            <Dialog
+                open={isPrinting}
+                onClose={() => setIsPrinting(false)}
+                TransitionComponent={Transition}
+                maxWidth={false}
+                PaperProps={{
+                    sx: {
+                        bgcolor: 'transparent',
+                        boxShadow: 'none',
+                        maxWidth: '95vw',
+                        maxHeight: '95vh',
+                        overflow: 'hidden',
+                        m: 2
+                    }
+                }}
+            >
+                {/* Main Container */}
+                <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', justifyContent: 'center', height: '100%', overflow: 'hidden' }}>
+
+                    {/* Bulletin Content Scrollable Area - FORCE VISIBLE SCROLLBAR */}
+                    <Box
+                        id="bulletins-container" // Add ID for easier targeting
+                        sx={{
+                            flex: 1,
+                            overflowY: 'auto', // Vertical scroll
+                            height: 'calc(90vh - 40px)', // Explicit height calculation to force overflow
+                            display: 'block',
+                            textAlign: 'center',
+                            pt: 2,
+                            pr: 2, // Padding for scrollbar
+                        }}>
+                        <Box
+                            className="print-container" // Renamed from printable-content
+                            sx={{
+                                // Use natural A4 size + scroll instead of zoom
+                                // zoom: '67%',  REMOVED: User wants full A4 size
+                                width: '210mm',
+                                minWidth: '210mm',
+                                margin: '0 auto', // Center the A4 page in the scroll view
+                                mb: 0
+                            }}>
+                            <style type="text/css" media="print">
+                                {`
+                        @page { 
+                            size: auto; /* Allow browser to use selected page size */
+                            margin: 0; /* Remove page margins - use internal padding instead */
+                        }
+                        
+                        /* CONDITIONAL SINGLE PAGE FORCE */
+                        ${reportCards.length === 1 ? `
+                            html, body {
+                                height: 297mm !important;
+                                max-height: 297mm !important;
+                                overflow: hidden !important;
+                            }
+                            .print-container {
+                                height: 297mm !important;
+                                max-height: 297mm !important;
+                                overflow: hidden !important;
+                            }
+                        ` : ''}
+
+                        body { -webkit-print-color-adjust: exact; }
+                        
+                        /* Hide everything by default */
+                        body * {
+                            visibility: hidden;
+                        }
+
+                        /* Target ONLY our print container and its contents */
+                        .print-container, .print-container * {
+                            visibility: visible;
+                        }
+
+                        /* Neutralize MUI Dialog Styles */
+                        .MuiDialog-root, .MuiDialog-container, .MuiPaper-root {
+                            visibility: visible !important;
+                            position: static !important;
+                            overflow: visible !important;
+                            transform: none !important;
+                            box-shadow: none !important;
+                            width: auto !important;
+                            height: auto !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            max-width: none !important;
+                            max-height: none !important;
+                            display: block !important;
+                            background: transparent !important;
+                        }
+
+                        /* Position our container at the top left of the PAGE flow */
+                        .print-container {
+                            position: absolute;
+                            left: 0;
+                            top: 0;
+                            width: 100%;
+                            margin: 0;
+                            padding: 0;
+                            zoom: 1 !important;
+                            transform: none !important;
+                            z-index: 9999;
+                            background: white;
+                            text-align: left;
+                        }
+                        
+                        /* Ensure individual pages flow naturally and adapt to page size */
+                        .printable-content {
+                            position: relative;
+                            width: 100% !important; /* Use full available width */
+                            min-width: 0 !important; /* Allow shrinking for smaller formats */
+                            max-width: 100% !important; /* Don't exceed page width */
+                            margin: 0 !important; /* Remove margins */
+                            padding: 8mm !important; /* Restore internal padding */
+                            /* Removed page-break-after and break-after - they force empty pages */
+                            box-shadow: none !important;
+                            border: none !important;
+                            min-height: auto !important; /* Let content determine height */
+                            box-sizing: border-box !important;
+                        }
+                        
+                        /* Reset the scroll container to avoid clipping */
+                        #bulletins-container {
+                            height: auto !important;
+                            overflow: visible !important;
+                            display: block !important;
+                        }
+
+                        .page-break { page-break-after: always; }
+                        .no-print { display: none !important; }
+                        `}
+                            </style>
+                            {/* Global scrollbar style for screen only */}
+                            <style type="text/css" media="screen">
+                                {`
+                                ::-webkit-scrollbar {
+                                    width: 12px;
+                                    height: 12px;
+                                }
+                                ::-webkit-scrollbar-track {
+                                    background: #f1f1f1;
+                                    border-radius: 6px;
+                                }
+                                ::-webkit-scrollbar-thumb {
+                                    background: #888;
+                                    border-radius: 6px;
+                                    border: 3px solid #f1f1f1;
+                                }
+                                ::-webkit-scrollbar-thumb:hover {
+                                    background: #555;
+                                }
+                            `}
+                            </style>
+
+                            <Box className="bulletin-container">
+
+                                {reportCards.map((report, index) => {
+                                    const minRows = 15;
+                                    const emptyRowsCount = Math.max(0, minRows - report.grades.length);
+                                    const emptyRows = Array.from({ length: emptyRowsCount });
+
+                                    return (
+                                        <Paper
+                                            key={index}
+                                            elevation={3}
+                                            className="printable-content"
+                                            sx={{
+                                                width: '210mm',
+                                                minHeight: '297mm', // Full A4 height for preview
+                                                p: 4, // Padding for preview - print CSS overrides with 8mm
+                                                mb: 4, // Add margin for screen preview - Print CSS removes it
+                                                mx: 'auto',
+                                                backgroundColor: 'white',
+                                                position: 'relative',
+                                                // Force new page for each bulletin in mass print, except the last one
+                                                pageBreakAfter: index < reportCards.length - 1 ? 'always' : 'auto',
+                                                boxSizing: 'border-box' // Include padding in width/height calculation
+                                            }}
+                                        >
+                                            {/* HEADER */}
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5, alignItems: 'flex-start' }}> {/* Reduced mb from 2 */}
+                                                <Box sx={{ textAlign: 'left' }}> {/* Explicitly left align school info */}
+                                                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#000', textTransform: 'uppercase' }}>
+                                                        {schoolSettings?.school_name || "LEUANA SCHOOL SYSTEM"}
+                                                    </Typography>
+                                                    <Typography variant="body2">{schoolSettings?.phone || "+237 600 00 00 00"}</Typography>
+                                                    <Typography variant="body2">{schoolSettings?.address || "Yaoundé, Cameroun"}</Typography>
+                                                    <Typography variant="body2">{schoolSettings?.email || "info@leuana-school.com"}</Typography>
+                                                </Box>
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                                                    <img
+                                                        src={getLogoUrl(schoolSettings?.logo_url)}
+                                                        alt="Logo"
+                                                        style={{ height: 120, width: 120, objectFit: 'contain' }}
+                                                        onError={(e) => {
+                                                            // Fallback to local default if backend image fails
+                                                            if (e.currentTarget.src !== window.location.origin + "/logo-bokeland-school-system.png") {
+                                                                e.currentTarget.src = "/logo-bokeland-school-system.png";
+                                                            } else {
+                                                                e.currentTarget.style.display = 'none';
+                                                            }
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Box>
+
+                                            <Typography variant="h5" align="center" sx={{ fontWeight: 'bold', mb: 2, textTransform: 'uppercase' }}> {/* Reduced mb from 3 */}
+                                                BULLETIN DE NOTE
+                                            </Typography>
+
+                                            {/* STUDENT INFO */}
+                                            <Box sx={{ mb: 2, textAlign: 'left' }}> {/* Reduced mb from 3 - Explicitly left align student info */}
+                                                <Typography><strong>Nom de l'élève :</strong> {report.student.nom} {report.student.prenom}</Typography>
+                                                <Typography><strong>Classe :</strong> {classes.find(c => c.id === selectedClassId)?.libelle}</Typography>
+                                                <Typography><strong>Évaluation :</strong> {evaluations.find(e => e.id === selectedEvaluationId)?.nom}</Typography>
+                                            </Box>
+
+                                            {/* GRADES TABLE */}
+                                            <TableContainer sx={{ border: '1px solid #000', borderRadius: '12px', mb: 1.5, overflow: 'hidden' }}> {/* Reduced mb from 2 */}
+                                                <Table size="small">
+                                                    <TableHead>
+                                                        <TableRow sx={{ bgcolor: '#fff3e0' }}>
+                                                            <TableCell sx={{ fontWeight: 'bold', borderRight: '1px solid #ddd', width: '30%' }}>Matière</TableCell>
+                                                            <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: '1px solid #ddd' }}>Note / 20</TableCell>
+                                                            <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: '1px solid #ddd' }}>Coef.</TableCell>
+                                                            <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: '1px solid #ddd' }}>Total</TableCell>
+                                                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Observation</TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {report.grades.map((grade, idx) => (
+                                                            <TableRow key={idx} sx={{ '&:nth-of-type(odd)': { bgcolor: '#fff' }, '&:nth-of-type(even)': { bgcolor: '#fff8f5' } }}>
+                                                                <TableCell sx={{ borderRight: '1px solid #f0f0f0', py: 0.8 }}>{grade.matiere}</TableCell>
+                                                                <TableCell align="center" sx={{ borderRight: '1px solid #f0f0f0', py: 0.8 }}>{grade.note.toFixed(2)}</TableCell>
+                                                                <TableCell align="center" sx={{ borderRight: '1px solid #f0f0f0', py: 0.8 }}>{grade.coefficient}</TableCell>
+                                                                <TableCell align="center" sx={{ borderRight: '1px solid #f0f0f0', py: 0.8 }}>{grade.total.toFixed(2)}</TableCell>
+                                                                <TableCell align="center" sx={{ py: 0.8 }}>{grade.observation}</TableCell>
+                                                            </TableRow>
+                                                        ))}
+                                                        {emptyRows.map((_, idx) => (
+                                                            <TableRow key={`empty-${idx}`} sx={{ '&:nth-of-type(odd)': { bgcolor: '#fff' }, '&:nth-of-type(even)': { bgcolor: '#fff8f5' }, height: '35px' }}>
+                                                                <TableCell sx={{ borderRight: '1px solid #f0f0f0' }}>&nbsp;</TableCell>
+                                                                <TableCell sx={{ borderRight: '1px solid #f0f0f0' }}>&nbsp;</TableCell>
+                                                                <TableCell sx={{ borderRight: '1px solid #f0f0f0' }}>&nbsp;</TableCell>
+                                                                <TableCell sx={{ borderRight: '1px solid #f0f0f0' }}>&nbsp;</TableCell>
+                                                                <TableCell>&nbsp;</TableCell>
+                                                            </TableRow>
+                                                        ))}
+                                                    </TableBody>
+                                                </Table>
+                                            </TableContainer>
+
+                                            {/* FOOTER STATS */}
+                                            <Box sx={{ border: '1px solid #000', borderRadius: 2, display: 'flex', mb: 2, overflow: 'hidden' }}>
+                                                <Box sx={{ p: 1.5, borderRight: '1px solid #000', display: 'flex', alignItems: 'center', gap: 1, minWidth: '150px' }}>
+                                                    <Typography variant="body2">Moyenne</Typography>
+                                                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{report.stats.average.toFixed(2)} / 20</Typography>
+                                                </Box>
+                                                <Box sx={{ p: 1.5, borderRight: '1px solid #000', display: 'flex', alignItems: 'center', gap: 1, minWidth: '100px' }}>
+                                                    <Typography variant="body2">Rang</Typography>
+                                                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                                        {report.stats.rank > 0 ? `${report.stats.rank}e / ${report.stats.totalStudents}` : '-'}
+                                                    </Typography>
+                                                </Box>
+                                                <Box sx={{ p: 1.5, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                                                    <Typography variant="body1" sx={{ fontWeight: '500', fontStyle: 'italic' }}>
+                                                        {report.stats.decision}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+
+                                            {/* DATE AND SIGNATURE */}
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 'auto', px: 2 }}>
+                                                <Box>
+                                                    <Typography variant="body2">{new Date().toLocaleDateString('fr-FR')}</Typography>
+                                                </Box>
+                                                <Box sx={{ textAlign: 'center', minWidth: 200 }}>
+                                                    {/* 'Le principal' text removed as per request */}
+                                                    <Box sx={{ height: 30 }} /> {/* Reduced from 60 to prevent overflow */}
+                                                </Box>
+                                            </Box>
+
+                                            {/* Digital Signature Removed as per request */}
+                                        </Paper>
+                                    );
+                                })}
+                            </Box>
+                        </Box>
+                    </Box>
+
+                    {/* Action Buttons - Right Side */}
+                    <Box className="print-hide" sx={{ display: 'flex', flexDirection: 'column', gap: 2, ml: 2 }}>
+                        <IconButton
+                            onClick={() => setIsPrinting(false)}
+                            sx={{
+                                bgcolor: '#d32f2f',
+                                color: 'white',
+                                width: 56,
+                                height: 56,
+                                '&:hover': { bgcolor: '#b71c1c' }
+                            }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                        <IconButton
+                            onClick={() => window.print()}
+                            sx={{
+                                bgcolor: '#1976d2',
+                                color: 'white',
+                                width: 56,
+                                height: 56,
+                                '&:hover': { bgcolor: '#115293' }
+                            }}
+                        >
+                            <PrintIcon />
+                        </IconButton>
+                    </Box>
+                </Box>
+            </Dialog >
+        );
     };
+
+    if (isPrinting) {
+        return <ReportCardPreview />;
+    }
 
     return (
         <Box>
-            {/* Report Card Dialog */}
-            {openReportCard && (reportData || bulkReportData) && createPortal(
-                <>
-                    {/* Print Styles */}
-                    <style>{`
-                        @media print {
-                            #root { display: none !important; }
-                            body > *:not(#report-card-print):not(style) { display: none !important; }
-                            #report-card-print {
-                                display: block !important;
-                                position: absolute !important;
-                                top: 0 !important;
-                                left: 0 !important;
-                                width: 100% !important;
-                                height: auto !important;
-                                background: white !important;
-                                z-index: 99999 !important;
-                            }
-                            .no-print { display: none !important; }
-                            @page { size: A4; margin: 0; }
-                            html, body {
-                                margin: 0 !important;
-                                padding: 0 !important;
-                                width: 100% !important;
-                                height: 100% !important;
-                                overflow: visible !important;
-                            }
-                            body > * { display: none !important; }
-                            #report-card-print {
-                                display: block !important;
-                                position: relative !important;
-                                width: 100% !important;
-                                height: auto !important;
-                                margin: 0 !important;
-                                padding: 0 !important;
-                                background: white !important;
-                            }
-                            .print-container,
-                            .modal-content-wrapper .print-container {
-                                width: 100% !important;
-                                height: auto !important;
-                                min-height: 297mm !important;
-                                margin: 0 !important;
-                                padding: 10mm !important;
-                                box-sizing: border-box !important;
-                                border-radius: 0 !important;
-                                box-shadow: none !important;
-                                overflow: visible !important;
-                                -webkit-print-color-adjust: exact;
-                                print-color-adjust: exact;
-                                transform: none !important;
-                            }
-                            .modal-content-wrapper {
-                                position: static !important;
-                                transform: none !important;
-                                width: 100% !important;
-                                height: auto !important;
-                                margin: 0 !important;
-                                padding: 0 !important;
-                                max-width: none !important;
-                                max-height: none !important;
-                                display: block !important;
-                                overflow: visible !important;
-                            }
-                            .print-content { page-break-inside: avoid !important; }
-                            .print-container {
-                                page-break-after: always !important;
-                                page-break-inside: avoid !important;
-                            }
-                            .print-container:last-child {
-                                page-break-after: auto !important;
-                            }
-                            .print-footer {
-                                position: fixed !important;
-                                bottom: 2mm !important;
-                                left: 10mm !important;
-                                width: auto !important;
-                                margin: 0 !important;
-                                z-index: 9999999 !important;
-                                color: black !important;
-                                display: block !important;
-                            }
-                            .MuiBox-root { margin-bottom: 4px !important; }
-                            .MuiTypography-h5 { margin-bottom: 4px !important; font-size: 1rem !important; }
-                            .MuiTableContainer-root { margin-bottom: 8px !important; }
-                        }
-                        .modal-overlay {
-                            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                            background-color: rgba(0,0,0,0.5); z-index: 999998 !important;
-                        }
-                        .modal-content-wrapper {
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            z-index: 999999 !important;
-                            overflow-y: auto;
-                            overflow-x: hidden;
-                            padding: 5px 0;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                        }
-                        .modal-content-wrapper .print-container {
-                            transform: scale(0.7);
-                            transform-origin: top center;
-                            margin-bottom: -50px;
-                        }
-                        .modal-content-wrapper .print-container:last-child {
-                            margin-bottom: 0;
-                        }
-                    `}</style>
+            <Typography variant="h5" sx={{ mb: 3 }}>{t('exams.printing.title')}</Typography>
 
-                    <div className="modal-overlay no-print" onClick={() => setOpenReportCard(false)}></div>
+            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-                    <div id="report-card-print" className="modal-content-wrapper">
-                        {(bulkReportData || [reportData]).map((data: any, index: number) => (
-                            <Paper key={index} className="print-container" sx={{ width: '210mm', minHeight: '297mm', overflowY: 'auto', p: 4, position: 'relative', mx: 'auto', display: 'block' }}>
-                                <div className="print-content">
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'flex-start' }}>
-                                        <Box>
-                                            <Typography variant="body1" fontWeight="bold" sx={{ fontSize: '10pt' }}>{settings?.school_name || 'BOKELAND SCHOOL SYSTEM'}</Typography>
-                                            <Typography variant="body2" sx={{ fontSize: '9pt' }}>{settings?.phone || '+237 690189297'}</Typography>
-                                            <Typography variant="body2" sx={{ fontSize: '9pt' }}>{settings?.address || 'Carrefour BATA Nlongkak'}</Typography>
-                                            <Typography variant="body2" sx={{ fontSize: '9pt' }}>{settings?.email || 'leuanasarl@gmail.com'}</Typography>
-                                        </Box>
-                                        <Box>
-                                            {settings?.logo_url ? (
-                                                <img
-                                                    src={`${BASE_URL}${settings.logo_url}`}
-                                                    alt="Logo"
-                                                    style={{ width: '111px', height: '111px', objectFit: 'contain' }}
-                                                />
-                                            ) : (
-                                                <Typography variant="h4" color="primary" fontWeight="bold" sx={{ border: '2px solid #008080', px: 1, color: '#008080', fontSize: '1.5rem' }}>
-                                                    leu<span style={{ color: 'black' }}>ana</span>
-                                                </Typography>
-                                            )}
-                                        </Box>
-                                    </Box>
-
-                                    <Typography variant="h5" align="center" fontWeight="bold" sx={{ mb: 2, textTransform: 'uppercase', fontSize: '1.2rem' }}>
-                                        BULLETIN DE NOTE
-                                    </Typography>
-
-                                    <Box sx={{ mb: 2 }}>
-                                        <Typography variant="body1" sx={{ fontSize: '10pt' }}><strong>nom de l'élève :</strong> {data.student.nom} {data.student.prenom}</Typography>
-                                        <Typography variant="body1" sx={{ fontSize: '10pt' }}><strong>classe :</strong> {data.className}</Typography>
-                                        <Typography variant="body1" sx={{ fontSize: '10pt' }}><strong>évaluation :</strong> {data.evaluation}</Typography>
-                                    </Box>
-
-                                    <TableContainer component={Paper} variant="outlined" sx={{ mb: 3, border: '1px solid black' }}>
-                                        <Table size="small">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell sx={{ borderRight: '1px solid #ccc', fontWeight: 'bold' }}>matière</TableCell>
-                                                    <TableCell align="center" sx={{ borderRight: '1px solid #ccc', fontWeight: 'bold' }}>note</TableCell>
-                                                    <TableCell align="center" sx={{ borderRight: '1px solid #ccc', fontWeight: 'bold' }}>coefficient</TableCell>
-                                                    <TableCell align="center" sx={{ borderRight: '1px solid #ccc', fontWeight: 'bold' }}>note totale</TableCell>
-                                                    <TableCell align="center" sx={{ fontWeight: 'bold' }}>observation</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {data.rows.map((row: any, idx: number) => (
-                                                    <TableRow key={idx} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#FFF5F0' } }}>
-                                                        <TableCell sx={{ borderRight: '1px solid #ccc' }}>{row.matiere}</TableCell>
-                                                        <TableCell align="center" sx={{ borderRight: '1px solid #ccc' }}>{row.note}</TableCell>
-                                                        <TableCell align="center" sx={{ borderRight: '1px solid #ccc' }}>{row.coefficient}</TableCell>
-                                                        <TableCell align="center" sx={{ borderRight: '1px solid #ccc' }}>{typeof row.noteTotale === 'number' ? row.noteTotale.toFixed(2) : row.noteTotale}</TableCell>
-                                                        <TableCell align="center">{row.observation}</TableCell>
-                                                    </TableRow>
-                                                ))}
-                                                {Array.from({ length: Math.max(0, 16 - data.rows.length) }).map((_, idx) => (
-                                                    <TableRow key={`empty-${idx}`} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#FFF5F0' } }}>
-                                                        <TableCell sx={{ borderRight: '1px solid #ccc' }}>&nbsp;</TableCell>
-                                                        <TableCell align="center" sx={{ borderRight: '1px solid #ccc' }}>&nbsp;</TableCell>
-                                                        <TableCell align="center" sx={{ borderRight: '1px solid #ccc' }}>&nbsp;</TableCell>
-                                                        <TableCell align="center" sx={{ borderRight: '1px solid #ccc' }}>&nbsp;</TableCell>
-                                                        <TableCell align="center">&nbsp;</TableCell>
-                                                    </TableRow>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-
-                                    <Box sx={{ border: '1px solid black', p: 0, mb: 1 }}>
-                                        <Grid container>
-                                            <Grid item xs={2} sx={{ p: 1, borderRight: '1px solid black', bgcolor: '#FFF5F0' }}>
-                                                <Typography align="center">moyenne</Typography>
-                                            </Grid>
-                                            <Grid item xs={2} sx={{ p: 1, borderRight: '1px solid black' }}>
-                                                <Typography align="center" fontWeight="bold">{data.average}</Typography>
-                                            </Grid>
-                                            <Grid item xs={2} sx={{ p: 1, borderRight: '1px solid black', bgcolor: '#FFF5F0' }}>
-                                                <Typography align="center">rang</Typography>
-                                            </Grid>
-                                            <Grid item xs={2} sx={{ p: 1, borderRight: '1px solid black' }}>
-                                                <Typography align="center" fontWeight="bold">{data.rank}e</Typography>
-                                            </Grid>
-                                            <Grid item xs={2} sx={{ p: 1, borderRight: '1px solid black', bgcolor: '#FFF5F0' }}>
-                                                <Typography align="center">observation</Typography>
-                                            </Grid>
-                                            <Grid item xs={2} sx={{ p: 1 }}>
-                                                <Typography align="center">{data.finalObservation}</Typography>
-                                            </Grid>
-                                        </Grid>
-                                    </Box>
-
-                                    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', px: 4 }}>
-                                        <Typography variant="subtitle1" sx={{ fontSize: '11pt' }}>{formatDate(new Date())}</Typography>
-                                        <Typography variant="subtitle1" sx={{ fontSize: '11pt' }}>Le principal</Typography>
-                                    </Box>
-                                </div>
-
-                                <Box className="print-footer" sx={{ position: 'fixed', bottom: '2mm', left: '10mm', textAlign: 'left' }}>
-                                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '9pt' }}>by LEUANA TECHNOLOGY</Typography>
-                                </Box>
-                            </Paper>
-                        ))}
-
-                        <IconButton
-                            className="no-print"
-                            onClick={() => setOpenReportCard(false)}
-                            sx={{
-                                position: 'fixed', right: 'calc(50% - 105mm - 60px)', top: '80px', bgcolor: 'error.main', color: 'white',
-                                '&:hover': { bgcolor: 'error.dark' }, width: 48, height: 48, boxShadow: 3, zIndex: 1000001
-                            }}
-                        >
-                            <CloseIcon fontSize="medium" />
-                        </IconButton>
-
-                        <IconButton
-                            className="no-print"
-                            onClick={() => window.print()}
-                            sx={{
-                                position: 'fixed', right: 'calc(50% - 105mm - 60px)', top: '50%', transform: 'translateY(-50%)', bgcolor: 'primary.main', color: 'white',
-                                '&:hover': { bgcolor: 'primary.dark' }, width: 56, height: 56, boxShadow: 3, zIndex: 1000000
-                            }}
-                        >
-                            <PrintIcon fontSize="large" />
-                        </IconButton>
-                    </div>
-                </>,
-                document.body
-            )}
-
-
-            <Typography variant="h6" sx={{ mb: 2 }}>Impression des bulletins</Typography>
-
-            <Paper sx={{ p: 3, mb: 4, borderRadius: 2, boxShadow: 1 }}>
+            <Paper sx={{ p: 2, mb: 3 }}>
                 <Grid container spacing={2} alignItems="center">
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <Grid size={{ xs: 12, md: 3 }}>
                         <TextField
                             select
-                            label="Evaluation"
                             fullWidth
-                            value={printEvaluation}
-                            onChange={(e) => setPrintEvaluation(e.target.value)}
-                            SelectProps={{ displayEmpty: true }}
-                            InputLabelProps={{ shrink: true }}
+                            label={t('exams.common.evaluation')}
+                            value={selectedEvaluationId || ''}
+                            onChange={(e) => setSelectedEvaluationId(Number(e.target.value))}
+                            sx={{ minWidth: 200 }}
                         >
-                            <MenuItem value="">
-                                Sélectionner une évaluation
-                            </MenuItem>
-                            {evaluations.map((evaluation) => (
-                                <MenuItem key={evaluation.id} value={evaluation.nom}>{evaluation.nom}</MenuItem>
+                            {evaluations.map((evalItem) => (
+                                <MenuItem key={evalItem.id} value={evalItem.id}>{evalItem.nom}</MenuItem>
                             ))}
                         </TextField>
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <Grid size={{ xs: 12, md: 3 }}>
                         <TextField
                             select
-                            label="Classe"
                             fullWidth
-                            value={printClass}
-                            onChange={(e) => setPrintClass(e.target.value)}
-                            SelectProps={{ displayEmpty: true }}
-                            InputLabelProps={{ shrink: true }}
+                            label={t('exams.common.class')}
+                            value={selectedClassId || ''}
+                            onChange={(e) => setSelectedClassId(Number(e.target.value))}
+                            sx={{ minWidth: 200 }}
                         >
-                            <MenuItem value="">
-                                Sélectionner une classe
-                            </MenuItem>
                             {classes.map((cls) => (
-                                <MenuItem key={cls.id} value={cls.id.toString()}>{cls.libelle}</MenuItem>
+                                <MenuItem key={cls.id} value={cls.id}>{cls.libelle}</MenuItem>
                             ))}
                         </TextField>
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        {/* Spacer */}
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    {/* Spacer (3rd column) */}
+                    <Grid size={{ xs: 12, md: 3 }}></Grid>
+
+                    {/* Print Button (4th column) */}
+                    <Grid size={{ xs: 12, md: 3 }}>
                         <Button
                             variant="contained"
-                            onClick={handlePrintValidate}
                             fullWidth
-                            sx={{ height: '56px', bgcolor: '#ff6f00', '&:hover': { bgcolor: '#e65100' } }}
+                            disabled={!selectedClassId || !selectedEvaluationId || selectedStudentIds.length === 0}
+                            onClick={() => handlePreparePrint()}
+                            startIcon={<PrintIcon />}
+                            sx={{
+                                height: '56px',
+                                bgcolor: '#d32f2f', // Red to match image or theme
+                                '&:hover': { bgcolor: '#b71c1c' },
+                                textTransform: 'none', // To match "Nouvel élève" style which is typically sentence case in modern UIs
+                                fontSize: '0.95rem'  // Slight adjustment to match typical button font size if default is different
+                            }}
                         >
-                            Valider
+                            Imprimer
                         </Button>
                     </Grid>
                 </Grid>
             </Paper>
 
-            {printError && <Alert severity="error" sx={{ mb: 2 }}>{printError}</Alert>}
-            {loading && <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}><CircularProgress /></Box>}
+            {loading && <Box display="flex" justifyContent="center" my={4}><CircularProgress /></Box>}
 
-            {
-                showPrintTable && (
-                    <Paper sx={{ p: 3 }}>
-                        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography variant="h6">Liste des élèves</Typography>
-                            <Button
-                                variant="contained"
-                                startIcon={<PrintIcon />}
-                                onClick={handleBulkPrint}
-                                disabled={selectedStudents.length === 0}
-                                sx={{ bgcolor: '#ff6f00', '&:hover': { bgcolor: '#e65100' } }}
-                            >
-                                Imprimer la sélection ({selectedStudents.length})
-                            </Button>
-                        </Box>
-                        <TableContainer sx={{ maxHeight: 586 }}>
-                            <Table size="small" stickyHeader>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                                indeterminate={selectedStudents.length > 0 && selectedStudents.length < printStudents.length}
-                                                checked={printStudents.length > 0 && selectedStudents.length === printStudents.length}
-                                                onChange={handleSelectAll}
-                                            />
-                                        </TableCell>
-                                        <TableCell>Nom</TableCell>
-                                        <TableCell>Prénom</TableCell>
-                                        <TableCell align="center">Action</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {printStudents.map((student) => (
-                                        <TableRow key={student.id} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#fffaed' } }}>
-                                            <TableCell padding="checkbox">
-                                                <Checkbox
-                                                    checked={selectedStudents.includes(student.id)}
-                                                    onChange={() => handleSelectStudent(student.id)}
-                                                />
+            {/* Student Selection Table */}
+            {!loading && selectedClassId && students.length > 0 && (
+                <>
+                    <TableContainer component={Paper} sx={{ maxHeight: 586 }}>
+                        <Table stickyHeader size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell padding="checkbox">
+                                        <Checkbox
+                                            checked={students.length > 0 && selectedStudentIds.length === students.length}
+                                            indeterminate={selectedStudentIds.length > 0 && selectedStudentIds.length < students.length}
+                                            onChange={(e) => handleSelectAll(e.target.checked)}
+                                        />
+                                    </TableCell>
+                                    <TableCell>{t('exams.common.lastName')}</TableCell>
+                                    <TableCell>{t('exams.common.firstName')}</TableCell>
+                                    <TableCell>Matricule</TableCell>
+                                    <TableCell align="right">Actions</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {students.map((student, index) => {
+                                    const isSelected = selectedStudentIds.includes(student.id);
+                                    return (
+                                        <TableRow
+                                            key={student.id}
+                                            hover
+                                            onClick={() => handleSelectStudent(student.id, !isSelected)}
+                                            role="checkbox"
+                                            selected={isSelected}
+                                            sx={{
+                                                cursor: 'pointer',
+                                                height: '45px', // Fixed compact height
+                                                '&:nth-of-type(odd)': { backgroundColor: '#FFF5F0' },
+                                                '&.Mui-selected': { backgroundColor: '#ffe0b2 !important' },
+                                                '&.Mui-selected:hover': { backgroundColor: '#ffcc80 !important' }
+                                            }}
+                                        >
+                                            <TableCell padding="checkbox" sx={{ py: 0.5 }}>
+                                                <Checkbox checked={isSelected} size="small" sx={{ color: '#ff6f00', '&.Mui-checked': { color: '#ff6f00' }, p: 0.5 }} />
                                             </TableCell>
-                                            <TableCell>{student.nom}</TableCell>
-                                            <TableCell>{student.prenom}</TableCell>
-                                            <TableCell align="center">
-                                                <IconButton onClick={() => handlePrintClick(student)} color="primary">
-                                                    <PrintIcon />
-                                                </IconButton>
+                                            <TableCell sx={{ py: 0.5 }}>{student.nom}</TableCell>
+                                            <TableCell sx={{ py: 0.5 }}>{student.prenom}</TableCell>
+                                            <TableCell sx={{ py: 0.5 }}>{student.matricule || 'N/A'}</TableCell>
+                                            <TableCell align="right" sx={{ py: 0.5 }}>
+                                                <Tooltip title="Imprimer le bulletin">
+                                                    <IconButton
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleSinglePrint(student);
+                                                        }}
+                                                        size="small"
+                                                        sx={{
+                                                            color: '#ff6f00',
+                                                            '&:hover': { backgroundColor: 'rgba(255, 111, 0, 0.08)' }
+                                                        }}
+                                                    >
+                                                        <PrintIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
                                             </TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Paper>
-                )
-            }
-        </Box >
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </>
+            )}
+
+            {!loading && selectedClassId && students.length === 0 && (
+                <Typography variant="body1" color="text.secondary" align="center" sx={{ mt: 4 }}>
+                    {t('exams.common.noStudentsFound')}
+                </Typography>
+            )}
+        </Box>
     );
 };
 

@@ -35,20 +35,21 @@ import { formatDate } from '../utils/formatDate';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Controller } from 'react-hook-form';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
-const schema = z.object({
+const createSchema = (t: any) => z.object({
     titre: z.string().optional(),
     montant: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-        message: 'Le montant doit être positif',
+        message: t('expenses.validation.amountPositive'),
     }),
-    date_depense: z.string().min(1, 'Date requise'),
+    date_depense: z.string().min(1, t('expenses.validation.dateRequired')),
     description: z.string().optional(),
     category: z.enum(['generale', 'salaire']).optional(),
     teacher_id: z.string().optional(),
     staff_id: z.string().optional(),
 });
 
-type FormData = z.infer<typeof schema>;
+type FormData = z.infer<ReturnType<typeof createSchema>>;
 
 interface Expense {
     id: number;
@@ -80,6 +81,8 @@ interface Staff {
 }
 
 const Expenses: React.FC = () => {
+    const { t } = useTranslation();
+    const schema = createSchema(t);
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [open, setOpen] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
@@ -128,7 +131,7 @@ const Expenses: React.FC = () => {
             setError('');
         } catch (err) {
             console.error('Error fetching data', err);
-            setError('Erreur lors du chargement des données');
+            setError(t('expenses.messages.loadError'));
         } finally {
             setLoading(false);
         }
@@ -157,7 +160,7 @@ const Expenses: React.FC = () => {
             if (mode === 'salary') {
                 // Validate that a person is selected
                 if (!selectedPersonId) {
-                    setError('Veuillez sélectionner une personne');
+                    setError(t('expenses.validation.personRequired'));
                     return;
                 }
 
@@ -188,7 +191,7 @@ const Expenses: React.FC = () => {
 
                 if (existingSalary) {
                     const monthName = selectedDate.toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
-                    setError(`Cette personne a déjà un salaire enregistré pour ${monthName}`);
+                    setError(`${t('expenses.messages.salaryExists')} ${monthName}`);
                     return;
                 }
 
@@ -213,7 +216,7 @@ const Expenses: React.FC = () => {
             } else {
                 // Validate titre for expense mode
                 if (!data.titre || data.titre.trim() === '') {
-                    setError('Le titre est requis');
+                    setError(t('expenses.validation.titleRequired'));
                     return;
                 }
                 payload.category = 'generale';
@@ -229,7 +232,7 @@ const Expenses: React.FC = () => {
             setError('');
         } catch (err) {
             console.error('Error saving expense', err);
-            setError('Erreur lors de l\'enregistrement');
+            setError(t('expenses.messages.saveError'));
         }
     };
 
@@ -272,14 +275,14 @@ const Expenses: React.FC = () => {
     };
 
     const handleDelete = async (id: number) => {
-        if (confirm('Êtes-vous sûr de vouloir supprimer cette charge ?')) {
+        if (confirm(t('expenses.messages.deleteConfirm'))) {
             try {
                 await api.delete(`/expenses/${id}`);
                 fetchData();
                 setError('');
             } catch (err) {
                 console.error('Error deleting expense', err);
-                setError('Erreur lors de la suppression');
+                setError(t('expenses.messages.deleteError'));
             }
         }
     };
@@ -335,14 +338,14 @@ const Expenses: React.FC = () => {
                     }}
                 >
                     <Tab
-                        label="Charges Diverses"
+                        label={t('expenses.tabs.general')}
                         sx={{
                             '&.Mui-selected': { color: '#795548' },
                             color: 'text.secondary'
                         }}
                     />
                     <Tab
-                        label="Salaires"
+                        label={t('expenses.tabs.salaries')}
                         sx={{
                             '&.Mui-selected': { color: '#795548' },
                             color: 'text.secondary'
@@ -354,20 +357,20 @@ const Expenses: React.FC = () => {
             <Box sx={{ mb: 3 }}>
                 <Paper sx={{ p: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
                     <DatePicker
-                        label="Date début"
+                        label={t('expenses.fields.startDate')}
                         value={startDate ? dayjs(startDate) : null}
                         onChange={(newValue) => setStartDate(newValue ? newValue.format('YYYY-MM-DD') : '')}
                         slotProps={{ textField: { sx: { flex: 1 }, InputLabelProps: { shrink: true } } }}
                     />
                     <DatePicker
-                        label="Date fin"
+                        label={t('expenses.fields.endDate')}
                         value={endDate ? dayjs(endDate) : null}
                         onChange={(newValue) => setEndDate(newValue ? newValue.format('YYYY-MM-DD') : '')}
                         slotProps={{ textField: { sx: { flex: 1 }, InputLabelProps: { shrink: true } } }}
                     />
                     <TextField
-                        label="Recherche"
-                        placeholder="Mot-clé..."
+                        label={t('expenses.fields.search')}
+                        placeholder={t('expenses.fields.searchPlaceholder')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         sx={{ flex: 1 }}
@@ -385,7 +388,7 @@ const Expenses: React.FC = () => {
                                 onClick={handleOpenExpense}
                                 sx={{ backgroundColor: '#795548', '&:hover': { backgroundColor: '#5d4037' }, minWidth: '180px', height: '40px' }}
                             >
-                                Nouvelle charge
+                                {t('expenses.actions.newExpense')}
                             </Button>
                         </Box>
 
@@ -395,11 +398,11 @@ const Expenses: React.FC = () => {
                             <Table size="small" stickyHeader>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Titre</TableCell>
-                                        <TableCell>Description</TableCell>
-                                        <TableCell>Montant (FCFA)</TableCell>
-                                        <TableCell>Actions</TableCell>
+                                        <TableCell>{t('expenses.fields.date')}</TableCell>
+                                        <TableCell>{t('expenses.fields.title')}</TableCell>
+                                        <TableCell>{t('expenses.fields.description')}</TableCell>
+                                        <TableCell>{t('expenses.fields.amount')}</TableCell>
+                                        <TableCell>{t('expenses.fields.actions')}</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -421,7 +424,7 @@ const Expenses: React.FC = () => {
                                     ))}
                                     {generalExpenses.length === 0 && (
                                         <TableRow>
-                                            <TableCell colSpan={5} align="center">Aucune charge trouvée</TableCell>
+                                            <TableCell colSpan={5} align="center">{t('expenses.messages.noExpenseFound')}</TableCell>
                                         </TableRow>
                                     )}
                                 </TableBody>
@@ -442,11 +445,11 @@ const Expenses: React.FC = () => {
                             <Table size="small" stickyHeader>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Nom</TableCell>
-                                        <TableCell>Montant (FCFA)</TableCell>
-                                        <TableCell>Statut</TableCell>
-                                        <TableCell>Actions</TableCell>
+                                        <TableCell>{t('expenses.fields.date')}</TableCell>
+                                        <TableCell>{t('expenses.fields.name')}</TableCell>
+                                        <TableCell>{t('expenses.fields.amount')}</TableCell>
+                                        <TableCell>{t('expenses.fields.status')}</TableCell>
+                                        <TableCell>{t('expenses.fields.actions')}</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -462,7 +465,7 @@ const Expenses: React.FC = () => {
                                                 <TableCell>{expense.montant.toLocaleString()}</TableCell>
                                                 <TableCell>
                                                     <Chip
-                                                        label="Paiement reçu"
+                                                        label={t('expenses.fields.paymentReceived')}
                                                         color="success"
                                                         size="small"
                                                         variant="outlined"
@@ -478,7 +481,7 @@ const Expenses: React.FC = () => {
                                     })}
                                     {salaryExpenses.length === 0 && (
                                         <TableRow>
-                                            <TableCell colSpan={5} align="center">Aucun salaire enregistré</TableCell>
+                                            <TableCell colSpan={5} align="center">{t('expenses.messages.noSalaryFound')}</TableCell>
                                         </TableRow>
                                     )}
                                 </TableBody>
@@ -491,8 +494,8 @@ const Expenses: React.FC = () => {
             <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
                 <DialogTitle>
                     {mode === 'expense'
-                        ? (editingId ? 'Modifier la charge' : 'Ajouter une charge')
-                        : (editingId ? 'Modifier le salaire' : 'Nouveau salaire')
+                        ? (editingId ? t('expenses.titles.editExpense') : t('expenses.titles.addExpense'))
+                        : (editingId ? t('expenses.titles.editSalary') : t('expenses.titles.addSalary'))
                     }
                 </DialogTitle>
                 <DialogContent>
@@ -501,14 +504,14 @@ const Expenses: React.FC = () => {
                         {mode === 'expense' ? (
                             <>
                                 <TextField
-                                    label="Titre (ex: Achat craie)"
+                                    label={t('expenses.fields.titlePlaceholder')}
                                     {...register('titre')}
                                     error={!!errors.titre}
                                     helperText={errors.titre?.message}
                                     fullWidth
                                 />
                                 <TextField
-                                    label="Montant (FCFA)"
+                                    label={t('expenses.fields.amount')}
                                     {...register('montant')}
                                     error={!!errors.montant}
                                     helperText={errors.montant?.message}
@@ -516,7 +519,7 @@ const Expenses: React.FC = () => {
                                     type="number"
                                 />
                                 <TextField
-                                    label="Description"
+                                    label={t('expenses.fields.description')}
                                     {...register('description')}
                                     error={!!errors.description}
                                     helperText={errors.description?.message}
@@ -528,10 +531,10 @@ const Expenses: React.FC = () => {
                         ) : (
                             <>
                                 <FormControl fullWidth>
-                                    <InputLabel>Type de personnel</InputLabel>
+                                    <InputLabel>{t('expenses.fields.personnelType')}</InputLabel>
                                     <Select
                                         value={salaryType}
-                                        label="Type de personnel"
+                                        label={t('expenses.fields.personnelType')}
                                         onChange={(e) => {
                                             setSalaryType(e.target.value as 'teacher' | 'staff');
                                             setSelectedPersonId('');
@@ -539,16 +542,16 @@ const Expenses: React.FC = () => {
                                         }}
                                         disabled={!!editingId} // Cannot change type during edit to simplify logic
                                     >
-                                        <MenuItem value="teacher">Enseignant</MenuItem>
-                                        <MenuItem value="staff">Administration</MenuItem>
+                                        <MenuItem value="teacher">{t('expenses.personnelTypes.teacher')}</MenuItem>
+                                        <MenuItem value="staff">{t('expenses.personnelTypes.staff')}</MenuItem>
                                     </Select>
                                 </FormControl>
 
                                 <FormControl fullWidth>
-                                    <InputLabel>Nom</InputLabel>
+                                    <InputLabel>{t('expenses.fields.name')}</InputLabel>
                                     <Select
                                         value={selectedPersonId}
-                                        label="Nom"
+                                        label={t('expenses.fields.name')}
                                         onChange={(e) => handlePersonChange(e.target.value, salaryType)}
                                         disabled={!!editingId}
                                     >
@@ -569,7 +572,7 @@ const Expenses: React.FC = () => {
                                 </FormControl>
 
                                 <TextField
-                                    label="Montant (FCFA)"
+                                    label={t('expenses.fields.amount')}
                                     {...register('montant')}
                                     error={!!errors.montant}
                                     helperText={errors.montant?.message}
@@ -586,7 +589,7 @@ const Expenses: React.FC = () => {
                             name="date_depense"
                             render={({ field }) => (
                                 <DatePicker
-                                    label="Date"
+                                    label={t('expenses.fields.date')}
                                     value={field.value ? dayjs(field.value) : null}
                                     onChange={(newValue) => field.onChange(newValue ? newValue.format('YYYY-MM-DD') : '')}
                                     disabled={mode === 'salary'}
@@ -604,9 +607,9 @@ const Expenses: React.FC = () => {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Annuler</Button>
+                    <Button onClick={handleClose}>{t('expenses.actions.cancel')}</Button>
                     <Button onClick={handleSubmit(onSubmit)} variant="contained" color="primary">
-                        Enregistrer
+                        {t('expenses.actions.save')}
                     </Button>
                 </DialogActions>
             </Dialog>

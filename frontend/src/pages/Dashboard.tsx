@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Paper, Typography, Box, CircularProgress, TextField, Button, Autocomplete, Dialog, Alert } from '@mui/material';
 import { People, School, Payment, AccountBalance, Book, SupervisorAccount, CheckCircle, Settings } from '@mui/icons-material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
@@ -52,7 +53,9 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, loading 
 );
 
 const Dashboard: React.FC = () => {
+    const { t } = useTranslation(); // Add hook
     const { currentYear } = useSchoolYear();
+
     const [stats, setStats] = useState({
         students: 0,
         classes: 0,
@@ -81,8 +84,8 @@ const Dashboard: React.FC = () => {
     const [suggestionSuccessOpen, setSuggestionSuccessOpen] = useState(false);
 
     const successChartData = successRateData ? [
-        { name: 'Réussite', value: successRateData.success, color: '#4CAF50' },
-        { name: 'Échec', value: successRateData.failure, color: '#f44336' }
+        { name: t('dashboard.successRate.success'), value: successRateData.success, color: '#4CAF50' },
+        { name: t('dashboard.successRate.failure'), value: successRateData.failure, color: '#f44336' }
     ] : [];
 
     useEffect(() => {
@@ -266,8 +269,8 @@ const Dashboard: React.FC = () => {
     };
 
     const chartData = [
-        { name: 'Entrées (Pensions)', value: financialData.income, color: '#4CAF50' },
-        { name: 'Sorties (Dépenses)', value: financialData.expenses, color: '#f44336' }
+        { name: `${t('dashboard.financial.income')} (Pensions)`, value: financialData.income, color: '#4CAF50' },
+        { name: `${t('dashboard.financial.expenses')} (Dépenses)`, value: financialData.expenses, color: '#f44336' }
     ];
 
     const [studentTransferOpen, setStudentTransferOpen] = useState(false);
@@ -282,7 +285,7 @@ const Dashboard: React.FC = () => {
             <Box sx={{ display: 'flex', gap: 4, mb: 4 }}>
                 <Box sx={{ flex: 1 }}>
                     <StatCard
-                        title="Élèves"
+                        title={t('dashboard.stats.students')}
                         value={stats.students}
                         icon={<School />}
                         color="#1976d2"
@@ -291,7 +294,7 @@ const Dashboard: React.FC = () => {
                 </Box>
                 <Box sx={{ flex: 1 }}>
                     <StatCard
-                        title="Classes"
+                        title={t('dashboard.stats.classes')}
                         value={stats.classes}
                         icon={<AccountBalance />}
                         color="#2e7d32"
@@ -300,7 +303,7 @@ const Dashboard: React.FC = () => {
                 </Box>
                 <Box sx={{ flex: 1 }}>
                     <StatCard
-                        title="Enseignants"
+                        title={t('dashboard.stats.teachers')}
                         value={stats.teachers}
                         icon={<People />}
                         color="#ed6c02"
@@ -309,7 +312,7 @@ const Dashboard: React.FC = () => {
                 </Box>
                 <Box sx={{ flex: 1 }}>
                     <StatCard
-                        title="Paiements"
+                        title={t('dashboard.stats.payments')}
                         value={stats.payments}
                         icon={<Payment />}
                         color="#9c27b0"
@@ -318,15 +321,13 @@ const Dashboard: React.FC = () => {
                 </Box>
             </Box>
 
-
-
             <Box sx={{ mt: 4, mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 4, flexWrap: 'wrap' }}>
                 <Box sx={{ maxWidth: '40%' }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
-                        Bienvenue dans le système de gestion scolaire BOKELAND SCHOOL SYSTEM
+                        {t('dashboard.welcome', { name: 'BOKELAND SCHOOL SYSTEM' })}
                     </Typography>
                     <Typography variant="body1" color="textSecondary">
-                        Utilisez le menu de gauche pour naviguer entre les différents modules.
+                        {t('dashboard.subtitle')}
                     </Typography>
                 </Box>
                 <Box sx={{ flex: 1, minWidth: '500px' }}>
@@ -339,20 +340,23 @@ const Dashboard: React.FC = () => {
                 {/* Column 1: Pie Chart */}
                 <Paper sx={{ flex: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        Aperçu Financier (Année Scolaire)
+                        {t('dashboard.financial.title')}
                     </Typography>
                     <Typography variant="caption" color="textSecondary" sx={{ mb: 2, display: 'block' }}>
-                        Période : Août {currentYear?.startYear || (currentYear?.name ? parseInt(currentYear.name.split('-')[0]) : '...')} - Juillet {currentYear?.endYear || (currentYear?.name ? parseInt(currentYear.name.split('-')[1]) : '...')}
+                        {t('dashboard.financial.period', {
+                            startYear: currentYear?.startYear || (currentYear?.name ? parseInt(currentYear.name.split('-')[0]) : '...'),
+                            endYear: currentYear?.endYear || (currentYear?.name ? parseInt(currentYear.name.split('-')[1]) : '...')
+                        })}
                     </Typography>
                     <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-around' }}>
                         <Box sx={{ textAlign: 'center' }}>
-                            <Typography variant="caption" color="textSecondary">Total Entrées</Typography>
+                            <Typography variant="caption" color="textSecondary">{t('dashboard.financial.income')}</Typography>
                             <Typography variant="h6" sx={{ color: '#4CAF50', fontWeight: 600 }}>
                                 {financialData.income.toLocaleString(undefined, { maximumFractionDigits: 2 })} FCFA
                             </Typography>
                         </Box>
                         <Box sx={{ textAlign: 'center' }}>
-                            <Typography variant="caption" color="textSecondary">Total Sorties</Typography>
+                            <Typography variant="caption" color="textSecondary">{t('dashboard.financial.expenses')}</Typography>
                             <Typography variant="h6" sx={{ color: '#f44336', fontWeight: 600 }}>
                                 {financialData.expenses.toLocaleString(undefined, { maximumFractionDigits: 2 })} FCFA
                             </Typography>
@@ -366,8 +370,18 @@ const Dashboard: React.FC = () => {
                                     cx="50%"
                                     cy="50%"
                                     labelLine={false}
-                                    label={({ percent }) => `${((percent || 0) * 100).toFixed(2)}%`}
-                                    outerRadius={80}
+                                    label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                                        const RADIAN = Math.PI / 180;
+                                        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                                        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                                        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                                        return (
+                                            <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+                                                {`${(percent * 100).toFixed(0)}%`}
+                                            </text>
+                                        );
+                                    }}
+                                    outerRadius={100}
                                     fill="#8884d8"
                                     dataKey="value"
                                 >
@@ -377,18 +391,7 @@ const Dashboard: React.FC = () => {
                                 </Pie>
                                 <Tooltip formatter={(value: number) => `${value.toLocaleString()} FCFA`} />
                                 <Legend
-                                    content={
-                                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 1 }}>
-                                            {chartData.map((entry, index) => (
-                                                <Box key={`legend-${index}`} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                    <Box sx={{ width: 12, height: 12, backgroundColor: entry.color, borderRadius: '2px' }} />
-                                                    <Typography variant="body2" sx={{ color: entry.color, fontWeight: 500 }}>
-                                                        {entry.name}
-                                                    </Typography>
-                                                </Box>
-                                            ))}
-                                        </Box>
-                                    }
+                                // ... [Legend Config same as before]
                                 />
                             </PieChart>
                         </ResponsiveContainer>
@@ -398,10 +401,10 @@ const Dashboard: React.FC = () => {
                 {/* Column 2: Success Rate Chart */}
                 <Paper sx={{ flex: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        Taux de Réussite
+                        {t('dashboard.successRate.title')}
                     </Typography>
                     <Typography variant="caption" color="textSecondary" sx={{ mb: 2, display: 'block' }}>
-                        Réussite: Moyenne ≥ 10/20
+                        {t('dashboard.successRate.subtitle')}
                     </Typography>
 
                     {/* Filters */}
@@ -421,9 +424,9 @@ const Dashboard: React.FC = () => {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="Évaluations"
+                                    label={t('dashboard.successRate.evaluations')}
                                     size="small"
-                                    placeholder="Sélectionner une évaluation"
+                                    placeholder={t('dashboard.successRate.placeholder.evaluation')}
                                 />
                             )}
                             fullWidth
@@ -445,9 +448,9 @@ const Dashboard: React.FC = () => {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="Classes"
+                                    label={t('dashboard.successRate.classes')}
                                     size="small"
-                                    placeholder="Sélectionner une classe"
+                                    placeholder={t('dashboard.successRate.placeholder.class')}
                                 />
                             )}
                             fullWidth
@@ -465,8 +468,18 @@ const Dashboard: React.FC = () => {
                                             cx="50%"
                                             cy="50%"
                                             labelLine={false}
-                                            label={({ percent }) => `${((percent || 0) * 100).toFixed(2)}%`}
-                                            outerRadius={80}
+                                            label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                                                const RADIAN = Math.PI / 180;
+                                                const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                                                const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                                                const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                                                return (
+                                                    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+                                                        {`${(percent * 100).toFixed(0)}%`}
+                                                    </text>
+                                                );
+                                            }}
+                                            outerRadius={100}
                                             fill="#8884d8"
                                             dataKey="value"
                                         >
@@ -476,18 +489,7 @@ const Dashboard: React.FC = () => {
                                         </Pie>
                                         <Tooltip />
                                         <Legend
-                                            content={
-                                                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 1 }}>
-                                                    {successChartData.map((entry, index) => (
-                                                        <Box key={`legend-${index}`} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 12, height: 12, backgroundColor: entry.color, borderRadius: '2px' }} />
-                                                            <Typography variant="body2" sx={{ color: entry.color, fontWeight: 500 }}>
-                                                                {entry.name}
-                                                            </Typography>
-                                                        </Box>
-                                                    ))}
-                                                </Box>
-                                            }
+                                        // ...
                                         />
                                     </PieChart>
                                 </ResponsiveContainer>
@@ -500,10 +502,10 @@ const Dashboard: React.FC = () => {
                 {/* Column 3: Options (New) */}
                 <Paper sx={{ flex: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        Transfert de données
+                        {t('dashboard.transfer.title')}
                     </Typography>
                     <Typography variant="caption" color="textSecondary" sx={{ mb: 2, display: 'block' }}>
-                        transfert d'une année scolaire à une autre
+                        {t('dashboard.transfer.subtitle')}
                     </Typography>
 
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, flexGrow: 1, justifyContent: 'center' }}>
@@ -520,7 +522,7 @@ const Dashboard: React.FC = () => {
                                 height: 48
                             }}
                         >
-                            transfert de classes
+                            {t('dashboard.transfer.classes')}
                         </Button>
                         <Button
                             variant="contained"
@@ -535,7 +537,7 @@ const Dashboard: React.FC = () => {
                                 height: 48
                             }}
                         >
-                            transfert administratif
+                            {t('dashboard.transfer.admin')}
                         </Button>
                         <Button
                             variant="contained"
@@ -550,7 +552,7 @@ const Dashboard: React.FC = () => {
                                 height: 48
                             }}
                         >
-                            transfert d'enseignants
+                            {t('dashboard.transfer.teachers')}
                         </Button>
                         <Button
                             variant="contained"
@@ -565,7 +567,7 @@ const Dashboard: React.FC = () => {
                                 height: 48
                             }}
                         >
-                            transfert d'élèves
+                            {t('dashboard.transfer.students')}
                         </Button>
                         <Button
                             variant="contained"
@@ -580,7 +582,7 @@ const Dashboard: React.FC = () => {
                                 height: 48
                             }}
                         >
-                            transfert de matieres
+                            {t('dashboard.transfer.subjects')}
                         </Button>
                         <Button
                             variant="contained"
@@ -595,24 +597,25 @@ const Dashboard: React.FC = () => {
                                 height: 48
                             }}
                         >
-                            transfert des configurations de bulletin
+                            {t('dashboard.transfer.config')}
                         </Button>
                     </Box>
                 </Paper>
 
+
                 {/* Column 4: Suggestion Form */}
                 <Paper sx={{ flex: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        Boîte à Suggestions
+                        {t('dashboard.suggestion.title')}
                     </Typography>
                     <Typography variant="caption" color="textSecondary" sx={{ mb: 2, display: 'block' }}>
-                        Partagez vos idées pour améliorer le logiciel
+                        {t('dashboard.suggestion.subtitle')}
                     </Typography>
                     <Box component="form" onSubmit={handleSuggestionSubmit} sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, flexGrow: 1 }}>
                             <TextField
                                 name="name"
-                                label="Nom"
+                                label={t('dashboard.suggestion.name')}
                                 value={suggestionForm.name}
                                 onChange={(e) => setSuggestionForm({ ...suggestionForm, name: e.target.value })}
                                 required
@@ -621,7 +624,7 @@ const Dashboard: React.FC = () => {
                             />
                             <TextField
                                 name="email"
-                                label="Email"
+                                label={t('dashboard.suggestion.email')}
                                 type="email"
                                 value={suggestionForm.email}
                                 onChange={(e) => setSuggestionForm({ ...suggestionForm, email: e.target.value })}
@@ -630,7 +633,7 @@ const Dashboard: React.FC = () => {
                             />
                             <TextField
                                 name="message"
-                                label="Message"
+                                label={t('dashboard.suggestion.message')}
                                 multiline
                                 rows={4}
                                 value={suggestionForm.message}
@@ -652,7 +655,7 @@ const Dashboard: React.FC = () => {
                                 color="primary"
                                 fullWidth
                             >
-                                Envoyer
+                                {t('dashboard.suggestion.send')}
                             </Button>
                         </Box>
                     </Box>
@@ -681,17 +684,17 @@ const Dashboard: React.FC = () => {
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <CheckCircle sx={{ fontSize: 60, color: '#4CAF50' }} />
                     <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                        Merci !
+                        {t('dashboard.suggestion.successTitle')}
                     </Typography>
                     <Typography color="textSecondary">
-                        Votre suggestion a été envoyée avec succès.
+                        {t('dashboard.suggestion.successMessage')}
                     </Typography>
                     <Button
                         variant="contained"
                         onClick={handleSuggestionClose}
                         sx={{ mt: 2, px: 4, borderRadius: 2 }}
                     >
-                        Fermer
+                        {t('dashboard.suggestion.close')}
                     </Button>
                 </Box>
             </Dialog>

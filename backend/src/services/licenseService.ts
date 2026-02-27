@@ -2,7 +2,7 @@ import { machineId } from 'node-machine-id';
 import axios from 'axios';
 
 // License Server URL (could be in .env in production)
-const LICENSE_SERVER_URL = 'http://localhost:3001/api/license';
+const LICENSE_SERVER_URL = process.env.LICENSE_SERVER_URL || 'http://localhost:5005';
 
 export interface LicenseStatus {
     status: 'TRIAL' | 'ACTIVE' | 'EXPIRED' | 'BANNED' | 'NOT_REGISTERED' | 'OFFLINE_VALID' | 'OFFLINE_EXPIRED';
@@ -16,7 +16,7 @@ export interface LicenseStatus {
 // In-memory cache for license status to avoid hitting the server on every request
 let cachedLicenseStatus: LicenseStatus | null = null;
 let lastCheckTime: number = 0;
-const CHECK_INTERVAL = 1000 * 60 * 60; // 1 hour
+const CHECK_INTERVAL = 1000 * 60 * 5; // 5 minutes (reduced from 1 hour for faster sync)
 
 export const getMachineFingerprint = async (): Promise<string> => {
     try {
@@ -50,7 +50,7 @@ export const checkLicense = async (force: boolean = false): Promise<LicenseStatu
             payload.email = settings.email;
         }
 
-        const response = await axios.post(`${LICENSE_SERVER_URL}/check`, payload, { timeout: 5000 });
+        const response = await axios.post(`${LICENSE_SERVER_URL}/api/license/check`, payload, { timeout: 5000 });
         const serverData = response.data;
 
         // SERVER AUTHORITY LOGIC:
@@ -75,8 +75,17 @@ export const checkLicense = async (force: boolean = false): Promise<LicenseStatu
         // OFFLINE LOGIC:
         // Use local settings but ENFORCE expiration strictly
 
-        if (!settings || !settings.license_expiration_date) {
+        if (!settings) {
             return { status: 'NOT_REGISTERED', message: 'Pas de licence locale valide trouvé. Connexion internet requise.' };
+        }
+
+        if (!settings.license_expiration_date) {
+            // New installation without expiration date yet -> Default to TRIAL
+            return {
+                status: 'TRIAL',
+                message: 'Mode Essai - Licence Valide',
+                days_remaining: 30
+            };
         }
 
         const now = new Date();
@@ -107,7 +116,7 @@ export const checkLicense = async (force: boolean = false): Promise<LicenseStatu
 export const activateLicense = async (schoolName: string, email: string) => {
     try {
         const fingerPrint = await getMachineFingerprint();
-        const response = await axios.post(`${LICENSE_SERVER_URL}/activate`, {
+        const response = await axios.post(`${LICENSE_SERVER_URL}/api/license/activate`, {
             machine_id: fingerPrint,
             school_name: schoolName,
             email: email
@@ -123,7 +132,7 @@ export const activateLicense = async (schoolName: string, email: string) => {
 export const initiatePayment = async (amount: number, phoneNumber: string) => {
     try {
         const fingerPrint = await getMachineFingerprint();
-        const response = await axios.post(`${LICENSE_SERVER_URL}/pay`, {
+        const response = await axios.post(`${LICENSE_SERVER_URL}/api/license/pay`, {
             machine_id: fingerPrint,
             amount: amount,
             phone_number: phoneNumber

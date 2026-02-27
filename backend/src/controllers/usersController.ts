@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import User from '../models/User';
 import Teacher from '../models/Teacher';
 import bcrypt from 'bcrypt';
+import { sendEmailChangeNotification } from '../services/emailService';
 
 // Get all users (admin only)
 export const getAllUsers = async (req: Request, res: Response) => {
@@ -88,8 +89,15 @@ export const updateUser = async (req: Request, res: Response) => {
         }
 
         // Prevent updating default admin
+        // Prevent changing critical fields for default admin
         if (user.is_default) {
-            return res.status(403).json({ message: 'Cannot modify the default admin account' });
+            if (username && username !== user.username) {
+                return res.status(403).json({ message: 'Cannot change username of default admin' });
+            }
+            if (role && role !== user.role) {
+                return res.status(403).json({ message: 'Cannot change role of default admin' });
+            }
+            // Allow password/email/teacher_id (though default admin isn't usually a teacher)
         }
 
         // Prepare update data
@@ -113,7 +121,16 @@ export const updateUser = async (req: Request, res: Response) => {
             updateData.permissions = null;
         }
 
+        const oldEmail = user.email;
         await user.update(updateData);
+
+        // Notify if email changed (only if new email is provided and different)
+        if (updateData.email && oldEmail !== updateData.email) {
+            if (oldEmail) {
+                sendEmailChangeNotification(oldEmail, user.username, updateData.email).catch(console.error);
+            }
+            sendEmailChangeNotification(updateData.email, user.username, updateData.email).catch(console.error);
+        }
 
         res.json({
             id: user.id,

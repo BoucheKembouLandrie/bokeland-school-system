@@ -3,7 +3,13 @@ import { getCachedLicenseStatus, checkLicense } from '../services/licenseService
 
 export const licenseMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     // Skip license check for activation route and static files
-    if (req.path === '/api/license/activate' || req.path === '/api/license/status' || req.path.startsWith('/uploads')) {
+    console.log(`[LicenseMiddleware] Checking request: ${req.method} ${req.path}`);
+    if (req.path === '/api/license/activate' ||
+        req.path === '/api/license/status' ||
+        req.path.startsWith('/uploads') ||
+        req.path.startsWith('/api/onboarding') ||
+        req.path === '/api/settings') {
+        console.log(`[LicenseMiddleware] Exempted path: ${req.path}`);
         return next();
     }
 

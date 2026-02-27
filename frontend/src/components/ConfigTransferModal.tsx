@@ -7,6 +7,7 @@ import {
 import { Settings } from '@mui/icons-material';
 import api from '../services/api';
 import { useSchoolYear } from '../contexts/SchoolYearContext';
+import { useTranslation } from 'react-i18next';
 
 interface ConfigTransferModalProps {
     open: boolean;
@@ -14,6 +15,7 @@ interface ConfigTransferModalProps {
 }
 
 const ConfigTransferModal: React.FC<ConfigTransferModalProps> = ({ open, onClose }) => {
+    const { t } = useTranslation();
     const { currentYear } = useSchoolYear();
 
     const [years, setYears] = useState<any[]>([]);
@@ -68,12 +70,12 @@ const ConfigTransferModal: React.FC<ConfigTransferModalProps> = ({ open, onClose
 
     const handleTransfer = async () => {
         if (!sourceYearId || !targetYearId) {
-            setMessage({ type: 'error', text: 'Veuillez sélectionner les années source et cible' });
+            setMessage({ type: 'error', text: t('dashboard.transferModals.messages.selectYears') });
             return;
         }
 
         if (sourceYearId === targetYearId) {
-            setMessage({ type: 'error', text: 'L\'année source et l\'année cible doivent être différentes' });
+            setMessage({ type: 'error', text: t('dashboard.transferModals.messages.diffYears') });
             return;
         }
 
@@ -88,7 +90,7 @@ const ConfigTransferModal: React.FC<ConfigTransferModalProps> = ({ open, onClose
 
             setMessage({
                 type: 'success',
-                text: `${response.data.transferred} configuration(s) transférée(s) avec succès`
+                text: t('dashboard.transferModals.messages.successConfig', { transferred: response.data.transferred })
             });
 
             // Reset target year selection after successful transfer
@@ -101,7 +103,7 @@ const ConfigTransferModal: React.FC<ConfigTransferModalProps> = ({ open, onClose
             console.error('Transfer error:', error);
             setMessage({
                 type: 'error',
-                text: error.response?.data?.error || 'Erreur lors du transfert des configurations'
+                text: error.response?.data?.error || t('dashboard.transferModals.messages.errorConfig')
             });
         } finally {
             setTransferring(false);
@@ -123,7 +125,7 @@ const ConfigTransferModal: React.FC<ConfigTransferModalProps> = ({ open, onClose
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
             <DialogTitle sx={{ bgcolor: '#1976d2', color: 'white', display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Settings />
-                Transfert des configurations de bulletin
+                {t('dashboard.transferModals.titles.config')}
             </DialogTitle>
             <DialogContent sx={{ mt: 2 }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -135,7 +137,7 @@ const ConfigTransferModal: React.FC<ConfigTransferModalProps> = ({ open, onClose
 
                     <TextField
                         select
-                        label="Année source"
+                        label={t('dashboard.transferModals.sourceYear')}
                         value={sourceYearId}
                         onChange={(e) => setSourceYearId(e.target.value)}
                         fullWidth
@@ -152,18 +154,28 @@ const ConfigTransferModal: React.FC<ConfigTransferModalProps> = ({ open, onClose
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <CircularProgress size={20} />
                             <Typography variant="body2" color="text.secondary">
-                                Chargement des configurations...
+                                {t('dashboard.transferModals.loadingConfig')}
                             </Typography>
                         </Box>
                     ) : sourceYearId && (
                         <Alert severity="info">
-                            <strong>{configCount}</strong> configuration(s) trouvée(s) dans l'année {sourceYear?.name}
+                            <strong>{configCount}</strong> {t('dashboard.transferModals.foundConfig', { count: configCount, year: sourceYear?.name }).split(configCount.toString()).slice(1).join('')}
+                        </Alert>
+                    )}
+
+                    {/* Hacky way to handle partial translation with dynamic values if not purely using interpolation. 
+                        Actually, t() handles interpolation nicely. Let's fix the alert content to use t() fully.
+                     */}
+                    {/* Re-rendering Alert properly with t() */}
+                    {!loading && sourceYearId && (
+                        <Alert severity="info">
+                            <span dangerouslySetInnerHTML={{ __html: t('dashboard.transferModals.foundConfig', { count: configCount, year: sourceYear?.name }).replace(configCount.toString(), `<strong>${configCount}</strong>`) }} />
                         </Alert>
                     )}
 
                     <TextField
                         select
-                        label="Année cible"
+                        label={t('dashboard.transferModals.targetYear')}
                         value={targetYearId}
                         onChange={(e) => setTargetYearId(e.target.value)}
                         fullWidth
@@ -181,15 +193,14 @@ const ConfigTransferModal: React.FC<ConfigTransferModalProps> = ({ open, onClose
 
                     {sourceYearId && targetYearId && (
                         <Alert severity="warning">
-                            Les configurations de <strong>{sourceYear?.name}</strong> seront copiées vers <strong>{targetYear?.name}</strong>.
-                            Les configurations existantes dans l'année cible ne seront pas modifiées.
+                            {t('dashboard.transferModals.messages.configWarning', { source: sourceYear?.name, target: targetYear?.name })}
                         </Alert>
                     )}
                 </Box>
             </DialogContent>
             <DialogActions sx={{ p: 2, gap: 1 }}>
                 <Button onClick={handleClose} disabled={transferring}>
-                    Annuler
+                    {t('dashboard.transferModals.cancel')}
                 </Button>
                 <Button
                     variant="contained"
@@ -200,10 +211,10 @@ const ConfigTransferModal: React.FC<ConfigTransferModalProps> = ({ open, onClose
                     {transferring ? (
                         <>
                             <CircularProgress size={20} sx={{ mr: 1, color: 'white' }} />
-                            Transfert en cours...
+                            {t('dashboard.transferModals.transferring')}
                         </>
                     ) : (
-                        'Transférer'
+                        t('dashboard.transferModals.transfer')
                     )}
                 </Button>
             </DialogActions>

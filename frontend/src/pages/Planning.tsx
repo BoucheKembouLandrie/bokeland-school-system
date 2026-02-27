@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import api from '../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface Class {
     id: number;
@@ -39,10 +40,10 @@ interface Schedule {
     subject?: Subject;
 }
 
-const DAYS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 const HOURS = Array.from({ length: 13 }, (_, i) => i + 6); // 6h to 18h
 
 const Planning: React.FC = () => {
+    const { t } = useTranslation();
     const [classes, setClasses] = useState<Class[]>([]);
     const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
     const [schedules, setSchedules] = useState<Schedule[]>([]);
@@ -56,6 +57,15 @@ const Planning: React.FC = () => {
         end_time: ''
     });
     const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
+
+    const DAYS = [
+        t('planning.days.monday'),
+        t('planning.days.tuesday'),
+        t('planning.days.wednesday'),
+        t('planning.days.thursday'),
+        t('planning.days.friday'),
+        t('planning.days.saturday')
+    ];
 
     useEffect(() => {
         fetchClasses();
@@ -158,12 +168,12 @@ const Planning: React.FC = () => {
             handleCloseDialog();
         } catch (error) {
             console.error('Error saving schedule:', error);
-            alert('Erreur lors de la sauvegarde du planning: ' + (error as any).message);
+            alert(`${t('planning.messages.saveError')}: ${(error as any).message}`);
         }
     };
 
     const handleDelete = async (id: number) => {
-        if (window.confirm('Supprimer ce créneau ?')) {
+        if (window.confirm(t('planning.messages.deleteConfirm'))) {
             try {
                 await api.delete(`/schedules/${id}`);
                 fetchSchedules();
@@ -181,7 +191,7 @@ const Planning: React.FC = () => {
             {classes.length === 0 ? (
                 <Paper sx={{ p: 3, textAlign: 'center', mb: 2 }}>
                     <Typography variant="h6" color="text.secondary">
-                        Aucune classe trouvée. Veuillez créer des classes dans l'onglet "Classes".
+                        {t('planning.messages.noClasses')}
                     </Typography>
                 </Paper>
             ) : (
@@ -228,7 +238,7 @@ const Planning: React.FC = () => {
                         onClick={() => handleOpenDialog()}
                         sx={{ bgcolor: '#2e7d32', '&:hover': { bgcolor: '#1b5e20' }, ml: 2, minWidth: 200 }}
                     >
-                        Ajouter un planning
+                        {t('planning.actions.addSchedule')}
                     </Button>
                 </Box>
             )}
@@ -332,7 +342,7 @@ const Planning: React.FC = () => {
                                         const endParts = schedule.end_time.split(':').map(Number);
 
                                         // Total range in minutes (6h to 18h = 12 hours)
-                                        const startHourRange = HOURS[0];
+                                        const startHourRange = 6;
                                         const totalRangeMinutes = 12 * 60;
 
                                         // Convert event times to minutes from start of range
@@ -428,12 +438,12 @@ const Planning: React.FC = () => {
             </Paper>
 
             <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-                <DialogTitle>{editingSchedule ? 'Modifier le planning' : 'Ajouter un planning'}</DialogTitle>
+                <DialogTitle>{editingSchedule ? t('planning.titles.edit') : t('planning.titles.add')}</DialogTitle>
                 <DialogContent>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
                         <TextField
                             select
-                            label="Sélectionner la classe"
+                            label={t('planning.fields.selectClass')}
                             value={formData.classe_id}
                             onChange={(e) => {
                                 console.log('Selected class:', e.target.value);
@@ -444,7 +454,7 @@ const Planning: React.FC = () => {
                         >
                             {classes.length === 0 ? (
                                 <MenuItem disabled sx={{ color: '#999' }}>
-                                    Aucune classe disponible
+                                    {t('planning.fields.noClassesAvailable')}
                                 </MenuItem>
                             ) : (
                                 classes.map(cls => {
@@ -459,13 +469,13 @@ const Planning: React.FC = () => {
                         </TextField>
                         <TextField
                             select
-                            label="Sélectionner la matière"
+                            label={t('planning.fields.selectSubject')}
                             value={formData.subject_id}
                             onChange={(e) => setFormData({ ...formData, subject_id: e.target.value })}
                             fullWidth
                             required
                             disabled={!formData.classe_id}
-                            helperText={!formData.classe_id ? "Veuillez d'abord sélectionner une classe" : ""}
+                            helperText={!formData.classe_id ? t('planning.fields.selectClassFirst') : ""}
                         >
                             {getFilteredSubjects().map(subject => (
                                 <MenuItem key={subject.id} value={subject.id} sx={{ color: '#000 !important', backgroundColor: '#fff' }}>
@@ -475,7 +485,7 @@ const Planning: React.FC = () => {
                         </TextField>
                         <TextField
                             select
-                            label="Jour de la semaine"
+                            label={t('planning.fields.dayOfWeek')}
                             value={formData.day_of_week}
                             onChange={(e) => setFormData({ ...formData, day_of_week: e.target.value })}
                             fullWidth
@@ -488,7 +498,7 @@ const Planning: React.FC = () => {
                             ))}
                         </TextField>
                         <TextField
-                            label="Heure de début"
+                            label={t('planning.fields.startTime')}
                             type="time"
                             value={formData.start_time}
                             onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
@@ -497,7 +507,7 @@ const Planning: React.FC = () => {
                             InputLabelProps={{ shrink: true }}
                         />
                         <TextField
-                            label="Heure de fin"
+                            label={t('planning.fields.endTime')}
                             type="time"
                             value={formData.end_time}
                             onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
@@ -508,14 +518,14 @@ const Planning: React.FC = () => {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseDialog}>Annuler</Button>
+                    <Button onClick={handleCloseDialog}>{t('planning.actions.cancel')}</Button>
                     <Button
                         onClick={handleSubmit}
                         variant="contained"
                         sx={{ bgcolor: '#2e7d32', '&:hover': { bgcolor: '#1b5e20' } }}
                         disabled={!formData.classe_id || !formData.subject_id || !formData.day_of_week || !formData.start_time || !formData.end_time}
                     >
-                        Valider
+                        {t('planning.actions.validate')}
                     </Button>
                 </DialogActions>
             </Dialog>

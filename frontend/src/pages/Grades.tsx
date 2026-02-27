@@ -877,55 +877,73 @@ const AdminGradesView: React.FC = () => {
 
                         {showPrintTable && (
                             <Paper sx={{ p: 3 }}>
-                                <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                                     <Typography variant="h6">Liste des élèves</Typography>
                                     <Button
                                         variant="contained"
-                                        startIcon={<PrintIcon />}
+                                        size="small"
                                         onClick={handleBulkPrint}
                                         disabled={selectedStudents.length === 0}
-                                        sx={{ bgcolor: '#ff6f00', '&:hover': { bgcolor: '#e65100' } }}
+                                        sx={{
+                                            bgcolor: '#ff6f00',
+                                            '&:hover': { bgcolor: '#e65100' },
+                                            textTransform: 'none',
+                                            px: 2
+                                        }}
                                     >
-                                        Imprimer la sélection ({selectedStudents.length})
+                                        Imprimer la sélection
                                     </Button>
                                 </Box>
-                                <TableContainer>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        indeterminate={selectedStudents.length > 0 && selectedStudents.length < printStudents.length}
-                                                        checked={printStudents.length > 0 && selectedStudents.length === printStudents.length}
-                                                        onChange={handleSelectAll}
-                                                    />
-                                                </TableCell>
-                                                <TableCell>Nom</TableCell>
-                                                <TableCell>Prénom</TableCell>
-                                                <TableCell align="center">Action</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {printStudents.map((student) => (
-                                                <TableRow key={student.id} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#fffaed' } }}>
-                                                    <TableCell padding="checkbox">
-                                                        <Checkbox
-                                                            checked={selectedStudents.includes(student.id)}
-                                                            onChange={() => handleSelectStudent(student.id)}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>{student.nom}</TableCell>
-                                                    <TableCell>{student.prenom}</TableCell>
-                                                    <TableCell align="center">
-                                                        <IconButton onClick={() => handlePrintClick(student)} color="primary">
-                                                            <PrintIcon />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                <Box>
+                                    {printStudents.map((student, index) => {
+                                        const isSelected = selectedStudents.includes(student.id);
+                                        return (
+                                            <Box
+                                                key={student.id}
+                                                onClick={() => {
+                                                    if (isSelected) {
+                                                        setSelectedStudents(prev => prev.filter(id => id !== student.id));
+                                                    } else {
+                                                        setSelectedStudents(prev => [...prev, student.id]);
+                                                    }
+                                                }}
+                                                sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    p: 2,
+                                                    backgroundColor: index % 2 === 0 ? '#FFF5F0' : 'transparent',
+                                                    borderLeft: isSelected ? '4px solid #ff6f00' : '4px solid transparent',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s',
+                                                    '&:hover': {
+                                                        backgroundColor: index % 2 === 0 ? '#FFE8DC' : '#FFF5F0'
+                                                    }
+                                                }}
+                                            >
+                                                <Typography variant="body1" sx={{ fontWeight: isSelected ? 600 : 400 }}>
+                                                    {student.nom} {student.prenom}
+                                                </Typography>
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handlePrintClick(student);
+                                                    }}
+                                                    sx={{
+                                                        bgcolor: '#ff6f00',
+                                                        '&:hover': { bgcolor: '#e65100' },
+                                                        textTransform: 'none',
+                                                        px: 2
+                                                    }}
+                                                >
+                                                    Imprimer
+                                                </Button>
+                                            </Box>
+                                        );
+                                    })}
+                                </Box>
                             </Paper>
                         )}
                     </Box>

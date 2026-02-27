@@ -6,6 +6,7 @@ interface SchoolYear {
     name: string;
     startYear: number;
     endYear: number;
+    is_active?: boolean;
 }
 
 interface SchoolYearContextType {
@@ -28,6 +29,13 @@ export const SchoolYearProvider: React.FC<{ children: ReactNode }> = ({ children
     });
     const [loading, setLoading] = useState(false);
 
+    const selectYear = (year: SchoolYear) => {
+        setCurrentYear(year);
+        localStorage.setItem('currentSchoolYear', JSON.stringify(year));
+        // Force full page reload to ensure clean state
+        window.location.href = '/';
+    };
+
     const fetchYears = async () => {
         try {
             setLoading(true);
@@ -37,48 +45,44 @@ export const SchoolYearProvider: React.FC<{ children: ReactNode }> = ({ children
             setYears(response.data);
 
             console.log('🔍 [SchoolYearContext] Current year from state:', currentYear);
-            console.log('🔍 [SchoolYearContext] LocalStorage value:', localStorage.getItem('currentSchoolYear'));
 
-            // Auto-select first year if none selected
-            // Auto-select based on current date if none selected
-            if (!currentYear && response.data.length > 0) {
-                console.log('⚠️ [SchoolYearContext] No current year, auto-selecting...');
-                const now = new Date();
-                const month = now.getMonth(); // 0-11
-                const currentCalendarYear = now.getFullYear();
+            // Logic to determine the active year
+            // 1. Prioritize the one marked 'is_active' in DB
+            const activeYearFromDB = response.data.find((y: SchoolYear) => y.is_active);
 
-                // Logic: 
-                // Aug (7) to Dec (11) -> Start Year = Current Year
-                // Jan (0) to Jul (6) -> Start Year = Current Year - 1
-                const targetStartYear = month >= 7 ? currentCalendarYear : currentCalendarYear - 1;
-
-                const matchingYear = response.data.find((y: SchoolYear) => y.startYear === targetStartYear);
-
-                if (matchingYear) {
-                    console.log('✅ [SchoolYearContext] Found matching year:', matchingYear);
-                    selectYear(matchingYear);
-                } else {
-                    // Fallback to the most recent one (assuming list is sorted or just taking first)
-                    console.log('⚠️ [SchoolYearContext] No matching year, using first:', response.data[0]);
+            if (!currentYear) {
+                if (activeYearFromDB) {
+                    console.log('✅ [SchoolYearContext] Found active year from DB:', activeYearFromDB);
+                    selectYear(activeYearFromDB);
+                } else if (response.data.length > 0) {
+                    // Fallback to first one if no active year
+                    console.log('⚠️ [SchoolYearContext] No active year, using first:', response.data[0]);
                     selectYear(response.data[0]);
+                } else {
+                    console.warn('⚠️ [SchoolYearContext] No years available in database!');
                 }
-            } else if (currentYear) {
-                console.log('✅ [SchoolYearContext] Using existing current year:', currentYear);
             } else {
-                console.warn('⚠️ [SchoolYearContext] No years available in database!');
+                // Verify if currentYear is still valid
+                const stillExists = response.data.find((y: SchoolYear) => y.id === currentYear.id);
+                if (!stillExists) {
+                    console.warn('⚠️ [SchoolYearContext] Current year invalid, resetting...');
+                    if (activeYearFromDB) {
+                        selectYear(activeYearFromDB);
+                    } else if (response.data.length > 0) {
+                        selectYear(response.data[0]);
+                    } else {
+                        setCurrentYear(null);
+                        localStorage.removeItem('currentSchoolYear');
+                    }
+                } else {
+                    console.log('✅ [SchoolYearContext] Using existing current year:', currentYear);
+                }
             }
         } catch (error) {
             console.error('❌ [SchoolYearContext] Failed to fetch school years:', error);
         } finally {
             setLoading(false);
         }
-    };
-
-    const selectYear = (year: SchoolYear) => {
-        setCurrentYear(year);
-        localStorage.setItem('currentSchoolYear', JSON.stringify(year));
-        // Force full page reload to ensure clean state
-        window.location.href = '/';
     };
 
     const createYear = async (name: string) => {

@@ -28,14 +28,14 @@ import { formatDate } from '../utils/formatDate';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Controller } from 'react-hook-form';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
-const schema = z.object({
-    nom: z.string().min(1, 'Nom de l\'évaluation requis'),
-    date_debut: z.string().min(1, 'Date de début requise'),
-    date_fin: z.string().min(1, 'Date de fin requise'),
+// We need to move schema creation inside the component or use a function to access t
+const createSchema = (t: any) => z.object({
+    nom: z.string().min(1, t('exams.evaluations.validation.nameRequired')),
+    date_debut: z.string().min(1, t('exams.evaluations.validation.startDateRequired')),
+    date_fin: z.string().min(1, t('exams.evaluations.validation.endDateRequired')),
 });
-
-type FormData = z.infer<typeof schema>;
 
 interface Evaluation {
     id: number;
@@ -45,6 +45,10 @@ interface Evaluation {
 }
 
 const EvaluationsTab: React.FC = () => {
+    const { t } = useTranslation();
+    const schema = createSchema(t);
+    type FormData = z.infer<typeof schema>;
+
     const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
     const [open, setOpen] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
@@ -67,7 +71,7 @@ const EvaluationsTab: React.FC = () => {
             setError('');
         } catch (err) {
             console.error('Error fetching evaluations', err);
-            setError('Erreur lors du chargement des évaluations');
+            setError(t('exams.evaluations.messages.loadError'));
         } finally {
             setLoading(false);
         }
@@ -85,7 +89,7 @@ const EvaluationsTab: React.FC = () => {
             setError('');
         } catch (err) {
             console.error('Error saving evaluation', err);
-            setError('Erreur lors de l\'enregistrement');
+            setError(t('exams.evaluations.messages.saveError'));
         }
     };
 
@@ -98,14 +102,14 @@ const EvaluationsTab: React.FC = () => {
     };
 
     const handleDelete = async (id: number) => {
-        if (confirm('Êtes-vous sûr de vouloir supprimer cette évaluation ?')) {
+        if (confirm(t('exams.evaluations.messages.deleteConfirm'))) {
             try {
                 await api.delete(`/evaluations/${id}`);
                 fetchData();
                 setError('');
             } catch (err) {
                 console.error('Error deleting evaluation', err);
-                setError('Erreur lors de la suppression');
+                setError(t('exams.evaluations.messages.deleteError'));
             }
         }
     };
@@ -133,7 +137,7 @@ const EvaluationsTab: React.FC = () => {
                     onClick={() => setOpen(true)}
                     sx={{ backgroundColor: '#d32f2f', '&:hover': { backgroundColor: '#b71c1c' } }}
                 >
-                    Ajouter une évaluation
+                    {t('exams.evaluations.actions.add')}
                 </Button>
             </Box>
 
@@ -143,10 +147,10 @@ const EvaluationsTab: React.FC = () => {
                 <Table size="small" stickyHeader>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Évaluation</TableCell>
-                            <TableCell>Date de début</TableCell>
-                            <TableCell>Date de fin</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell>{t('exams.evaluations.table.name')}</TableCell>
+                            <TableCell>{t('exams.evaluations.fields.startDate')}</TableCell>
+                            <TableCell>{t('exams.evaluations.fields.endDate')}</TableCell>
+                            <TableCell>{t('exams.common.actions')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -168,7 +172,7 @@ const EvaluationsTab: React.FC = () => {
                         {evaluations.length === 0 && (
                             <TableRow>
                                 <TableCell colSpan={4} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                                    Aucune évaluation créée
+                                    {t('exams.evaluations.messages.noEvaluations')}
                                 </TableCell>
                             </TableRow>
                         )}
@@ -177,11 +181,11 @@ const EvaluationsTab: React.FC = () => {
             </TableContainer>
 
             <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-                <DialogTitle>{editingId ? 'Modifier l\'évaluation' : 'Ajouter une évaluation'}</DialogTitle>
+                <DialogTitle>{editingId ? t('exams.evaluations.titles.edit') : t('exams.evaluations.titles.add')}</DialogTitle>
                 <DialogContent>
                     <Box component="form" sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                         <TextField
-                            label="Nom de l'évaluation"
+                            label={t('exams.evaluations.fields.name')}
                             {...register('nom')}
                             error={!!errors.nom}
                             helperText={errors.nom?.message}
@@ -192,7 +196,7 @@ const EvaluationsTab: React.FC = () => {
                             name="date_debut"
                             render={({ field }) => (
                                 <DatePicker
-                                    label="Date de début"
+                                    label={t('exams.evaluations.fields.startDate')}
                                     value={field.value ? dayjs(field.value) : null}
                                     onChange={(newValue) => field.onChange(newValue ? newValue.format('YYYY-MM-DD') : '')}
                                     slotProps={{
@@ -211,7 +215,7 @@ const EvaluationsTab: React.FC = () => {
                             name="date_fin"
                             render={({ field }) => (
                                 <DatePicker
-                                    label="Date de fin"
+                                    label={t('exams.evaluations.fields.endDate')}
                                     value={field.value ? dayjs(field.value) : null}
                                     onChange={(newValue) => field.onChange(newValue ? newValue.format('YYYY-MM-DD') : '')}
                                     slotProps={{
@@ -228,9 +232,9 @@ const EvaluationsTab: React.FC = () => {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Annuler</Button>
+                    <Button onClick={handleClose}>{t('exams.common.cancel')}</Button>
                     <Button onClick={handleSubmit(onSubmit)} variant="contained" sx={{ bgcolor: '#d32f2f', '&:hover': { bgcolor: '#b71c1c' } }}>
-                        {editingId ? 'Modifier' : 'Ajouter'}
+                        {editingId ? t('exams.common.edit') : t('exams.common.add')}
                     </Button>
                 </DialogActions>
             </Dialog>

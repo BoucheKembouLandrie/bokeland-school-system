@@ -42,11 +42,12 @@ import localLicenseRoutes from './routes/licenseRoutes';
 import { checkLicense } from './services/licenseService';
 
 // Initialize License Check on Startup
-checkLicense(true).then(status => {
-    console.log('--- LICENSE STATUS ---');
-    console.log(status);
-    console.log('----------------------');
-});
+// Initialize License Check on Startup - MOVED TO SERVER.TS
+// checkLicense(true).then(status => {
+//     console.log('--- LICENSE STATUS ---');
+//     console.log(status);
+//     console.log('----------------------');
+// });
 
 // Apply License Middleware globally (it will skip its own routes internally)
 app.use(licenseMiddleware);
@@ -138,6 +139,8 @@ import suggestionRoutes from './routes/suggestionRoutes';
 import dataRoutes from './routes/dataRoutes';
 import schoolYearRoutes from './routes/schoolYearRoutes';
 import scheduleRoutes from './routes/scheduleRoutes';
+import onboardingRoutes from './routes/onboardingRoutes';
+console.log('Finished importing routes in app.ts');
 import path from 'path';
 
 app.use('/api/auth', authRoutes);
@@ -146,6 +149,7 @@ app.use('/api/classes', classRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/grades', gradeRoutes);
+app.use('/api/notes', gradeRoutes); // Alias for frontend compatibility
 app.use('/api/payments', paymentRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/settings', settingsRoutes);
@@ -155,6 +159,7 @@ app.use('/api/staff', staffRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/suggestions', suggestionRoutes);
 app.use('/api/data', dataRoutes);
+app.use('/api/onboarding', onboardingRoutes);
 import examRuleRoutes from './routes/examRuleRoutes';
 
 // ... existing routes ...

@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
 import Teachers from './Teachers';
 import Administration from './Administration';
+import { useTranslation } from 'react-i18next';
 
 const Staff: React.FC = () => {
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState(0);
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -23,14 +25,14 @@ const Staff: React.FC = () => {
                     }}
                 >
                     <Tab
-                        label="Enseignants"
+                        label={t('staff.tabs.teachers')}
                         sx={{
                             '&.Mui-selected': { color: '#c2185b' },
                             color: 'text.secondary'
                         }}
                     />
                     <Tab
-                        label="Administration"
+                        label={t('staff.tabs.administration')}
                         sx={{
                             '&.Mui-selected': { color: '#c2185b' },
                             color: 'text.secondary'

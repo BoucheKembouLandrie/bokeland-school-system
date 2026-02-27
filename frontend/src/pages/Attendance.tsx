@@ -30,16 +30,17 @@ import api from '../services/api';
 import { formatDate } from '../utils/formatDate';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
-const schema = z.object({
-    date: z.string().min(1, 'Date requise'),
-    classe_id: z.string().min(1, 'Classe requise'),
-    eleve_id: z.string().min(1, 'Élève requis'),
-    motif: z.string().min(1, 'Motif requis'),
-    time: z.string().min(1, 'Heure requise'),
+const createSchema = (t: any) => z.object({
+    date: z.string().min(1, t('attendance.validation.dateRequired')),
+    classe_id: z.string().min(1, t('attendance.validation.classRequired')),
+    eleve_id: z.string().min(1, t('attendance.validation.studentRequired')),
+    motif: z.string().min(1, t('attendance.validation.reasonRequired')),
+    time: z.string().min(1, t('attendance.validation.timeRequired')),
 });
 
-type FormData = z.infer<typeof schema>;
+type FormData = z.infer<ReturnType<typeof createSchema>>;
 
 interface Attendance {
     id: number;
@@ -64,6 +65,8 @@ interface Class {
 }
 
 const Attendance: React.FC = () => {
+    const { t } = useTranslation();
+    const schema = createSchema(t);
     const [attendances, setAttendances] = useState<Attendance[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
     const [classes, setClasses] = useState<Class[]>([]);
@@ -121,30 +124,39 @@ const Attendance: React.FC = () => {
             setError('');
         } catch (err) {
             console.error('Error fetching data', err);
-            setError('Erreur lors du chargement des données');
+            setError(t('attendance.messages.loadError'));
         } finally {
             setLoading(false);
         }
     };
 
     const onSubmit = async (data: FormData) => {
+        console.log("=== ATTENDANCE FORM SUBMIT ===");
+        console.log("Form data:", data);
+
         try {
             const payload = {
                 ...data,
                 statut: 'retard',
             };
+            console.log("Payload to send:", payload);
 
             if (editingId) {
+                console.log("Updating attendance ID:", editingId);
                 await api.put(`/attendance/${editingId}`, payload);
             } else {
-                await api.post('/attendance', payload);
+                console.log("Creating new attendance...");
+                const response = await api.post('/attendance', payload);
+                console.log("✅ Response:", response.data);
             }
             fetchData();
             handleClose();
             setError('');
-        } catch (err) {
-            console.error('Error saving attendance', err);
-            setError('Erreur lors de l\'enregistrement');
+        } catch (err: any) {
+            console.error('❌ Error saving attendance:', err);
+            console.error('Error response:', err.response?.data);
+            console.error('Error status:', err.response?.status);
+            setError(t('attendance.messages.saveError'));
         }
     };
 
@@ -165,14 +177,14 @@ const Attendance: React.FC = () => {
     };
 
     const handleDelete = async (id: number) => {
-        if (confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement ?')) {
+        if (confirm(t('attendance.messages.deleteConfirm'))) {
             try {
                 await api.delete(`/attendance/${id}`);
                 fetchData();
                 setError('');
             } catch (err) {
                 console.error('Error deleting attendance', err);
-                setError('Erreur lors de la suppression');
+                setError(t('attendance.messages.deleteError'));
             }
         }
     };
@@ -215,7 +227,7 @@ const Attendance: React.FC = () => {
                     onClick={() => setOpen(true)}
                     sx={{ backgroundColor: '#1e88e5', '&:hover': { backgroundColor: '#1565c0' } }}
                 >
-                    Ajouter une présence
+                    {t('attendance.actions.addAttendance')}
                 </Button>
             </Box>
 
@@ -226,7 +238,7 @@ const Attendance: React.FC = () => {
                 <Grid container spacing={2} alignItems="center">
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <DatePicker
-                            label="Date"
+                            label={t('attendance.fields.date')}
                             value={filterDate ? dayjs(filterDate) : null}
                             onChange={(newValue) => setFilterDate(newValue ? newValue.format('YYYY-MM-DD') : '')}
                             slotProps={{ textField: { fullWidth: true, InputLabelProps: { shrink: true } } }}
@@ -235,7 +247,7 @@ const Attendance: React.FC = () => {
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <TextField
                             select
-                            label="Classe"
+                            label={t('attendance.fields.class')}
                             fullWidth
                             value={filterClass}
                             onChange={(e) => {
@@ -245,7 +257,7 @@ const Attendance: React.FC = () => {
                             SelectProps={{ displayEmpty: true }}
                             InputLabelProps={{ shrink: true }}
                         >
-                            <MenuItem value="">Toutes les classes</MenuItem>
+                            <MenuItem value="">{t('attendance.fields.allClasses')}</MenuItem>
                             {classes.map((cls) => (
                                 <MenuItem key={cls.id} value={cls.id.toString()}>{cls.libelle}</MenuItem>
                             ))}
@@ -261,11 +273,11 @@ const Attendance: React.FC = () => {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="Élève"
+                                    label={t('attendance.fields.student')}
                                     InputLabelProps={{ shrink: true }}
                                 />
                             )}
-                            noOptionsText="Aucun élève trouvé"
+                            noOptionsText={t('attendance.messages.noStudentFound')}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                         />
                     </Grid>
@@ -280,7 +292,7 @@ const Attendance: React.FC = () => {
                             }}
                             sx={{ height: '56px' }}
                         >
-                            Réinitialiser
+                            {t('attendance.actions.reset')}
                         </Button>
                     </Grid>
                 </Grid>
@@ -290,11 +302,11 @@ const Attendance: React.FC = () => {
                 <Table size="small" stickyHeader>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Nom</TableCell>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Motif</TableCell>
-                            <TableCell>Periode</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell>{t('attendance.fields.name')}</TableCell>
+                            <TableCell>{t('attendance.fields.date')}</TableCell>
+                            <TableCell>{t('attendance.fields.reason')}</TableCell>
+                            <TableCell>{t('attendance.fields.period')}</TableCell>
+                            <TableCell>{t('attendance.fields.actions')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -321,7 +333,7 @@ const Attendance: React.FC = () => {
             </TableContainer>
 
             <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-                <DialogTitle>{editingId ? 'Modifier la présence' : 'Ajouter une présence'}</DialogTitle>
+                <DialogTitle>{editingId ? t('attendance.titles.edit') : t('attendance.titles.add')}</DialogTitle>
                 <DialogContent>
                     <Box component="form" sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                         <Controller
@@ -330,7 +342,7 @@ const Attendance: React.FC = () => {
                             defaultValue={new Date().toISOString().split('T')[0]}
                             render={({ field }) => (
                                 <DatePicker
-                                    label="Date"
+                                    label={t('attendance.fields.date')}
                                     value={field.value ? dayjs(field.value) : null}
                                     onChange={(newValue) => field.onChange(newValue ? newValue.format('YYYY-MM-DD') : '')}
                                     slotProps={{
@@ -346,14 +358,14 @@ const Attendance: React.FC = () => {
                         />
                         <TextField
                             select
-                            label="Classe"
+                            label={t('attendance.fields.class')}
                             {...register('classe_id')}
                             error={!!errors.classe_id}
                             helperText={errors.classe_id?.message}
                             fullWidth
                             defaultValue=""
                         >
-                            <MenuItem value="">Sélectionner une classe</MenuItem>
+                            <MenuItem value="">{t('attendance.fields.selectClass')}</MenuItem>
                             {classes.map((cls) => (
                                 <MenuItem key={cls.id} value={cls.id.toString()}>
                                     {cls.libelle}
@@ -369,30 +381,30 @@ const Attendance: React.FC = () => {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="Élève"
+                                    label={t('attendance.fields.student')}
                                     error={!!errors.eleve_id}
                                     helperText={errors.eleve_id?.message}
                                 />
                             )}
-                            noOptionsText="Aucun élève trouvé"
+                            noOptionsText={t('attendance.messages.noStudentFound')}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                         />
                         <TextField
                             select
-                            label="Motif"
+                            label={t('attendance.fields.reason')}
                             {...register('motif')}
                             error={!!errors.motif}
                             helperText={errors.motif?.message}
                             fullWidth
                             defaultValue="absence justifiée"
                         >
-                            <MenuItem value="absence justifiée">absence justifiée</MenuItem>
-                            <MenuItem value="absence non justifiée">absence non justifiée</MenuItem>
+                            <MenuItem value="absence justifiée">{t('attendance.reasons.justified')}</MenuItem>
+                            <MenuItem value="absence non justifiée">{t('attendance.reasons.unjustified')}</MenuItem>
                         </TextField>
                         <Box sx={{ display: 'flex', gap: 1 }}>
                             <TextField
                                 select
-                                label="Heure"
+                                label={t('attendance.fields.time')}
                                 {...register('time')}
                                 error={!!errors.time}
                                 helperText={errors.time?.message}
@@ -412,7 +424,7 @@ const Attendance: React.FC = () => {
                             </TextField>
                             <TextField
                                 select
-                                label="Minutes"
+                                label={t('attendance.fields.minutes')}
                                 sx={{ flex: 1 }}
                                 value={watch('time')?.split(':')[1] || ''}
                                 onChange={(e) => {
@@ -431,9 +443,17 @@ const Attendance: React.FC = () => {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Annuler</Button>
-                    <Button onClick={handleSubmit(onSubmit)} variant="contained">
-                        {editingId ? 'Modifier' : 'Enregistrer'}
+                    <Button onClick={handleClose}>{t('attendance.actions.cancel')}</Button>
+                    <Button
+                        onClick={() => {
+                            console.log("Save button clicked!");
+                            console.log("Form errors:", errors);
+                            console.log("Form values:", watch());
+                            handleSubmit(onSubmit)();
+                        }}
+                        variant="contained"
+                    >
+                        {editingId ? t('attendance.actions.edit') : t('attendance.actions.save')}
                     </Button>
                 </DialogActions>
             </Dialog>

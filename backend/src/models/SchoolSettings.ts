@@ -15,6 +15,12 @@ class SchoolSettings extends Model {
     public license_status!: string;
     public license_expiration_date!: Date;
     public license_check_date!: Date;
+
+    // Onboarding Fields
+    public country_code!: string;
+    public country!: string;
+    public language!: string;
+    public is_onboarding_complete!: boolean;
 }
 
 SchoolSettings.init({
@@ -63,6 +69,23 @@ SchoolSettings.init({
         type: DataTypes.STRING,
         allowNull: true,
         defaultValue: 'dd/mm/yyyy',
+    },
+    country_code: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    country: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    language: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: 'fr',
+    },
+    is_onboarding_complete: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
     },
 }, {
     sequelize,

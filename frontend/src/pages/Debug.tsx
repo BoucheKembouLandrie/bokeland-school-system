@@ -59,7 +59,7 @@ const Debug: React.FC = () => {
             )}
 
             <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Paper sx={{ p: 2 }}>
                         <Typography variant="h6">Frontend State</Typography>
                         <pre>{JSON.stringify({
@@ -70,7 +70,7 @@ const Debug: React.FC = () => {
                     </Paper>
                 </Grid>
 
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Paper sx={{ p: 2 }}>
                         <Typography variant="h6">Backend Status (Port 5006)</Typography>
                         {status ? (
@@ -81,17 +81,17 @@ const Debug: React.FC = () => {
                     </Paper>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                     <Paper sx={{ p: 2 }}>
                         <Typography variant="h6">Data Accessibility Check</Typography>
                         <Grid container>
-                            <Grid item xs={4}>
+                            <Grid size={4}>
                                 <Typography>Students: <b>{counts.students !== undefined ? counts.students : '...'}</b></Typography>
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid size={4}>
                                 <Typography>Classes: <b>{counts.classes !== undefined ? counts.classes : '...'}</b></Typography>
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid size={4}>
                                 <Typography>Teachers: <b>{counts.teachers !== undefined ? counts.teachers : '...'}</b></Typography>
                             </Grid>
                         </Grid>

@@ -3,15 +3,16 @@ import { SchoolSettings } from '../models';
 import path from 'path';
 import fs from 'fs';
 
+// Forced update
 export const getSettings = async (req: Request, res: Response) => {
     try {
         let settings = await SchoolSettings.findOne();
         if (!settings) {
             settings = await SchoolSettings.create({
-                school_name: 'LEUANA SCHOOL',
-                website: 'https://leuanaschool.com',
-                address: 'situé à carrefour bata nlongkak',
-                phone: '+237690189297',
+                school_name: 'Bokeland School System',
+                website: '',
+                address: '',
+                phone: '',
                 logo_url: ''
             });
         }
@@ -23,13 +24,13 @@ export const getSettings = async (req: Request, res: Response) => {
 
 export const updateSettings = async (req: Request, res: Response) => {
     try {
-        const { school_name, website, address, phone, email } = req.body;
+        const { school_name, website, address, phone, email, country_code, date_format } = req.body;
         let settings = await SchoolSettings.findOne();
 
         if (!settings) {
             settings = await SchoolSettings.create(req.body);
         } else {
-            await settings.update({ school_name, website, address, phone, email });
+            await settings.update({ school_name, website, address, phone, email, country_code, date_format });
         }
 
         res.json(settings);

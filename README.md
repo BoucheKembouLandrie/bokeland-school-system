@@ -1,6 +1,7 @@
-# Leuana School - Système de Gestion Scolaire
+# Bokeland School System
 
-Système complet de gestion scolaire développé avec React (TypeScript) pour le frontend et Node.js (Express) pour le backend.
+Système de gestion scolaire complet (ERP) pour les établissements d'enseignement secondaire au Cameroun.
+Bokeland School System permet de gérer les élèves, les enseignants, les classes, les notes, les emplois du temps, les finances et bien plus encore.s
 
 ## 📋 Table des matières
 
@@ -339,7 +340,7 @@ Déployer le contenu du dossier `dist/` sur :
 
 ## 📝 Notes importantes
 
-- Tous les noms "marc-school" ont été remplacés par "leuana-school"
+- Tous les noms "leuana-school" ont été remplacés par "bokeland-school-system"
 - Les matricules sont générés automatiquement au format `LEU-YYYY-XXXX`
 - Le système utilise JWT pour l'authentification
 - Les mots de passe sont hashés avec bcrypt (10 rounds)
@@ -354,8 +355,8 @@ Déployer le contenu du dossier `dist/` sur :
 
 ## 📄 Licence
 
-Projet propriétaire - Leuana School © 2024-2025
+Projet propriétaire - Bokeland School System © 2024-2025
 
 ---
 
-**Développé pour Leuana School** - Système de gestion scolaire moderne et complet
+**Développé pour Bokeland School System** - Système de gestion scolaire moderne et complet

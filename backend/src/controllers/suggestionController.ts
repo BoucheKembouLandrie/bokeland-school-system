@@ -10,14 +10,14 @@ export const sendSuggestion = async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'Tous les champs sont requis' });
         }
 
-        // Create transporter (support generic SMTP or Gmail)
+        // Create transporter using environment variables
         const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST || 'smtp.gmail.com',
-            port: parseInt(process.env.SMTP_PORT || '587'),
+            host: process.env.SMTP_HOST,
+            port: parseInt(process.env.SMTP_PORT || '465'),
             secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
             auth: {
-                user: process.env.EMAIL_USER || 'suggestion@bokeland.com',
-                pass: process.env.EMAIL_PASSWORD || 'your-app-password'
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD
             },
             tls: {
                 rejectUnauthorized: false
@@ -26,8 +26,8 @@ export const sendSuggestion = async (req: Request, res: Response) => {
 
         // Email options
         const mailOptions = {
-            from: 'suggestion@bokeland.com',
-            to: 'client-form@bokeland.com',
+            from: process.env.EMAIL_FROM || process.env.EMAIL_USER, // Use the configured sender
+            to: 'client-form@bokeland.com', // Keep this or make it configurable if needed
             subject: 'boite à suggestion du logiciel scolaire',
             text: `Nom: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
             html: `

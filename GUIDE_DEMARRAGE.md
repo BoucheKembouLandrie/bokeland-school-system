@@ -1,8 +1,8 @@
-# Guide de démarrage rapide - Leuana School
+# Guide de démarrage rapide - Bokeland School System
 
 ## 🎉 Félicitations !
 
-Votre application Leuana School fonctionne maintenant ! Voici ce qui est opérationnel :
+Votre application Bokeland School System fonctionne maintenant ! Voici ce qui est opérationnel :
 
 ## ✅ Ce qui fonctionne actuellement
 

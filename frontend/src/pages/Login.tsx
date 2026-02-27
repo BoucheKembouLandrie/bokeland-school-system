@@ -7,6 +7,7 @@ import {
     Dialog, DialogTitle, DialogContent, DialogActions,
     RadioGroup, FormControlLabel, Radio, Alert
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import api from '../services/api';
@@ -30,6 +31,7 @@ const CAROUSEL_IMAGES = [
 ];
 
 const Login: React.FC = () => {
+    const { t } = useTranslation();
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema),
     });
@@ -70,7 +72,7 @@ const Login: React.FC = () => {
             navigate('/');
         } catch (err) {
             console.error('Login failed', err);
-            setError('Identifiants incorrects');
+            setError(t('login.error'));
         }
     };
 
@@ -90,7 +92,7 @@ const Login: React.FC = () => {
     const handleForgotPasswordSubmit = async () => {
         if (selectedRole === 'admin') {
             if (!email || !email.includes('@')) {
-                setForgotPasswordMessage({ type: 'error', text: 'Veuillez entrer une adresse email valide' });
+                setForgotPasswordMessage({ type: 'error', text: t('welcome.validation.invalidEmail') });
                 return;
             }
 
@@ -99,7 +101,7 @@ const Login: React.FC = () => {
                 await api.post('/auth/forgot-password', { email, role: 'admin' });
                 setForgotPasswordMessage({
                     type: 'success',
-                    text: 'Un email de réinitialisation a été envoyé à votre adresse email.'
+                    text: 'Un email de réinitialisation a été envoyé à votre adresse email.' // Consider adding this to translations later if critical
                 });
                 setEmail('');
             } catch (error) {
@@ -173,12 +175,12 @@ const Login: React.FC = () => {
                     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', p: 4, bgcolor: '#008888', position: 'relative' }}>
                         <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: '100%', maxWidth: 350 }}>
                             <Typography component="h1" variant="h5" sx={{ mb: 4, textAlign: 'center', color: 'white' }}>
-                                Connexion
+                                {t('login.title')}
                             </Typography>
                             <TextField
                                 margin="normal"
                                 fullWidth
-                                label="Nom d'utilisateur"
+                                label={t('login.username')}
                                 autoComplete="username"
                                 autoFocus
                                 {...register('username')}
@@ -199,7 +201,7 @@ const Login: React.FC = () => {
                             <TextField
                                 margin="normal"
                                 fullWidth
-                                label="Mot de passe"
+                                label={t('login.password')}
                                 type="password"
                                 autoComplete="current-password"
                                 {...register('password')}
@@ -232,7 +234,7 @@ const Login: React.FC = () => {
                                     }
                                 }}
                             >
-                                se connecter
+                                {t('login.submit')}
                             </Button>
 
                             {error && (
@@ -255,7 +257,7 @@ const Login: React.FC = () => {
                                         }
                                     }}
                                 >
-                                    Mot de passe oublié ?
+                                    {t('login.forgotPassword')}
                                 </Button>
                             </Box>
                         </Box>
@@ -276,13 +278,13 @@ const Login: React.FC = () => {
                                 sx={{ color: 'rgba(255, 255, 255, 0.8)', cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
                                 onClick={() => alert('Mentions légales à venir')}
                             >
-                                Mentions légales
+                                {t('login.mentions')}
                             </Typography>
                             <Typography
                                 variant="caption"
                                 sx={{ color: 'rgba(255, 255, 255, 0.6)' }}
                             >
-                                Version 1.0.0
+                                {t('login.version')}
                             </Typography>
                         </Box>
                     </Box>

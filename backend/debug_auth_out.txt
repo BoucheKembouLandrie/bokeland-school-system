@@ -1,0 +1,10 @@
+Starting...
+Modules loaded.
+✅ User "admin" found.
+🔄 Resetting password to "Admin@123"...
+✅ Password updated.
+🔐 Password Comparison ('Admin@123' vs hash): ✅ MATCH
+🔑 Using JWT Secret (first 2 chars): le...
+🎫 Token generated.
+✅ Token Verified successfully!
+   Payload: {"id":1,"role":"admin","iat":1770602233,"exp":1770688633}

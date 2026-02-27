@@ -7,12 +7,19 @@ import SchoolYear from '../models/SchoolYear';
 export const getAllSubjects = async (req: Request, res: Response) => {
     try {
         const schoolYearId = req.headers['x-school-year-id'];
+        const classId = req.query.classe_id;
+
         if (!schoolYearId) {
             return res.status(400).json({ message: 'School Year ID is required' });
         }
 
+        const whereClause: any = { school_year_id: schoolYearId };
+        if (classId) {
+            whereClause.classe_id = classId;
+        }
+
         const subjects = await Subject.findAll({
-            where: { school_year_id: schoolYearId },
+            where: whereClause,
             include: [
                 { model: Teacher, as: 'teacher' },
                 { model: Class, as: 'class' }

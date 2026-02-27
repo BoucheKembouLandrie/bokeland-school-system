@@ -24,16 +24,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import api from '../services/api';
-
-const schema = z.object({
-    nom: z.string().min(1, 'Nom requis'),
-    prenom: z.string().min(1, 'Prénom requis'),
-    tel: z.string().min(1, 'Téléphone requis'),
-    email: z.string().email('Email invalide').min(1, 'Email requis'),
-    salaire: z.string().min(1, 'Salaire requis'),
-});
-
-type FormData = z.infer<typeof schema>;
+import { useTranslation } from 'react-i18next';
 
 interface Teacher {
     id: number;
@@ -45,11 +36,22 @@ interface Teacher {
 }
 
 const Teachers: React.FC = () => {
+    const { t } = useTranslation();
     const [teachers, setTeachers] = useState<Teacher[]>([]);
     const [open, setOpen] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    const schema = z.object({
+        nom: z.string().min(1, t('teachers.validation.nomRequired')),
+        prenom: z.string().min(1, t('teachers.validation.prenomRequired')),
+        tel: z.string().min(1, t('teachers.validation.telRequired')),
+        email: z.string().email(t('teachers.validation.emailInvalid')).min(1, t('teachers.validation.emailRequired')),
+        salaire: z.string().min(1, t('teachers.validation.salaryRequired')),
+    });
+
+    type FormData = z.infer<typeof schema>;
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema),
@@ -67,7 +69,7 @@ const Teachers: React.FC = () => {
             setError('');
         } catch (err) {
             console.error('Error fetching teachers', err);
-            setError('Erreur lors du chargement des enseignants');
+            setError(t('teachers.messages.loadError'));
         } finally {
             setLoading(false);
         }
@@ -85,7 +87,7 @@ const Teachers: React.FC = () => {
             setError('');
         } catch (err) {
             console.error('Error saving teacher', err);
-            setError('Erreur lors de l\'enregistrement');
+            setError(t('teachers.messages.saveError'));
         }
     };
 
@@ -102,14 +104,14 @@ const Teachers: React.FC = () => {
     };
 
     const handleDelete = async (id: number) => {
-        if (confirm('Êtes-vous sûr de vouloir supprimer cet enseignant ?')) {
+        if (confirm(t('teachers.messages.deleteConfirm'))) {
             try {
                 await api.delete(`/teachers/${id}`);
                 fetchTeachers();
                 setError('');
             } catch (err) {
                 console.error('Error deleting teacher', err);
-                setError('Erreur lors de la suppression');
+                setError(t('teachers.messages.deleteError'));
             }
         }
     };
@@ -138,7 +140,7 @@ const Teachers: React.FC = () => {
                     onClick={() => setOpen(true)}
                     sx={{ backgroundColor: '#c2185b', '&:hover': { backgroundColor: '#ad1457' } }}
                 >
-                    Nouvel enseignant
+                    {t('teachers.actions.newTeacher')}
                 </Button>
             </Box>
 
@@ -148,12 +150,12 @@ const Teachers: React.FC = () => {
                 <Table size="small" stickyHeader>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Nom</TableCell>
-                            <TableCell>Prénom</TableCell>
-                            <TableCell>Téléphone</TableCell>
-                            <TableCell>Email</TableCell>
-                            <TableCell>Salaire</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell>{t('teachers.fields.nom')}</TableCell>
+                            <TableCell>{t('teachers.fields.prenom')}</TableCell>
+                            <TableCell>{t('teachers.fields.tel')}</TableCell>
+                            <TableCell>{t('teachers.fields.email')}</TableCell>
+                            <TableCell>{t('teachers.fields.salary')}</TableCell>
+                            <TableCell>{t('teachers.fields.actions')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -179,51 +181,51 @@ const Teachers: React.FC = () => {
             </TableContainer>
 
             <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-                <DialogTitle>{editingId ? 'Modifier l\'enseignant' : 'Ajouter un enseignant'}</DialogTitle>
+                <DialogTitle>{editingId ? t('teachers.titles.edit') : t('teachers.titles.add')}</DialogTitle>
                 <DialogContent>
                     <Box component="form" sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                         <TextField
-                            label="Nom"
+                            label={t('teachers.fields.nom')}
                             {...register('nom')}
                             error={!!errors.nom}
-                            helperText={errors.nom?.message}
+                            helperText={errors.nom?.message?.toString()}
                             fullWidth
                         />
                         <TextField
-                            label="Prénom"
+                            label={t('teachers.fields.prenom')}
                             {...register('prenom')}
                             error={!!errors.prenom}
-                            helperText={errors.prenom?.message}
+                            helperText={errors.prenom?.message?.toString()}
                             fullWidth
                         />
                         <TextField
-                            label="Téléphone"
+                            label={t('teachers.fields.tel')}
                             {...register('tel')}
                             error={!!errors.tel}
-                            helperText={errors.tel?.message}
+                            helperText={errors.tel?.message?.toString()}
                             fullWidth
                         />
                         <TextField
-                            label="Email"
+                            label={t('teachers.fields.email')}
                             {...register('email')}
                             error={!!errors.email}
-                            helperText={errors.email?.message}
+                            helperText={errors.email?.message?.toString()}
                             fullWidth
                         />
                         <TextField
-                            label="Salaire"
+                            label={t('teachers.fields.salary')}
                             {...register('salaire')}
                             error={!!errors.salaire}
-                            helperText={errors.salaire?.message}
+                            helperText={errors.salaire?.message?.toString()}
                             fullWidth
                             type="number"
                         />
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Annuler</Button>
+                    <Button onClick={handleClose}>{t('teachers.actions.cancel')}</Button>
                     <Button onClick={handleSubmit(onSubmit)} variant="contained">
-                        {editingId ? 'Modifier' : 'Ajouter'}
+                        {editingId ? t('teachers.actions.edit') : t('teachers.actions.add')}
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import api from '../services/api';
 import { useSchoolYear } from '../contexts/SchoolYearContext';
+import { useTranslation } from 'react-i18next';
 
 interface SubjectTransferModalProps {
     open: boolean;
@@ -14,6 +15,7 @@ interface SubjectTransferModalProps {
 }
 
 const SubjectTransferModal: React.FC<SubjectTransferModalProps> = ({ open, onClose }) => {
+    const { t } = useTranslation();
     const { currentYear } = useSchoolYear();
 
     // Source State
@@ -114,9 +116,9 @@ const SubjectTransferModal: React.FC<SubjectTransferModalProps> = ({ open, onClo
 
             const res = await api.post('/subjects/action/transfer', payload);
 
-            let msg = `Transfert réussi ! ${res.data.count} matière(s) transférée(s).`;
+            let msg = `${t('dashboard.transferModals.messages.success')} ${res.data.count} ${t('dashboard.sidebar.subjects').toLowerCase()} transférée(s).`;
             if (res.data.classesCreated > 0) {
-                msg += ` ${res.data.classesCreated} classe(s) créée(s) automatiquement.`;
+                msg += ` ${res.data.classesCreated} ${t('dashboard.sidebar.classes').toLowerCase()} créée(s) automatiquement.`;
             }
             setMessage({ type: 'success', text: msg });
 
@@ -130,7 +132,7 @@ const SubjectTransferModal: React.FC<SubjectTransferModalProps> = ({ open, onClo
             setSelectAll(false);
 
         } catch (error) {
-            setMessage({ type: 'error', text: 'Erreur lors du transfert.' });
+            setMessage({ type: 'error', text: t('dashboard.transferModals.messages.error') });
             console.error(error);
         } finally {
             setTransferring(false);
@@ -139,7 +141,7 @@ const SubjectTransferModal: React.FC<SubjectTransferModalProps> = ({ open, onClo
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xl" fullWidth>
-            <DialogTitle>Transfert de Matières</DialogTitle>
+            <DialogTitle>{t('dashboard.transferModals.titles.subjects')}</DialogTitle>
             <DialogContent dividers>
                 {transferring && <LinearProgress sx={{ mb: 2 }} />}
                 {message && <Alert severity={message.type} sx={{ mb: 2 }}>{message.text}</Alert>}
@@ -148,10 +150,10 @@ const SubjectTransferModal: React.FC<SubjectTransferModalProps> = ({ open, onClo
 
                     {/* LEFT: SOURCE */}
                     <Grid size={{ xs: 6 }} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                        <Typography variant="h6" gutterBottom>Source (Année Courante)</Typography>
+                        <Typography variant="h6" gutterBottom>{t('dashboard.transferModals.source')}</Typography>
 
                         <Box sx={{ mb: 2 }}>
-                            <Typography variant="subtitle2" sx={{ mb: 1 }}>Sélectionner les matières</Typography>
+                            <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('dashboard.transferModals.select.subjects')}</Typography>
                         </Box>
 
                         {/* Select All Checkbox */}
@@ -166,7 +168,7 @@ const SubjectTransferModal: React.FC<SubjectTransferModalProps> = ({ open, onClo
                                             disableRipple
                                         />
                                     </ListItemIcon>
-                                    <ListItemText primary="Toutes les matières" primaryTypographyProps={{ fontWeight: 'bold' }} />
+                                    <ListItemText primary={t('dashboard.transferModals.select.allSubjects')} primaryTypographyProps={{ fontWeight: 'bold' }} />
                                 </ListItemButton>
                             </ListItem>
                         </Box>
@@ -197,7 +199,7 @@ const SubjectTransferModal: React.FC<SubjectTransferModalProps> = ({ open, onClo
                                     </ListItem>
                                 ))}
                                 {sourceSubjects.length === 0 && !loading && (
-                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>Aucune matière</Typography>
+                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>{t('dashboard.transferModals.empty.subjects')}</Typography>
                                 )}
                             </List>
                         </Paper>
@@ -205,12 +207,12 @@ const SubjectTransferModal: React.FC<SubjectTransferModalProps> = ({ open, onClo
 
                     {/* RIGHT: DESTINATION */}
                     <Grid size={{ xs: 6 }} sx={{ display: 'flex', flexDirection: 'column', height: '100%', borderLeft: '1px solid #eee', pl: 3 }}>
-                        <Typography variant="h6" gutterBottom>Destination</Typography>
+                        <Typography variant="h6" gutterBottom>{t('dashboard.transferModals.destination')}</Typography>
 
                         <Box sx={{ mb: 2 }}>
                             <TextField
                                 select
-                                label="Année Scolaire"
+                                label={t('dashboard.transferModals.schoolYear')}
                                 fullWidth
                                 value={destYearId}
                                 onChange={(e) => setDestYearId(e.target.value)}
@@ -222,10 +224,10 @@ const SubjectTransferModal: React.FC<SubjectTransferModalProps> = ({ open, onClo
                         </Box>
 
                         <Alert severity="info" sx={{ mb: 2 }}>
-                            Note: Les matières transférées devront être réassignées à des enseignants et classes dans la nouvelle année.
+                            {t('dashboard.transferModals.messages.subjectWarning')}
                         </Alert>
 
-                        <Typography variant="subtitle2" sx={{ mb: 1 }}>Matières dans l'année de destination :</Typography>
+                        <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('dashboard.transferModals.destinationLabel.subjects')}</Typography>
 
                         <Paper sx={{ flexGrow: 1, overflow: 'auto', bgcolor: '#f5f5f5', border: '1px solid #ddd' }}>
                             <List dense>
@@ -240,7 +242,7 @@ const SubjectTransferModal: React.FC<SubjectTransferModalProps> = ({ open, onClo
                                     </ListItem>
                                 ))}
                                 {destSubjects.length === 0 && (
-                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>Aucune matière</Typography>
+                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>{t('dashboard.transferModals.empty.subjects')}</Typography>
                                 )}
                             </List>
                         </Paper>
@@ -248,13 +250,13 @@ const SubjectTransferModal: React.FC<SubjectTransferModalProps> = ({ open, onClo
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Annuler</Button>
+                <Button onClick={onClose}>{t('dashboard.transferModals.cancel')}</Button>
                 <Button
                     variant="contained"
                     onClick={handleTransfer}
                     disabled={transferring || selectedSubjectIds.length === 0 || !destYearId}
                 >
-                    Valider le transfert {selectedSubjectIds.length > 0 && `(${selectedSubjectIds.length})`}
+                    {t('dashboard.transferModals.validate')} {selectedSubjectIds.length > 0 && `(${selectedSubjectIds.length})`}
                 </Button>
             </DialogActions>
         </Dialog>

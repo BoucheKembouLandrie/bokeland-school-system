@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 import { Edit, Save, Cancel, CloudDownload, CloudUpload, DeleteForever } from '@mui/icons-material';
 import api from '../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface SchoolSettings {
     id: number;
@@ -33,12 +34,14 @@ interface SchoolSettings {
     email: string;
     logo_url: string;
     date_format: string;
+    country_code?: string;
 }
 
 import { useSettings } from '../contexts/SettingsContext';
 import { BASE_URL } from '../config';
 
 const Settings: React.FC = () => {
+    const { t } = useTranslation();
     const { refreshSettings } = useSettings();
     const [settings, setSettings] = useState<SchoolSettings | null>(null);
     const [loading, setLoading] = useState(true);
@@ -66,7 +69,7 @@ const Settings: React.FC = () => {
             setSettings(response.data);
         } catch (err) {
             console.error('Error fetching settings', err);
-            setError('Erreur lors du chargement des paramètres.');
+            setError(t('settings.messages.loadError'));
         } finally {
             setLoading(false);
         }
@@ -90,12 +93,12 @@ const Settings: React.FC = () => {
             await api.put('/settings', updatedSettings);
             setSettings(updatedSettings);
             await refreshSettings();
-            setSuccess('Paramètre mis à jour avec succès.');
+            setSuccess(t('settings.messages.updateSuccess'));
             setEditingField(null);
             setTimeout(() => setSuccess(''), 3000);
         } catch (err) {
             console.error('Error updating settings', err);
-            setError('Erreur lors de la mise à jour.');
+            setError(t('settings.messages.updateError'));
             setTimeout(() => setError(''), 3000);
         }
     };
@@ -205,11 +208,11 @@ const Settings: React.FC = () => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             setProgress(100);
-            setSuccess('Importation réussie.');
+            setSuccess(t('settings.messages.importSuccess'));
             setTimeout(() => setSuccess(''), 3000);
         } catch (err) {
             console.error('Import error', err);
-            setError('Erreur lors de l\'importation. Vérifiez le fichier.');
+            setError(t('settings.messages.importError'));
             setTimeout(() => setError(''), 3000);
         } finally {
             clearInterval(interval);
@@ -225,12 +228,12 @@ const Settings: React.FC = () => {
         try {
             await api.delete('/data/reset');
             setProgress(100);
-            setSuccess('Base de données vidée avec succès.');
+            setSuccess(t('settings.messages.resetSuccess'));
             setTimeout(() => setSuccess(''), 3000);
             // Optionally force logout or refresh
         } catch (err) {
             console.error('Reset error', err);
-            setError('Erreur lors de la réinitialisation.');
+            setError(t('settings.messages.resetError'));
             setTimeout(() => setError(''), 3000);
         } finally {
             clearInterval(interval);
@@ -260,22 +263,20 @@ const Settings: React.FC = () => {
             }
 
             if (field === 'phone') {
-                // Parse existing value if needed, or simple text for now with country selector helper?
-                // Request said: "ask to select country to identify country code and then write number"
                 return (
                     <Box sx={{ display: 'flex', gap: 1 }}>
                         <FormControl size="small" sx={{ width: 120 }}>
                             <Select
-                                defaultValue="+237"
+                                defaultValue={settings?.country_code || "+237"}
                                 onChange={(e) => {
-                                    // Prepend code if not present? 
-                                    // Actually, let's just use this to set the prefix in the main input
                                     const code = e.target.value;
-                                    setEditValue(prev => {
-                                        // simple logic: replace old code or just prepend? 
-                                        // Let's just set the editValue to the code and let user type rest
-                                        return code + " ";
-                                    });
+                                    // Immediate update for country code
+                                    if (settings) {
+                                        api.put('/settings', { ...settings, country_code: code }).then(() => {
+                                            refreshSettings();
+                                            setSettings(prev => prev ? ({ ...prev, country_code: code }) : null);
+                                        }).catch(console.error);
+                                    }
                                 }}
                             >
                                 <MenuItem value="+237">🇨🇲 +237</MenuItem>
@@ -284,6 +285,8 @@ const Settings: React.FC = () => {
                                 <MenuItem value="+235">🇹🇩 +235</MenuItem>
                                 <MenuItem value="+33">🇫🇷 +33</MenuItem>
                                 <MenuItem value="+1">🇺🇸 +1</MenuItem>
+                                <MenuItem value="+221">🇸🇳 +221</MenuItem>
+                                <MenuItem value="+225">🇨🇮 +225</MenuItem>
                             </Select>
                         </FormControl>
                         <TextField
@@ -292,7 +295,7 @@ const Settings: React.FC = () => {
                             onChange={(e) => setEditValue(e.target.value)}
                             size="small"
                             autoFocus
-                            placeholder="+237 600000000"
+                            placeholder={t('settings.fields.phonePlaceholder')}
                         />
                     </Box>
                 );
@@ -326,7 +329,11 @@ const Settings: React.FC = () => {
                     {editingField === field ? (
                         renderEditInput()
                     ) : (
-                        <Typography variant="body1">{value || '-'}</Typography>
+                        <Typography variant="body1">
+                            {field === 'phone' && settings?.country_code
+                                ? `${settings.country_code} ${value}`
+                                : value || '-'}
+                        </Typography>
                     )}
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1, pr: 2 }}>
@@ -352,16 +359,19 @@ const Settings: React.FC = () => {
     };
 
     return (
-        <Box>
+        <Box sx={{ p: 4 }}>
 
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
+            <Typography variant="h5" sx={{ mb: 4, fontWeight: 'bold' }}>
+                {t('settings.title')}
+            </Typography>
             <Paper sx={{ p: 4, mb: 4, border: '1px solid #e0e0e0' }}>
                 {/* Logo Section */}
                 <Box sx={{ mb: 4 }}>
                     <Typography variant="subtitle2" sx={{ mb: 1, color: 'text.secondary' }}>
-                        logo (taille recommandée à 111 x 111 px)
+                        {t('settings.logoHelp')}
                     </Typography>
                     <Box
                         sx={{
@@ -379,16 +389,20 @@ const Settings: React.FC = () => {
                     >
                         {settings?.logo_url ? (
                             <img
-                                src={`${BASE_URL}${settings.logo_url}`}
+                                src={settings.logo_url === '/default-logo.png' ? '/default-logo.png' : `${BASE_URL}${settings.logo_url}`}
                                 alt="Logo"
                                 style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                             />
                         ) : (
-                            <Box sx={{ width: 100, height: 100, borderRadius: '50%', border: '1px solid #000' }} />
+                            <Box sx={{ width: 100, height: 100, borderRadius: '50%', border: '1px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {/* Optional: Add text or icon here */}
+                                <Typography variant="caption" color="text.secondary">Logo</Typography>
+                            </Box>
                         )}
 
                         {/* Edit Icon Overlay */}
                         <Box
+                            className="upload-overlay"
                             sx={{
                                 position: 'absolute',
                                 bottom: 5,
@@ -397,7 +411,9 @@ const Settings: React.FC = () => {
                                 borderRadius: '50%',
                                 p: 0.5,
                                 boxShadow: 1,
-                                display: 'flex'
+                                display: 'flex',
+                                opacity: 0,
+                                transition: 'opacity 0.2s'
                             }}
                         >
                             <Edit fontSize="small" color="action" />
@@ -414,25 +430,25 @@ const Settings: React.FC = () => {
 
                 {/* Fields List */}
                 <Box sx={{ border: '1px solid #e0e0e0', borderBottom: 'none' }}>
-                    {renderFieldRow("Nom de l'établissement", 'school_name', settings?.school_name || '', 0)}
-                    {renderFieldRow("site internet", 'website', settings?.website || '', 1)}
-                    {renderFieldRow("localisation", 'address', settings?.address || '', 2)}
-                    {renderFieldRow("numero de téléphone", 'phone', settings?.phone || '', 3, 'phone')}
-                    {renderFieldRow("adresse email", 'email', settings?.email || '', 4)}
-                    {renderFieldRow("format de date", 'date_format', settings?.date_format || 'dd/mm/yyyy', 5, 'select')}
+                    {renderFieldRow(t('settings.fields.schoolName'), 'school_name', settings?.school_name || '', 0)}
+                    {renderFieldRow(t('settings.fields.website'), 'website', settings?.website || '', 1)}
+                    {renderFieldRow(t('settings.fields.address'), 'address', settings?.address || '', 2)}
+                    {renderFieldRow(t('settings.fields.phone'), 'phone', settings?.phone || '', 3, 'phone')}
+                    {renderFieldRow(t('settings.fields.email'), 'email', settings?.email || '', 4)}
+                    {renderFieldRow(t('settings.fields.dateFormat'), 'date_format', settings?.date_format || 'dd/mm/yyyy', 5, 'select')}
                 </Box>
             </Paper>
 
             {/* Data Management Section */}
             <Paper sx={{ p: 4, mb: 4, border: '1px solid #e0e0e0' }}>
                 <Typography variant="h6" sx={{ mb: 3 }}>
-                    Gestion des Données
+                    {t('settings.dataManagement.title')}
                 </Typography>
 
                 {processing && (
                     <Box sx={{ width: '100%', mb: 3 }}>
                         <Typography variant="body2" color="text.secondary" gutterBottom>
-                            Traitement en cours...
+                            {t('settings.messages.processing')}
                         </Typography>
                         <LinearProgress variant="determinate" value={progress} />
                     </Box>
@@ -445,7 +461,7 @@ const Settings: React.FC = () => {
                         onClick={handleExport}
                         disabled={processing}
                     >
-                        Exporter les données
+                        {t('settings.dataManagement.export')}
                     </Button>
 
                     <Button
@@ -454,7 +470,7 @@ const Settings: React.FC = () => {
                         onClick={handleImportClick}
                         disabled={processing}
                     >
-                        Importer des données
+                        {t('settings.dataManagement.import')}
                     </Button>
                     <input
                         type="file"
@@ -472,7 +488,7 @@ const Settings: React.FC = () => {
                         disabled={processing}
                         sx={{ ml: 'auto' }}
                     >
-                        Supprimer les données
+                        {t('settings.dataManagement.delete')}
                     </Button>
                 </Box>
             </Paper>
@@ -484,10 +500,10 @@ const Settings: React.FC = () => {
                 maxWidth="sm"
                 fullWidth
             >
-                <DialogTitle>Mode d'importation</DialogTitle>
+                <DialogTitle>{t('settings.importDialog.title')}</DialogTitle>
                 <DialogContent>
                     <DialogContentText sx={{ mb: 3 }}>
-                        Des données existent déjà dans la base de données. Comment voulez-vous gérer les enregistrements en double ?
+                        {t('settings.importDialog.description')}
                     </DialogContentText>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                         <Button
@@ -497,9 +513,9 @@ const Settings: React.FC = () => {
                             sx={{ justifyContent: 'flex-start', textAlign: 'left', py: 2 }}
                         >
                             <Box>
-                                <Typography variant="subtitle1" fontWeight="bold">Ignorer les doublons</Typography>
+                                <Typography variant="subtitle1" fontWeight="bold">{t('settings.importDialog.skipTitle')}</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Ne pas importer les enregistrements qui ont le même ID
+                                    {t('settings.importDialog.skipDescription')}
                                 </Typography>
                             </Box>
                         </Button>
@@ -510,9 +526,9 @@ const Settings: React.FC = () => {
                             sx={{ justifyContent: 'flex-start', textAlign: 'left', py: 2 }}
                         >
                             <Box>
-                                <Typography variant="subtitle1" fontWeight="bold">Mettre à jour les existants</Typography>
+                                <Typography variant="subtitle1" fontWeight="bold">{t('settings.importDialog.updateTitle')}</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Remplacer les données existantes avec celles du fichier
+                                    {t('settings.importDialog.updateDescription')}
                                 </Typography>
                             </Box>
                         </Button>
@@ -523,9 +539,9 @@ const Settings: React.FC = () => {
                             sx={{ justifyContent: 'flex-start', textAlign: 'left', py: 2 }}
                         >
                             <Box>
-                                <Typography variant="subtitle1" fontWeight="bold">Créer des doublons</Typography>
+                                <Typography variant="subtitle1" fontWeight="bold">{t('settings.importDialog.duplicateTitle')}</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Créer de nouveaux enregistrements avec de nouveaux IDs
+                                    {t('settings.importDialog.duplicateDescription')}
                                 </Typography>
                             </Box>
                         </Button>
@@ -533,7 +549,7 @@ const Settings: React.FC = () => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenImportModeDialog(false)}>
-                        Annuler
+                        {t('settings.importDialog.cancel')}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -543,19 +559,18 @@ const Settings: React.FC = () => {
                 open={openResetDialog}
                 onClose={() => setOpenResetDialog(false)}
             >
-                <DialogTitle>Confirmation de suppression</DialogTitle>
+                <DialogTitle>{t('settings.resetDialog.title')}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Êtes-vous sûr de vouloir supprimer TOUTES les données du logiciel ?
-                        Cette action est irréversible et effacera tous les élèves, classes, notes, paiements, etc.
+                        {t('settings.resetDialog.description')}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenResetDialog(false)} color="primary">
-                        Annuler
+                        {t('settings.resetDialog.cancel')}
                     </Button>
                     <Button onClick={handleResetConfirm} color="error" variant="contained" autoFocus>
-                        Confirmer la suppression
+                        {t('settings.resetDialog.confirm')}
                     </Button>
                 </DialogActions>
             </Dialog>

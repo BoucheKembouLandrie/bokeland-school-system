@@ -52,9 +52,9 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
     const fetchData = async () => {
         try {
             const [clientsRes, statsRes, configRes] = await Promise.all([
-                axios.get('http://localhost:3001/api/admin/clients'),
-                axios.get('http://localhost:3001/api/admin/stats'),
-                axios.get('http://localhost:3001/api/admin/config')
+                axios.get('http://localhost:5005/api/admin/clients'),
+                axios.get('http://localhost:5005/api/admin/stats'),
+                axios.get('http://localhost:5005/api/admin/config')
             ]);
             setClients(clientsRes.data);
             setStats(statsRes.data);
@@ -67,7 +67,7 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
     const handleUpdateRate = async () => {
         setConfigLoading(true);
         try {
-            await axios.put('http://localhost:3001/api/admin/config', {
+            await axios.put('http://localhost:5005/api/admin/config', {
                 annual_subscription_rate: annualRate
             });
             alert('Tarif mis à jour avec succès');
@@ -106,7 +106,7 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
                         return;
                     }
                     // For TRIAL, we use updateClientStatus (no payment record needed)
-                    await axios.put(`http://localhost:3001/api/admin/clients/${selectedClient.id}`, {
+                    await axios.put(`http://localhost:5005/api/admin/clients/${selectedClient.id}`, {
                         status: newStatus,
                         days: days
                     });
@@ -129,14 +129,14 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
                     };
                     console.log('Sending Payment Payload:', payload);
 
-                    await axios.post('http://localhost:3001/api/admin/payments', payload);
+                    await axios.post('http://localhost:5005/api/admin/payments', payload);
                 } else {
                     alert("L'extension n'est pas autorisée pour ce statut.");
                     return;
                 }
             } else {
                 // Just status update without extension
-                await axios.put(`http://localhost:3001/api/admin/clients/${selectedClient.id}`, {
+                await axios.put(`http://localhost:5005/api/admin/clients/${selectedClient.id}`, {
                     status: newStatus
                 });
             }
@@ -156,7 +156,7 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
         if (!confirm('Are you sure you want to delete this client?')) return;
 
         try {
-            await axios.delete(`http://localhost:3001/api/admin/clients/${id}`);
+            await axios.delete(`http://localhost:5005/api/admin/clients/${id}`);
             fetchData();
         } catch (error) {
             console.error('Error deleting client', error);
@@ -188,6 +188,7 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
                     <Tab label="Clients" />
                     <Tab label="Finances" />
                     <Tab label="Configuration" />
+                    <Tab label="Déploiement" />
                 </Tabs>
             </AppBar>
 
@@ -269,7 +270,11 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
                                                     size="small"
                                                 />
                                             </TableCell>
-                                            <TableCell>{new Date(client.subscription_end_date).toLocaleDateString()}</TableCell>
+                                            <TableCell>
+                                                {client.subscription_end_date
+                                                    ? new Date(client.subscription_end_date).toLocaleDateString()
+                                                    : 'N/A'}
+                                            </TableCell>
                                             <TableCell>{client.last_checkin ? new Date(client.last_checkin).toLocaleString() : 'Never'}</TableCell>
                                             <TableCell align="right">
                                                 <IconButton size="small" onClick={() => handleEdit(client)}>
@@ -292,136 +297,143 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
 
             {
                 currentTab === 2 && (
-                    <Box sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
-                        <Paper sx={{ p: 4 }}>
-                            <Typography variant="h6" gutterBottom>
-                                Configuration Globale
-                            </Typography>
-                            <Box sx={{ my: 3 }}>
-                                <TextField
-                                    fullWidth
-                                    label="Tarif Annuel d'Abonnement (FCFA)"
-                                    type="number"
-                                    value={annualRate}
-                                    onChange={(e) => setAnnualRate(e.target.value)}
-                                    helperText="Ce montant sera affiché aux utilisateurs pour le renouvellement."
-                                />
-                            </Box>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleUpdateRate}
-                                disabled={configLoading}
-                            >
-                                {configLoading ? 'Mise à jour...' : 'Sauvegarder les modifications'}
-                            </Button>
-                        </Paper>
-
-                        {/* Logo Configuration */}
-                        <Paper sx={{ p: 4, mt: 3 }}>
-                            <Typography variant="h6" gutterBottom>
-                                Logo de l'Entreprise
-                            </Typography>
-                            <Box sx={{ my: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                                { /* Display Current Logo if known (we need to fetch it separately or assume path) */}
-                                {/* For simplicity, we just show a preview if a file is selected or let user upload to see changes */}
-                                <img
-                                    src="http://localhost:3001/uploads/company_logo.png"
-                                    alt="Logo"
-                                    style={{ maxWidth: 200, maxHeight: 100, objectFit: 'contain', border: '1px dashed #ccc' }}
-                                    onError={(e) => (e.currentTarget.style.display = 'none')}
-                                    key={Date.now()} // Force refresh on re-render
-                                />
-
-                                <input
-                                    accept="image/*"
-                                    style={{ display: 'none' }}
-                                    id="raised-button-file"
-                                    type="file"
-                                    onChange={async (e) => {
-                                        if (e.target.files && e.target.files[0]) {
-                                            const file = e.target.files[0];
-                                            const formData = new FormData();
-                                            formData.append('logo', file);
-
-                                            try {
-                                                await axios.post('http://localhost:3001/api/admin/config/logo', formData, {
-                                                    headers: { 'Content-Type': 'multipart/form-data' }
-                                                });
-                                                alert('Logo mis à jour avec succès');
-                                                // Trigger re-render or reload image
-                                                fetchData();
-                                            } catch (error) {
-                                                console.error('Upload error', error);
-                                                alert('Erreur lors du téléchargement du logo');
-                                            }
-                                        }
-                                    }}
-                                />
-                                <label htmlFor="raised-button-file">
-                                    <Button variant="outlined" component="span" startIcon={<Edit />}>
-                                        Changer le Logo
+                    <Box sx={{ p: 3 }}>
+                        <Box sx={{ display: 'flex', gap: 3 }}>
+                            {/* Tarif Column */}
+                            <Box sx={{ flex: 1 }}>
+                                <Paper sx={{ p: 4, height: '100%' }}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Configuration Globale
+                                    </Typography>
+                                    <Box sx={{ my: 3 }}>
+                                        <TextField
+                                            fullWidth
+                                            label="Tarif Annuel d'Abonnement (FCFA)"
+                                            type="number"
+                                            value={annualRate}
+                                            onChange={(e) => setAnnualRate(e.target.value)}
+                                            helperText="Ce montant sera affiché aux utilisateurs pour le renouvellement."
+                                        />
+                                    </Box>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={handleUpdateRate}
+                                        disabled={configLoading}
+                                        fullWidth
+                                    >
+                                        {configLoading ? 'Mise à jour...' : 'Sauvegarder'}
                                     </Button>
-                                </label>
-                                <Typography variant="caption" color="textSecondary">
-                                    Format: PNG (recommandé), JPG. Le logo sera visible sur les factures PDF.
-                                </Typography>
+                                </Paper>
                             </Box>
-                        </Paper>
 
-                        {/* Signature Configuration */}
-                        <Paper sx={{ p: 4, mt: 3 }}>
-                            <Typography variant="h6" gutterBottom>
-                                Signature de l'Entreprise
-                            </Typography>
-                            <Box sx={{ my: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                                <img
-                                    src="http://localhost:3001/uploads/company_signature.png"
-                                    alt="Signature"
-                                    style={{ maxWidth: 200, maxHeight: 100, objectFit: 'contain', border: '1px dashed #ccc' }}
-                                    onError={(e) => (e.currentTarget.style.display = 'none')}
-                                    key={Date.now() + 'sig'} // Force refresh on re-render
-                                />
+                            {/* Logo Column */}
+                            <Box sx={{ flex: 1 }}>
+                                <Paper sx={{ p: 4, height: '100%' }}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Logo de l'Entreprise
+                                    </Typography>
+                                    <Box sx={{ my: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                                        <img
+                                            src="http://localhost:5005/uploads/company_logo.png"
+                                            alt="Logo"
+                                            style={{ maxWidth: 200, maxHeight: 100, objectFit: 'contain', border: '1px dashed #ccc' }}
+                                            onError={(e) => (e.currentTarget.style.display = 'none')}
+                                            key={Date.now()}
+                                        />
 
-                                <input
-                                    accept="image/*"
-                                    style={{ display: 'none' }}
-                                    id="raised-button-file-signature"
-                                    type="file"
-                                    onChange={async (e) => {
-                                        if (e.target.files && e.target.files[0]) {
-                                            const file = e.target.files[0];
-                                            const formData = new FormData();
-                                            formData.append('signature', file);
+                                        <input
+                                            accept="image/*"
+                                            style={{ display: 'none' }}
+                                            id="raised-button-file"
+                                            type="file"
+                                            onChange={async (e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    const file = e.target.files[0];
+                                                    const formData = new FormData();
+                                                    formData.append('logo', file);
 
-                                            try {
-                                                await axios.post('http://localhost:3001/api/admin/config/signature', formData, {
-                                                    headers: { 'Content-Type': 'multipart/form-data' }
-                                                });
-                                                alert('Signature mise à jour avec succès');
-                                                // Trigger re-render or reload image
-                                                fetchData();
-                                            } catch (error) {
-                                                console.error('Upload error', error);
-                                                alert('Erreur lors du téléchargement de la signature');
-                                            }
-                                        }
-                                    }}
-                                />
-                                <label htmlFor="raised-button-file-signature">
-                                    <Button variant="outlined" component="span" startIcon={<Edit />}>
-                                        Changer la Signature
-                                    </Button>
-                                </label>
-                                <Typography variant="caption" color="textSecondary">
-                                    Format: PNG (transparent recommandé). Apparaîtra au bas des reçus.
-                                </Typography>
+                                                    try {
+                                                        await axios.post('http://localhost:5005/api/admin/config/logo', formData, {
+                                                            headers: { 'Content-Type': 'multipart/form-data' }
+                                                        });
+                                                        alert('Logo mis à jour avec succès');
+                                                        fetchData();
+                                                    } catch (error) {
+                                                        console.error('Upload error', error);
+                                                        alert('Erreur lors du téléchargement du logo');
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                        <label htmlFor="raised-button-file">
+                                            <Button variant="outlined" component="span" startIcon={<Edit />} fullWidth>
+                                                Changer le Logo
+                                            </Button>
+                                        </label>
+                                        <Typography variant="caption" color="textSecondary" align="center">
+                                            Format: PNG (recommandé), JPG
+                                        </Typography>
+                                    </Box>
+                                </Paper>
                             </Box>
-                        </Paper>
+
+                            {/* Signature Column */}
+                            <Box sx={{ flex: 1 }}>
+                                <Paper sx={{ p: 4, height: '100%' }}>
+                                    <Typography variant="h6" gutterBottom>
+                                        Signature de l'Entreprise
+                                    </Typography>
+                                    <Box sx={{ my: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                                        <img
+                                            src="http://localhost:5005/uploads/company_signature.png"
+                                            alt="Signature"
+                                            style={{ maxWidth: 200, maxHeight: 100, objectFit: 'contain', border: '1px dashed #ccc' }}
+                                            onError={(e) => (e.currentTarget.style.display = 'none')}
+                                            key={Date.now() + 'sig'}
+                                        />
+
+                                        <input
+                                            accept="image/*"
+                                            style={{ display: 'none' }}
+                                            id="raised-button-file-signature"
+                                            type="file"
+                                            onChange={async (e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    const file = e.target.files[0];
+                                                    const formData = new FormData();
+                                                    formData.append('signature', file);
+
+                                                    try {
+                                                        await axios.post('http://localhost:5005/api/admin/config/signature', formData, {
+                                                            headers: { 'Content-Type': 'multipart/form-data' }
+                                                        });
+                                                        alert('Signature mise à jour avec succès');
+                                                        fetchData();
+                                                    } catch (error) {
+                                                        console.error('Upload error', error);
+                                                        alert('Erreur lors du téléchargement de la signature');
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                        <label htmlFor="raised-button-file-signature">
+                                            <Button variant="outlined" component="span" startIcon={<Edit />} fullWidth>
+                                                Changer la Signature
+                                            </Button>
+                                        </label>
+                                        <Typography variant="caption" color="textSecondary" align="center">
+                                            Format: PNG (transparent)
+                                        </Typography>
+                                    </Box>
+                                </Paper>
+                            </Box>
+                        </Box>
                     </Box>
                 )
             }
 
+            {currentTab === 3 && <DeploymentTab />}
 
             <Dialog open={editDialog} onClose={() => setEditDialog(false)}>
                 <DialogTitle>Edit Client: {selectedClient?.school_name}</DialogTitle>
@@ -487,3 +499,146 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
 };
 
 export default DashboardPage;
+
+
+function DeploymentTab() {
+    const [latestVersion, setLatestVersion] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [history, setHistory] = useState<any[]>([]);
+
+    const fetchHistory = async () => {
+        try {
+            const res = await axios.get('http://localhost:5005/api/admin/updates/history');
+            setHistory(res.data);
+        } catch (error) {
+            console.error('Failed to fetch history', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchHistory();
+    }, []);
+
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || !e.target.files[0]) return;
+
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('updateFile', file);
+
+        setLoading(true);
+        try {
+            await axios.post('http://localhost:5005/api/admin/updates/upload', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            alert(`Fichier ${file.name} téléversé avec succès !`);
+            fetchHistory(); // Refresh list
+        } catch (error) {
+            console.error('Update upload error', error);
+            alert("Erreur lors de l'envoi de la mise à jour");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Box sx={{ p: 4 }}>
+            <Typography variant="h5" gutterBottom>
+                Centre de Déploiement (OTA)
+            </Typography>
+            <Typography color="text.secondary" paragraph>
+                Déposez ici les nouvelles versions de l'application. Les clients les téléchargeront automatiquement.
+            </Typography>
+
+
+            <Box sx={{ display: 'flex', gap: 3, mb: 4 }}>
+                <Box sx={{ flex: 1 }}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>1. Fichier de Version (.yml)</Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                Le fichier <code>latest.yml</code> généré par electron-builder. Il indique aux clients qu'une nouvelle version existe.
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                component="label"
+                                fullWidth
+                                disabled={loading}
+                            >
+                                {loading ? 'Envoi...' : 'Uploader latest.yml'}
+                                <input type="file" hidden accept=".yml" onChange={handleUpload} />
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </Box>
+
+                <Box sx={{ flex: 1 }}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>2. Installateur (.exe)</Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                L'exécutable d'installation (ex: <code>LeuanaSchool-Setup-1.0.2.exe</code>).
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                component="label"
+                                fullWidth
+                                disabled={loading}
+                            >
+                                {loading ? 'Envoi...' : 'Uploader l\'Installateur (.exe)'}
+                                <input type="file" hidden accept=".exe" onChange={handleUpload} />
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </Box>
+            </Box>
+
+
+            {/* History Table */}
+            <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>Historique des Versions</Typography>
+            <TableContainer component={Paper}>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Date</TableCell>
+                            <TableCell>Fichier</TableCell>
+                            <TableCell>Type</TableCell>
+                            <TableCell>Version Détectée</TableCell>
+                            <TableCell align="right">Taille</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {history.map((item) => (
+                            <TableRow key={item.id} hover>
+                                <TableCell>{new Date(item.createdAt).toLocaleString()}</TableCell>
+                                <TableCell>{item.filename}</TableCell>
+                                <TableCell>
+                                    <Chip
+                                        label={item.type}
+                                        color={item.type === 'yml' ? 'primary' : 'secondary'}
+                                        size="small"
+                                    />
+                                </TableCell>
+                                <TableCell>{item.version || '-'}</TableCell>
+                                <TableCell align="right">{(item.size / 1024 / 1024).toFixed(2)} MB</TableCell>
+                            </TableRow>
+                        ))}
+                        {history.length === 0 && (
+                            <TableRow>
+                                <TableCell colSpan={5} align="center">Aucun historique disponible</TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            <Box sx={{ mt: 4, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
+                <Typography variant="subtitle2">URLs de Téléchargement Direct :</Typography>
+                <ul>
+                    <li><a href="http://localhost:5005/updates/latest.yml" target="_blank" rel="noreferrer">http://localhost:5005/updates/latest.yml</a></li>
+                </ul>
+            </Box>
+        </Box>
+    );
+}

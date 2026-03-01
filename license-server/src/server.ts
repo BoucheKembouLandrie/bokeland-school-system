@@ -18,6 +18,7 @@ import path from 'path';
 app.use(cors());
 app.use(express.json());
 app.use('/public', express.static(path.join(__dirname, '../public'))); // Serve uploaded files
+app.use(express.static(path.join(__dirname, '../public'))); // Serve root files like PDFs
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads'))); // Direct access if needed
 
 app.use('/api/license', licenseRoutes);

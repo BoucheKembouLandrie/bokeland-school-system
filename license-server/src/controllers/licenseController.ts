@@ -143,15 +143,24 @@ export const extendSubscription = async (req: Request, res: Response) => {
 
         const currentEnd = new Date(client.subscription_end_date);
         const now = new Date();
+        const isExpired = currentEnd < now;
 
-        // If expired, start from now. If active, extend from current end date.
-        const baseDate = currentEnd > now ? currentEnd : now;
+        // CRITICAL FIX: If expired, ALWAYS start fresh from today
+        // If still active, extend from current end date
+        const baseDate = isExpired ? now : currentEnd;
         const newEnd = new Date(baseDate);
         newEnd.setDate(newEnd.getDate() + (days || 444)); // Default 444 days
 
         client.subscription_end_date = newEnd;
         client.status = 'ACTIVE';
         await client.save();
+
+        console.log(`🔄 Subscription extended for ${client.school_name}:`, {
+            was_expired: isExpired,
+            old_expiration: currentEnd.toISOString(),
+            new_expiration: newEnd.toISOString(),
+            days_added: days || 444
+        });
 
         res.json({
             message: 'Subscription extended',

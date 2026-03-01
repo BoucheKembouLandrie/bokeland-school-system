@@ -60,8 +60,8 @@ const FinancesPage = () => {
             console.log('Fetching payments with params:', params);
 
             const [paymentsRes, summaryRes] = await Promise.all([
-                axios.get('http://localhost:3001/api/admin/payments', { params }),
-                axios.get('http://localhost:3001/api/admin/revenue/summary', { params: { start_date: params.start_date, end_date: params.end_date } })
+                axios.get('http://localhost:5005/api/admin/payments', { params }),
+                axios.get('http://localhost:5005/api/admin/revenue/summary', { params: { start_date: params.start_date, end_date: params.end_date } })
             ]);
 
             console.log('Received payments:', paymentsRes.data.length);
@@ -79,7 +79,7 @@ const FinancesPage = () => {
     const handleDownloadInvoice = async (payment: Payment) => {
         if (!payment.invoice_number) return;
         try {
-            const response = await axios.get(`http://localhost:3001/api/admin/payments/${payment.id}/invoice`, {
+            const response = await axios.get(`http://localhost:5005/api/admin/payments/${payment.id}/invoice`, {
                 responseType: 'blob'
             });
             const url = window.URL.createObjectURL(new Blob([response.data]));

@@ -21,7 +21,8 @@ import {
     MenuItem,
     Chip,
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, Visibility, VisibilityOff } from '@mui/icons-material';
+import { InputAdornment } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -37,7 +38,7 @@ const createSchema = (t: any) => z.object({
     permissions: z.array(z.string()).optional(),
 });
 
-type FormData = z.infer<typeof schema>;
+type FormData = z.infer<ReturnType<typeof createSchema>>;
 
 interface User {
     id: number;
@@ -60,6 +61,8 @@ const Users: React.FC = () => {
     const [error, setError] = useState('');
     const [selectedRole, setSelectedRole] = useState<string>('teacher');
     const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+    const [showPassword, setShowPassword] = useState(false);
+    const [isDefaultUser, setIsDefaultUser] = useState(false);
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema),
@@ -121,10 +124,10 @@ const Users: React.FC = () => {
     };
 
     const handleEdit = (user: User) => {
-        // Allow editing default admin (password/email)
         setEditingId(user.id);
         setSelectedRole(user.role);
         setSelectedPermissions(user.permissions || []);
+        setIsDefaultUser(!!user.is_default);
         reset({
             username: user.username,
             email: user.email || '',
@@ -158,6 +161,7 @@ const Users: React.FC = () => {
         setEditingId(null);
         setSelectedRole('teacher');
         setSelectedPermissions([]);
+        setIsDefaultUser(false);
         reset();
     };
 
@@ -222,7 +226,6 @@ const Users: React.FC = () => {
                                     <IconButton
                                         onClick={() => handleEdit(user)}
                                         color="primary"
-                                        disabled={user.is_default}
                                     >
                                         <Edit />
                                     </IconButton>
@@ -248,17 +251,40 @@ const Users: React.FC = () => {
                             label={t('users.fields.username')}
                             {...register('username')}
                             error={!!errors.username}
-                            helperText={errors.username?.message}
+                            helperText={isDefaultUser ? 'Non modifiable pour le compte par défaut' : errors.username?.message}
                             fullWidth
+                            disabled={isDefaultUser}
+                            sx={isDefaultUser ? { backgroundColor: '#f5f5f5' } : {}}
                         />
                         <TextField
                             label={t('users.fields.password')}
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             {...register('password')}
                             error={!!errors.password}
                             helperText={errors.password?.message}
                             fullWidth
                             placeholder={editingId ? t('users.fields.passwordPlaceholder') : ""}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={() => setShowPassword(prev => !prev)}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
+                        <TextField
+                            label={`${t('users.fields.email')} (${t('common.optional', 'optionnel')})`}
+                            type="email"
+                            {...register('email')}
+                            error={!!errors.email}
+                            helperText={errors.email?.message}
+                            fullWidth
+                            placeholder={t('users.fields.emailPlaceholder')}
                         />
                         <TextField
                             select
@@ -269,25 +295,15 @@ const Users: React.FC = () => {
                             fullWidth
                             value={selectedRole}
                             onChange={(e) => setSelectedRole(e.target.value)}
+                            disabled={isDefaultUser}
+                            sx={isDefaultUser ? { backgroundColor: '#f5f5f5' } : {}}
                         >
                             <MenuItem value="admin">{t('users.roles.admin')}</MenuItem>
                             <MenuItem value="secretary">{t('users.roles.secretary')}</MenuItem>
                             <MenuItem value="teacher">{t('users.roles.teacher')}</MenuItem>
                         </TextField>
 
-                        {selectedRole === 'admin' && (
-                            <TextField
-                                label={t('users.fields.email')}
-                                type="email"
-                                {...register('email')}
-                                error={!!errors.email}
-                                helperText={errors.email?.message}
-                                fullWidth
-                                placeholder={t('users.fields.emailPlaceholder')}
-                            />
-                        )}
-
-                        {selectedRole === 'teacher' && (
+                        {!isDefaultUser && selectedRole === 'teacher' && (
                             <TextField
                                 select
                                 label={t('users.fields.teacher')}
@@ -304,7 +320,7 @@ const Users: React.FC = () => {
                             </TextField>
                         )}
 
-                        {selectedRole === 'secretary' && (
+                        {!isDefaultUser && selectedRole === 'secretary' && (
                             <Box>
                                 <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('users.fields.permissions')}</Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>

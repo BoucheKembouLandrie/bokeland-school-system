@@ -21,8 +21,9 @@ import {
     MenuItem,
     Grid,
     Autocomplete,
+    Divider,
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, Print } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -195,11 +196,86 @@ const Attendance: React.FC = () => {
         reset();
     };
 
+    const [showPrintPreview, setShowPrintPreview] = useState(false);
+
+    const doPrint = () => {
+        const rows = filteredAttendances.map(attendance => `
+            <tr>
+                <td>${attendance.student ? `${attendance.student.nom} ${attendance.student.prenom}` : 'N/A'}</td>
+                <td>${formatDate(attendance.date)}</td>
+                <td>${attendance.motif}</td>
+                <td>${attendance.time}</td>
+            </tr>
+        `).join('');
+
+        const classLabel = filterClass
+            ? classes.find(c => c.id.toString() === filterClass)?.libelle
+            : 'Toutes les classes';
+        const dateLabel = filterDate ? formatDate(filterDate) : '';
+        const subtitle = `${classLabel}${dateLabel ? ' | ' + dateLabel : ''}`;
+
+        const printContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Liste des Présences</title>
+                <style>
+                    body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 20px; color: #333; box-sizing: border-box; }
+                    h2 { text-align: center; margin-bottom: 4px; color: #1e88e5; font-size: 18px; }
+                    .subtitle { text-align: center; color: #888; margin-bottom: 20px; font-size: 11px; }
+                    table { width: 100%; border-collapse: collapse; margin: 0 auto; }
+                    th { background-color: #1e88e5; color: white; padding: 10px 8px; text-align: left; font-weight: 600; }
+                    td { padding: 7px 8px; border-bottom: 1px solid #e0e0e0; }
+                    tr { page-break-inside: avoid; }
+                    tr:nth-child(even) td { background-color: #ecf5fd; }
+                    @page { margin: 30mm 15mm; }
+                    @media print { 
+                        body { padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+                        thead { display: table-header-group; }
+                        tfoot { display: table-footer-group; }
+                    }
+                    .print-spacer { height: 30px !important; border: none !important; background-color: transparent !important; }
+                </style>
+            </head>
+            <body>
+                <h2>Liste des Présences</h2>
+                <p class="subtitle">${subtitle}</p>
+                <table>
+                    <thead>
+                        <tr><td colspan="4" class="print-spacer"></td></tr>
+                        <tr><th>Nom</th><th>Date</th><th>Motif</th><th>Période</th></tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+            </body>
+            </html>
+        `;
+
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.right = '0';
+        iframe.style.bottom = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+        const doc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (doc) {
+            doc.open();
+            doc.write(printContent);
+            doc.close();
+            setTimeout(() => {
+                iframe.contentWindow?.print();
+                setTimeout(() => document.body.removeChild(iframe), 1000);
+            }, 500);
+        }
+        setShowPrintPreview(false);
+    };
+
     // Filter attendances based on selected filters
     const filteredAttendances = attendances.filter(attendance => {
-        // Require Class Selection to show any data
-        if (!filterClass) return false;
-
         if (filterDate && attendance.date.split('T')[0] !== filterDate) return false;
 
         if (filterClass) {
@@ -283,16 +359,13 @@ const Attendance: React.FC = () => {
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Button
-                            variant="outlined"
+                            variant="contained"
                             fullWidth
-                            onClick={() => {
-                                setFilterDate('');
-                                setFilterClass('');
-                                setFilterStudent('');
-                            }}
-                            sx={{ height: '56px' }}
+                            startIcon={<Print />}
+                            onClick={() => setShowPrintPreview(true)}
+                            sx={{ backgroundColor: '#1e88e5', '&:hover': { backgroundColor: '#1565c0' }, height: '56px' }}
                         >
-                            {t('attendance.actions.reset')}
+                            Imprimer
                         </Button>
                     </Grid>
                 </Grid>
@@ -454,6 +527,82 @@ const Attendance: React.FC = () => {
                         variant="contained"
                     >
                         {editingId ? t('attendance.actions.edit') : t('attendance.actions.save')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Print Preview Dialog */}
+            <Dialog
+                open={showPrintPreview}
+                onClose={() => setShowPrintPreview(false)}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{ sx: { borderRadius: 3, overflow: 'hidden' } }}
+            >
+                <Box sx={{
+                    background: 'linear-gradient(135deg, #1565c0 0%, #1e88e5 60%, #42a5f5 100%)',
+                    px: 4, py: 2.5,
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                }}>
+                    <Box>
+                        <Typography variant="h6" sx={{ color: 'white', fontWeight: 700, letterSpacing: 1 }}>
+                            Aperçu d'impression
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.75)' }}>
+                            Liste des Présences — {filteredAttendances.length} enregistrement{filteredAttendances.length > 1 ? 's' : ''}
+                        </Typography>
+                    </Box>
+                    <Print sx={{ color: 'rgba(255,255,255,0.6)', fontSize: 32 }} />
+                </Box>
+
+                <DialogContent sx={{ p: 0, bgcolor: '#f8f9fa' }}>
+                    <Box sx={{ display: 'flex', borderBottom: '1px solid #e0e0e0' }}>
+                        <Box sx={{ flex: 1, px: 3, py: 1.5, textAlign: 'center' }}>
+                            <Typography variant="caption" color="text.secondary">Nombre de présences</Typography>
+                            <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e88e5' }}>{filteredAttendances.length}</Typography>
+                        </Box>
+                    </Box>
+                    <Box sx={{ maxHeight: 400, overflowY: 'auto', px: 2, py: 1.5 }}>
+                        <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                            <Table size="small">
+                                <TableHead>
+                                    <TableRow sx={{ backgroundColor: '#1e88e5' }}>
+                                        {['Nom', 'Date', 'Motif', 'Période'].map(h => (
+                                            <TableCell key={h} sx={{ color: 'white', fontWeight: 700, py: 1.2 }}>{h}</TableCell>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredAttendances.map((row, i) => (
+                                        <TableRow key={row.id} sx={{ bgcolor: i % 2 === 0 ? 'white' : '#ecf5fd' }}>
+                                            <TableCell sx={{ py: 0.8 }}>{row.student ? `${row.student.nom} ${row.student.prenom}` : 'N/A'}</TableCell>
+                                            <TableCell sx={{ whiteSpace: 'nowrap', py: 0.8 }}>{formatDate(row.date)}</TableCell>
+                                            <TableCell sx={{ py: 0.8 }}>{row.motif}</TableCell>
+                                            <TableCell sx={{ py: 0.8 }}>{row.time}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                    {filteredAttendances.length === 0 && (
+                                        <TableRow>
+                                            <TableCell colSpan={4} align="center" sx={{ py: 3, color: 'text.secondary' }}>
+                                                Aucune donnée à afficher
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                </DialogContent>
+
+                <Divider />
+                <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
+                    <Button onClick={() => setShowPrintPreview(false)} variant="outlined"
+                        sx={{ borderColor: '#1e88e5', color: '#1e88e5', '&:hover': { borderColor: '#1565c0', bgcolor: '#ecf5fd' } }}>
+                        Annuler
+                    </Button>
+                    <Button onClick={doPrint} variant="contained" startIcon={<Print />}
+                        sx={{ bgcolor: '#1e88e5', color: 'white', '&:hover': { bgcolor: '#1565c0' } }}>
+                        Imprimer
                     </Button>
                 </DialogActions>
             </Dialog>

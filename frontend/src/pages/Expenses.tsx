@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
     Box,
     Button,
@@ -25,8 +25,10 @@ import {
     FormControl,
     InputLabel,
     Chip,
+    Divider,
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, Print } from '@mui/icons-material';
+import Grid from '@mui/material/Grid';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -99,6 +101,7 @@ const Expenses: React.FC = () => {
     const [mode, setMode] = useState<'expense' | 'salary'>('expense');
     const [salaryType, setSalaryType] = useState<'teacher' | 'staff'>('teacher');
     const [selectedPersonId, setSelectedPersonId] = useState<string>('');
+    const [showPrintPreview, setShowPrintPreview] = useState(false);
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setActiveTab(newValue);
@@ -325,6 +328,125 @@ const Expenses: React.FC = () => {
             (expense.description && expense.description.toLowerCase().includes(searchTerm.toLowerCase())))
     );
 
+    const printData = (() => {
+        if (activeTab === 0) {
+            return {
+                title: 'Charges Diverses',
+                countLabel: 'Nombre de charges',
+                columns: ['Date', 'Titre', 'Description', 'Montant (FCFA)'],
+                rows: generalExpenses.map(exp => ({
+                    id: exp.id,
+                    col1: formatDate(exp.date_depense),
+                    col2: exp.titre,
+                    col3: exp.description || '—',
+                    montant: exp.montant
+                }))
+            };
+        } else {
+            return {
+                title: 'Salaires',
+                countLabel: 'Nombre de salaires',
+                columns: ['Date', 'Nom', 'Statut', 'Montant (FCFA)'],
+                rows: salaryExpenses.map(exp => {
+                    const teacherName = exp.teacher ? `${exp.teacher.nom} ${exp.teacher.prenom}` : '';
+                    const staffName = exp.staffMember ? `${exp.staffMember.nom} ${exp.staffMember.prenom}` : '';
+                    const name = teacherName || staffName || exp.titre;
+                    return {
+                        id: exp.id,
+                        col1: formatDate(exp.date_depense),
+                        col2: name,
+                        col3: 'Payé',
+                        montant: exp.montant
+                    };
+                })
+            };
+        }
+    })();
+
+    const handlePrintExpenses = () => {
+        setShowPrintPreview(true);
+    };
+
+    const doPrint = () => {
+        const rows = printData.rows.map(row => `
+            <tr>
+                <td>${row.col1}</td>
+                <td>${row.col2}</td>
+                <td>${row.col3}</td>
+                <td style="text-align:right">${Number(row.montant).toLocaleString()} FCFA</td>
+            </tr>
+        `).join('');
+
+        const totalAmount = printData.rows.reduce((sum, row) => sum + Number(row.montant), 0);
+        const dateFilter = (startDate || endDate)
+            ? `Période : ${startDate ? formatDate(startDate) : '...'} → ${endDate ? formatDate(endDate) : '...'}`
+            : 'Toutes les périodes';
+
+        const printContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>${printData.title}</title>
+                <style>
+                    body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; margin: 20px; color: #333; box-sizing: border-box; }
+                    h2 { text-align: center; margin-bottom: 4px; color: #5d4037; font-size: 18px; }
+                    .subtitle { text-align: center; color: #888; margin-bottom: 20px; font-size: 11px; }
+                    table { width: 100%; border-collapse: collapse; margin: 0 auto; }
+                    th { background-color: #795548; color: white; padding: 10px 8px; text-align: left; font-weight: 600; }
+                    td { padding: 7px 8px; border-bottom: 1px solid #ede0d2; }
+                    tr { page-break-inside: avoid; }
+                    tr:nth-child(even) td { background-color: #fdf6f0; }
+                    .total-row { font-weight: bold; }
+                    .total-row td { border-top: 2px solid #795548; padding-top: 10px; }
+                    @page { margin: 30mm 15mm; }
+                    @media print { 
+                        body { padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+                        thead { display: table-header-group; }
+                        tfoot { display: table-footer-group; }
+                    }
+                    /* Spacer for the top of each printed page table */
+                    .print-spacer { height: 30px !important; border: none !important; background-color: transparent !important; }
+                </style>
+            </head>
+            <body>
+                <h2>${printData.title}</h2>
+                <p class="subtitle">${dateFilter}${searchTerm ? ' &nbsp;|&nbsp; Recherche : ' + searchTerm : ''}</p>
+                <table>
+                    <thead>
+                        <tr><td colspan="4" class="print-spacer"></td></tr>
+                        <tr><th>${printData.columns[0]}</th><th>${printData.columns[1]}</th><th>${printData.columns[2]}</th><th style="text-align:right">${printData.columns[3]}</th></tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                        <tr class="total-row"><td colspan="3"><strong>Total</strong></td><td style="text-align:right"><strong>${totalAmount.toLocaleString()} FCFA</strong></td></tr>
+                    </tbody>
+                </table>
+            </body>
+            </html>
+        `;
+
+        // Use a hidden iframe to print without opening a new visible page
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.right = '0';
+        iframe.style.bottom = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+        const doc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (doc) {
+            doc.open();
+            doc.write(printContent);
+            doc.close();
+            setTimeout(() => {
+                iframe.contentWindow?.print();
+                setTimeout(() => document.body.removeChild(iframe), 1000);
+            }, 500);
+        }
+        setShowPrintPreview(false);
+    };
+
     return (
         <Box>
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
@@ -355,26 +477,45 @@ const Expenses: React.FC = () => {
             </Box>
 
             <Box sx={{ mb: 3 }}>
-                <Paper sx={{ p: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
-                    <DatePicker
-                        label={t('expenses.fields.startDate')}
-                        value={startDate ? dayjs(startDate) : null}
-                        onChange={(newValue) => setStartDate(newValue ? newValue.format('YYYY-MM-DD') : '')}
-                        slotProps={{ textField: { sx: { flex: 1 }, InputLabelProps: { shrink: true } } }}
-                    />
-                    <DatePicker
-                        label={t('expenses.fields.endDate')}
-                        value={endDate ? dayjs(endDate) : null}
-                        onChange={(newValue) => setEndDate(newValue ? newValue.format('YYYY-MM-DD') : '')}
-                        slotProps={{ textField: { sx: { flex: 1 }, InputLabelProps: { shrink: true } } }}
-                    />
-                    <TextField
-                        label={t('expenses.fields.search')}
-                        placeholder={t('expenses.fields.searchPlaceholder')}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        sx={{ flex: 1 }}
-                    />
+                <Paper sx={{ p: 2, width: '100%', boxSizing: 'border-box' }}>
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', width: '100%' }}>
+                        <Box sx={{ flex: 1 }}>
+                            <DatePicker
+                                label={t('expenses.fields.startDate')}
+                                value={startDate ? dayjs(startDate) : null}
+                                onChange={(newValue) => setStartDate(newValue ? newValue.format('YYYY-MM-DD') : '')}
+                                slotProps={{ textField: { fullWidth: true, InputLabelProps: { shrink: true } } }}
+                            />
+                        </Box>
+                        <Box sx={{ flex: 1 }}>
+                            <DatePicker
+                                label={t('expenses.fields.endDate')}
+                                value={endDate ? dayjs(endDate) : null}
+                                onChange={(newValue) => setEndDate(newValue ? newValue.format('YYYY-MM-DD') : '')}
+                                slotProps={{ textField: { fullWidth: true, InputLabelProps: { shrink: true } } }}
+                            />
+                        </Box>
+                        <Box sx={{ flex: 1 }}>
+                            <TextField
+                                label={t('expenses.fields.search')}
+                                placeholder={t('expenses.fields.searchPlaceholder')}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                fullWidth
+                            />
+                        </Box>
+                        <Box sx={{ flex: 1 }}>
+                            <Button
+                                variant="contained"
+                                startIcon={<Print />}
+                                onClick={handlePrintExpenses}
+                                fullWidth
+                                sx={{ backgroundColor: '#795548', '&:hover': { backgroundColor: '#5d4037' }, height: '56px' }}
+                            >
+                                Imprimer
+                            </Button>
+                        </Box>
+                    </Box>
                 </Paper>
             </Box>
 
@@ -610,6 +751,99 @@ const Expenses: React.FC = () => {
                     <Button onClick={handleClose}>{t('expenses.actions.cancel')}</Button>
                     <Button onClick={handleSubmit(onSubmit)} variant="contained" color="primary">
                         {t('expenses.actions.save')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Print Preview Dialog */}
+            <Dialog
+                open={showPrintPreview}
+                onClose={() => setShowPrintPreview(false)}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{ sx: { borderRadius: 3, overflow: 'hidden' } }}
+            >
+                <Box sx={{
+                    background: 'linear-gradient(135deg, #5d4037 0%, #795548 60%, #a1887f 100%)',
+                    px: 4, py: 2.5,
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                }}>
+                    <Box>
+                        <Typography variant="h6" sx={{ color: 'white', fontWeight: 700, letterSpacing: 1 }}>
+                            Aperçu d'impression
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.75)' }}>
+                            {printData.title} — {printData.rows.length} enregistrement{printData.rows.length > 1 ? 's' : ''}
+                            {(startDate || endDate) ? ` — ${startDate ? formatDate(startDate) : '...'} → ${endDate ? formatDate(endDate) : '...'}` : ''}
+                        </Typography>
+                    </Box>
+                    <Print sx={{ color: 'rgba(255,255,255,0.6)', fontSize: 32 }} />
+                </Box>
+
+                <DialogContent sx={{ p: 0, bgcolor: '#f8f4f1' }}>
+                    <Box sx={{ display: 'flex', borderBottom: '1px solid #e0d0c8' }}>
+                        <Box sx={{ flex: 1, px: 3, py: 1.5, textAlign: 'center', borderRight: '1px solid #e0d0c8' }}>
+                            <Typography variant="caption" color="text.secondary">{printData.countLabel}</Typography>
+                            <Typography variant="h6" sx={{ fontWeight: 700, color: '#5d4037' }}>{printData.rows.length}</Typography>
+                        </Box>
+                        <Box sx={{ flex: 1, px: 3, py: 1.5, textAlign: 'center' }}>
+                            <Typography variant="caption" color="text.secondary">Montant total</Typography>
+                            <Typography variant="h6" sx={{ fontWeight: 700, color: '#5d4037' }}>
+                                {printData.rows.reduce((s, r) => s + Number(r.montant), 0).toLocaleString()} FCFA
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <Box sx={{ maxHeight: 400, overflowY: 'auto', px: 2, py: 1.5 }}>
+                        <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 2, border: '1px solid #e0d0c8' }}>
+                            <Table size="small">
+                                <TableHead>
+                                    <TableRow sx={{ backgroundColor: '#795548' }}>
+                                        {printData.columns.map(h => (
+                                            <TableCell key={h} sx={{ color: 'white', fontWeight: 700, py: 1.2 }}>{h}</TableCell>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {printData.rows.map((row, i) => (
+                                        <TableRow key={row.id} sx={{ bgcolor: i % 2 === 0 ? 'white' : '#fdf6f0' }}>
+                                            <TableCell sx={{ whiteSpace: 'nowrap', py: 0.8 }}>{row.col1}</TableCell>
+                                            <TableCell sx={{ py: 0.8 }}>{row.col2}</TableCell>
+                                            <TableCell sx={{ py: 0.8, color: 'text.secondary' }}>{row.col3}</TableCell>
+                                            <TableCell align="right" sx={{ fontWeight: 600, py: 0.8, color: '#5d4037' }}>
+                                                {row.montant.toLocaleString()}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                    {printData.rows.length === 0 && (
+                                        <TableRow>
+                                            <TableCell colSpan={4} align="center" sx={{ py: 3, color: 'text.secondary' }}>
+                                                Aucune donnée à afficher
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                                <TableHead>
+                                    <TableRow sx={{ backgroundColor: '#efebe9' }}>
+                                        <TableCell colSpan={3} sx={{ fontWeight: 700, color: '#5d4037', py: 1 }}>Total</TableCell>
+                                        <TableCell align="right" sx={{ fontWeight: 800, color: '#5d4037', py: 1 }}>
+                                            {printData.rows.reduce((s, r) => s + Number(r.montant), 0).toLocaleString()} FCFA
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                </DialogContent>
+
+                <Divider />
+                <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
+                    <Button onClick={() => setShowPrintPreview(false)} variant="outlined"
+                        sx={{ borderColor: '#795548', color: '#795548', '&:hover': { borderColor: '#5d4037', bgcolor: '#f9f5f2' } }}>
+                        Annuler
+                    </Button>
+                    <Button onClick={doPrint} variant="contained" startIcon={<Print />}
+                        sx={{ backgroundColor: '#795548', '&:hover': { backgroundColor: '#5d4037' }, px: 3 }}>
+                        Imprimer
                     </Button>
                 </DialogActions>
             </Dialog>

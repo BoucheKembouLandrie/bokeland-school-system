@@ -26,17 +26,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import api from '../services/api';
-
-const schema = z.object({
-    nom: z.string().min(1, 'Nom de la matière requis'),
-    teacher_id: z.string().min(1, 'Enseignant requis'),
-    classe_id: z.string().min(1, 'Classe requise'),
-    coefficient: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-        message: 'Le coefficient doit être un nombre positif',
-    }),
-});
-
-type FormData = z.infer<typeof schema>;
+import { useTranslation } from 'react-i18next';
 
 interface Subject {
     id: number;
@@ -60,6 +50,7 @@ interface Class {
 }
 
 const Subjects: React.FC = () => {
+    const { t } = useTranslation();
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const [teachers, setTeachers] = useState<Teacher[]>([]);
     const [classes, setClasses] = useState<Class[]>([]);
@@ -70,6 +61,17 @@ const Subjects: React.FC = () => {
 
     // Filter State
     const [filterClassId, setFilterClassId] = useState<string>('');
+
+    const schema = z.object({
+        nom: z.string().min(1, t('subjects.validation.nameRequired')),
+        teacher_id: z.string().min(1, t('subjects.validation.teacherRequired')),
+        classe_id: z.string().min(1, t('subjects.validation.classRequired')),
+        coefficient: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+            message: t('subjects.validation.coefficientPositive'),
+        }),
+    });
+
+    type FormData = z.infer<typeof schema>;
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema),
@@ -93,7 +95,7 @@ const Subjects: React.FC = () => {
             setError('');
         } catch (err) {
             console.error('Error fetching data', err);
-            setError('Erreur lors du chargement des données');
+            setError(t('subjects.messages.loadError'));
         } finally {
             setLoading(false);
         }
@@ -111,7 +113,7 @@ const Subjects: React.FC = () => {
             setError('');
         } catch (err) {
             console.error('Error saving subject', err);
-            setError('Erreur lors de l\'enregistrement');
+            setError(t('subjects.messages.saveError'));
         }
     };
 
@@ -127,14 +129,14 @@ const Subjects: React.FC = () => {
     };
 
     const handleDelete = async (id: number) => {
-        if (confirm('Êtes-vous sûr de vouloir supprimer cette matière ?')) {
+        if (confirm(t('subjects.messages.deleteConfirm'))) {
             try {
                 await api.delete(`/subjects/${id}`);
                 fetchData();
                 setError('');
             } catch (err) {
                 console.error('Error deleting subject', err);
-                setError('Erreur lors de la suppression');
+                setError(t('subjects.messages.deleteError'));
             }
         }
     };
@@ -148,7 +150,7 @@ const Subjects: React.FC = () => {
     // Filter Logic
     const filteredSubjects = subjects.filter(subject => {
         if (!filterClassId) return true;
-        return subject.classe_id.toString() === filterClassId;
+        return subject.classe_id?.toString() === filterClassId;
     });
 
     if (loading) {
@@ -168,7 +170,7 @@ const Subjects: React.FC = () => {
                     onClick={() => setOpen(true)}
                     sx={{ backgroundColor: '#009688', '&:hover': { backgroundColor: '#00796b' } }}
                 >
-                    Nouvelle matière
+                    {t('subjects.actions.newSubject')}
                 </Button>
             </Box>
 
@@ -177,14 +179,14 @@ const Subjects: React.FC = () => {
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <TextField
                             select
-                            label="Classe"
+                            label={t('subjects.fields.class')}
                             value={filterClassId}
                             onChange={(e) => setFilterClassId(e.target.value)}
                             fullWidth
                             SelectProps={{ displayEmpty: true }}
                             InputLabelProps={{ shrink: true }}
                         >
-                            <MenuItem value="">Toutes les classes</MenuItem>
+                            <MenuItem value="">{t('subjects.filters.allClasses')}</MenuItem>
                             {classes.map((c) => (
                                 <MenuItem key={c.id} value={c.id.toString()}>{c.libelle}</MenuItem>
                             ))}
@@ -199,11 +201,11 @@ const Subjects: React.FC = () => {
                 <Table size="small" stickyHeader>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Nom</TableCell>
-                            <TableCell>Coefficient</TableCell>
-                            <TableCell>Enseignant</TableCell>
-                            <TableCell>Classe</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell>{t('subjects.fields.name')}</TableCell>
+                            <TableCell>{t('subjects.fields.coefficient')}</TableCell>
+                            <TableCell>{t('subjects.fields.teacher')}</TableCell>
+                            <TableCell>{t('subjects.fields.class')}</TableCell>
+                            <TableCell>{t('subjects.fields.actions')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -228,7 +230,7 @@ const Subjects: React.FC = () => {
                         {filteredSubjects.length === 0 && (
                             <TableRow>
                                 <TableCell colSpan={5} align="center">
-                                    Aucune matière trouvée
+                                    {t('subjects.messages.noSubjectsFound')}
                                 </TableCell>
                             </TableRow>
                         )}
@@ -237,35 +239,35 @@ const Subjects: React.FC = () => {
             </TableContainer >
 
             <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-                <DialogTitle>{editingId ? 'Modifier la matière' : 'Ajouter une matière'}</DialogTitle>
+                <DialogTitle>{editingId ? t('subjects.titles.edit') : t('subjects.titles.add')}</DialogTitle>
                 <DialogContent>
                     <Box component="form" sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                         <TextField
-                            label="Nom de la matière"
+                            label={t('subjects.fields.name')}
                             {...register('nom')}
                             error={!!errors.nom}
-                            helperText={errors.nom?.message}
+                            helperText={errors.nom?.message?.toString()}
                             fullWidth
                         />
                         <TextField
-                            label="Coefficient"
+                            label={t('subjects.fields.coefficient')}
                             type="number"
                             inputProps={{ min: 1 }}
                             {...register('coefficient')}
                             error={!!errors.coefficient}
-                            helperText={errors.coefficient?.message}
+                            helperText={errors.coefficient?.message?.toString()}
                             fullWidth
                         />
                         <TextField
                             select
-                            label="Enseignant"
+                            label={t('subjects.fields.teacher')}
                             {...register('teacher_id')}
                             error={!!errors.teacher_id}
-                            helperText={errors.teacher_id?.message}
+                            helperText={errors.teacher_id?.message?.toString()}
                             fullWidth
                             defaultValue=""
                         >
-                            <MenuItem value="">Sélectionner un enseignant</MenuItem>
+                            <MenuItem value="">{t('subjects.fields.selectTeacher')}</MenuItem>
                             {teachers.map((teacher) => (
                                 <MenuItem key={teacher.id} value={teacher.id.toString()}>
                                     {teacher.nom} {teacher.prenom}
@@ -274,14 +276,14 @@ const Subjects: React.FC = () => {
                         </TextField>
                         <TextField
                             select
-                            label="Classe"
+                            label={t('subjects.fields.class')}
                             {...register('classe_id')}
                             error={!!errors.classe_id}
-                            helperText={errors.classe_id?.message}
+                            helperText={errors.classe_id?.message?.toString()}
                             fullWidth
                             defaultValue=""
                         >
-                            <MenuItem value="">Sélectionner une classe</MenuItem>
+                            <MenuItem value="">{t('subjects.fields.selectClass')}</MenuItem>
                             {classes.map((classe) => (
                                 <MenuItem key={classe.id} value={classe.id.toString()}>
                                     {classe.libelle}
@@ -291,9 +293,9 @@ const Subjects: React.FC = () => {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Annuler</Button>
+                    <Button onClick={handleClose}>{t('subjects.actions.cancel')}</Button>
                     <Button onClick={handleSubmit(onSubmit)} variant="contained">
-                        {editingId ? 'Modifier' : 'Ajouter'}
+                        {editingId ? t('subjects.actions.edit') : t('subjects.actions.add')}
                     </Button>
                 </DialogActions>
             </Dialog>

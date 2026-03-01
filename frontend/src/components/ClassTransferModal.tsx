@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import api from '../services/api';
 import { useSchoolYear } from '../contexts/SchoolYearContext';
+import { useTranslation } from 'react-i18next';
 
 interface ClassTransferModalProps {
     open: boolean;
@@ -14,6 +15,7 @@ interface ClassTransferModalProps {
 }
 
 const ClassTransferModal: React.FC<ClassTransferModalProps> = ({ open, onClose }) => {
+    const { t } = useTranslation();
     const { currentYear } = useSchoolYear();
 
     // Source State
@@ -114,7 +116,7 @@ const ClassTransferModal: React.FC<ClassTransferModalProps> = ({ open, onClose }
 
             const res = await api.post('/classes/action/transfer', payload);
 
-            setMessage({ type: 'success', text: `Transfert réussi ! ${res.data.count} classe(s) transférée(s).` });
+            setMessage({ type: 'success', text: `${t('dashboard.transferModals.messages.success')} ${res.data.count} ${t('dashboard.sidebar.classes').toLowerCase()} transférée(s).` });
 
             // Refresh Destination List
             const destRes = await api.get('/classes', {
@@ -126,7 +128,7 @@ const ClassTransferModal: React.FC<ClassTransferModalProps> = ({ open, onClose }
             setSelectAll(false);
 
         } catch (error) {
-            setMessage({ type: 'error', text: 'Erreur lors du transfert.' });
+            setMessage({ type: 'error', text: t('dashboard.transferModals.messages.error') });
             console.error(error);
         } finally {
             setTransferring(false);
@@ -135,7 +137,7 @@ const ClassTransferModal: React.FC<ClassTransferModalProps> = ({ open, onClose }
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xl" fullWidth>
-            <DialogTitle>Transfert de Classes</DialogTitle>
+            <DialogTitle>{t('dashboard.transferModals.titles.classes')}</DialogTitle>
             <DialogContent dividers>
                 {transferring && <LinearProgress sx={{ mb: 2 }} />}
                 {message && <Alert severity={message.type} sx={{ mb: 2 }}>{message.text}</Alert>}
@@ -144,10 +146,10 @@ const ClassTransferModal: React.FC<ClassTransferModalProps> = ({ open, onClose }
 
                     {/* LEFT: SOURCE */}
                     <Grid size={{ xs: 6 }} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                        <Typography variant="h6" gutterBottom>Source (Année Courante)</Typography>
+                        <Typography variant="h6" gutterBottom>{t('dashboard.transferModals.source')}</Typography>
 
                         <Box sx={{ mb: 2 }}>
-                            <Typography variant="subtitle2" sx={{ mb: 1 }}>Sélectionner la classe</Typography>
+                            <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('dashboard.transferModals.select.class')}</Typography>
                         </Box>
 
                         {/* Select All Checkbox */}
@@ -162,7 +164,7 @@ const ClassTransferModal: React.FC<ClassTransferModalProps> = ({ open, onClose }
                                             disableRipple
                                         />
                                     </ListItemIcon>
-                                    <ListItemText primary="Toutes les classes" primaryTypographyProps={{ fontWeight: 'bold' }} />
+                                    <ListItemText primary={t('dashboard.transferModals.select.allClasses')} primaryTypographyProps={{ fontWeight: 'bold' }} />
                                 </ListItemButton>
                             </ListItem>
                         </Box>
@@ -190,7 +192,7 @@ const ClassTransferModal: React.FC<ClassTransferModalProps> = ({ open, onClose }
                                     </ListItem>
                                 ))}
                                 {sourceClasses.length === 0 && !loading && (
-                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>Aucune classe</Typography>
+                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>{t('dashboard.transferModals.empty.classes')}</Typography>
                                 )}
                             </List>
                         </Paper>
@@ -198,12 +200,12 @@ const ClassTransferModal: React.FC<ClassTransferModalProps> = ({ open, onClose }
 
                     {/* RIGHT: DESTINATION */}
                     <Grid size={{ xs: 6 }} sx={{ display: 'flex', flexDirection: 'column', height: '100%', borderLeft: '1px solid #eee', pl: 3 }}>
-                        <Typography variant="h6" gutterBottom>Destination</Typography>
+                        <Typography variant="h6" gutterBottom>{t('dashboard.transferModals.destination')}</Typography>
 
                         <Box sx={{ mb: 2 }}>
                             <TextField
                                 select
-                                label="Année Scolaire"
+                                label={t('dashboard.transferModals.schoolYear')}
                                 fullWidth
                                 value={destYearId}
                                 onChange={(e) => setDestYearId(e.target.value)}
@@ -214,7 +216,7 @@ const ClassTransferModal: React.FC<ClassTransferModalProps> = ({ open, onClose }
                             </TextField>
                         </Box>
 
-                        <Typography variant="subtitle2" sx={{ mb: 1 }}>Classes dans l'année de destination :</Typography>
+                        <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('dashboard.transferModals.destinationLabel.classes')}</Typography>
 
                         <Paper sx={{ flexGrow: 1, overflow: 'auto', bgcolor: '#f5f5f5', border: '1px solid #ddd' }}>
                             <List dense>
@@ -229,7 +231,7 @@ const ClassTransferModal: React.FC<ClassTransferModalProps> = ({ open, onClose }
                                     </ListItem>
                                 ))}
                                 {destClasses.length === 0 && (
-                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>Aucune classe</Typography>
+                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>{t('dashboard.transferModals.empty.classes')}</Typography>
                                 )}
                             </List>
                         </Paper>
@@ -237,13 +239,13 @@ const ClassTransferModal: React.FC<ClassTransferModalProps> = ({ open, onClose }
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Annuler</Button>
+                <Button onClick={onClose}>{t('dashboard.transferModals.cancel')}</Button>
                 <Button
                     variant="contained"
                     onClick={handleTransfer}
                     disabled={transferring || selectedClassIds.length === 0 || !destYearId}
                 >
-                    Valider le transfert {selectedClassIds.length > 0 && `(${selectedClassIds.length})`}
+                    {t('dashboard.transferModals.validate')} {selectedClassIds.length > 0 && `(${selectedClassIds.length})`}
                 </Button>
             </DialogActions>
         </Dialog>

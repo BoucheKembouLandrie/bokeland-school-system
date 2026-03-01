@@ -78,7 +78,6 @@ Client.init(
         subscription_end_date: {
             type: DataTypes.DATE,
             allowNull: false,
-            defaultValue: DataTypes.NOW, // Default to today's date instead of epoch
         },
         status: {
             type: DataTypes.ENUM('TRIAL', 'ACTIVE', 'EXPIRED', 'BANNED'),

@@ -37,7 +37,7 @@ const debugExport = async () => {
         console.log('Database connected.');
 
         const workbook = new ExcelJS.Workbook();
-        workbook.creator = 'Leuana School System';
+        workbook.creator = 'Bokeland School System';
         workbook.created = new Date();
 
         console.log('Starting export loop...');

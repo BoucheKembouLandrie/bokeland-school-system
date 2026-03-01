@@ -88,3 +88,55 @@ Si vous n'avez pas demandé cette récupération, veuillez ignorer cet email.
         html,
     });
 };
+
+export const sendWelcomeEmail = async (
+    email: string,
+    schoolName: string,
+    username: string
+): Promise<void> => {
+    const subject = 'Bienvenue - BOKELAND SCHOOL SYSTEM';
+    const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #008888;">Bienvenue sur BOKELAND SCHOOL SYSTEM</h2>
+            <p>Félicitations !</p>
+            <p>L'établissement <strong>${schoolName}</strong> a été configuré avec succès.</p>
+            <div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                <p><strong>Votre compte administrateur:</strong></p>
+                <p>Nom d'utilisateur: ${username}</p>
+                <p>Email: ${email}</p>
+            </div>
+            <p>Vous pouvez maintenant vous connecter et commencer à gérer votre établissement.</p>
+        </div>
+    `;
+    const text = `Bienvenue sur BOKELAND SCHOOL SYSTEM. L'établissement ${schoolName} a été configuré avec succès. Utilisateur: ${username}.`;
+
+    try {
+        await sendEmail({ to: email, subject, text, html });
+    } catch (e) {
+        console.warn('Welcome email failed', e);
+    }
+};
+
+export const sendEmailChangeNotification = async (
+    email: string,
+    username: string,
+    newEmail: string
+): Promise<void> => {
+    const subject = 'Changement de votre adresse email - BOKELAND SCHOOL SYSTEM';
+    const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #008888;">Mise à jour de votre compte</h2>
+            <p>Bonjour ${username},</p>
+            <p>Votre adresse email a été modifiée.</p>
+            <p><strong>Nouvelle adresse:</strong> ${newEmail}</p>
+            <p>Si vous n'êtes pas à l'origine de ce changement, veuillez contacter le support immédiatement.</p>
+        </div>
+    `;
+    const text = `Bonjour ${username}, votre adresse email a été modifiée pour ${newEmail}.`;
+
+    try {
+        await sendEmail({ to: email, subject, text, html });
+    } catch (e) {
+        console.warn('Email change notification failed', e);
+    }
+};

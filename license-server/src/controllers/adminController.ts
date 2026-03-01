@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Payment } from '../models/Payment';
 import { Client } from '../models/Client';
 import { Config } from '../models/Config';
-import { UpdateVersion } from '../models/UpdateVersion';
 import { Op } from 'sequelize';
 
 // Simple admin authentication (in production, use proper JWT/session)
@@ -91,45 +90,21 @@ export const updateClientStatus = async (req: Request, res: Response) => {
 
         if (status) {
             client.status = status;
-
-            // AUTO-RESET: When manually setting to EXPIRED, reset expiration date to today
-            // This makes it easier to test renewals and ensures expired clients have a current reference date
-            if (status === 'EXPIRED' && !days) {
-                const now = new Date();
-                client.subscription_end_date = now;
-                console.log(`🔄 Auto-reset expiration date to today for EXPIRED status: ${now.toISOString()}`);
-            }
         }
 
         if (days) {
             const currentEnd = new Date(client.subscription_end_date);
             const now = new Date();
-            const isExpired = currentEnd < now;
 
-            // CRITICAL FIX for EXPIRED licenses:
-            // - If TRIAL status: Always reset from today (existing behavior)
-            // - If EXPIRED (regardless of new status): Reset from today
-            // - If ACTIVE and not expired: Extend from current end date
-            let baseDate;
-            if (status === 'TRIAL') {
-                baseDate = now; // TRIAL always resets
-            } else if (isExpired) {
-                baseDate = now; // EXPIRED always resets
-            } else {
-                baseDate = currentEnd; // ACTIVE and not expired: extend
-            }
+            // STRICT RULE: If switching to TRIAL, we RESET the expiration to start from NOW.
+            // This effectively cancels any previous "Active" days.
+            // For ACTIVE/Other, we add to the existing expiration if it's in the future.
+            const baseDate = status === 'TRIAL' ? now : (currentEnd > now ? currentEnd : now);
 
             const newEnd = new Date(baseDate);
-            newEnd.setDate(newEnd.getDate() + parseInt(days));
+            newEnd.setDate(newEnd.getDate() + parseInt(days)); // Ensure integer addition
             client.subscription_end_date = newEnd;
-
-            console.log(`DEBUG: New expiration calculated:`, {
-                status,
-                was_expired: isExpired,
-                old_expiration: currentEnd.toISOString(),
-                new_expiration: newEnd.toISOString(),
-                days_added: days
-            });
+            console.log(`DEBUG: New expiration date calculated: ${newEnd} (Status: ${status})`);
         }
 
         await client.save();
@@ -214,53 +189,5 @@ export const uploadSignature = async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Signature upload error', error);
         res.status(500).json({ error: 'Failed to upload signature' });
-    }
-};
-
-
-export const uploadUpdate = async (req: Request, res: Response) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
-        }
-
-        const isYml = req.file.originalname.endsWith('.yml');
-        const filename = req.file.filename;
-        let version = null;
-
-        // Try to extract version from filename (setup-1.0.0.exe) if it's an exe
-        if (!isYml) {
-            const match = filename.match(/(\d+\.\d+\.\d+)/);
-            if (match) version = match[0];
-        }
-
-        await UpdateVersion.create({
-            filename: filename,
-            type: isYml ? 'yml' : 'exe',
-            size: req.file.size,
-            version: version
-        });
-
-        console.log(`Update file uploaded: ${filename}`);
-
-        res.json({
-            message: 'Update file uploaded successfully',
-            file_url: `/updates/${filename}`,
-            filename: filename
-        });
-    } catch (error) {
-        console.error('Update upload error', error);
-        res.status(500).json({ error: 'Failed to upload update file' });
-    }
-};
-
-export const getUpdateHistory = async (req: Request, res: Response) => {
-    try {
-        const history = await UpdateVersion.findAll({
-            order: [['createdAt', 'DESC']]
-        });
-        res.json(history);
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch update history' });
     }
 };

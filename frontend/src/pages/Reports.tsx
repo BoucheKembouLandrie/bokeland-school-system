@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Box, Typography, Paper, Tabs, Tab } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 const Reports: React.FC = () => {
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState(0);
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -11,7 +13,7 @@ const Reports: React.FC = () => {
     return (
         <Box>
             <Typography variant="h4" gutterBottom>
-                Rapports
+                {t('reports.title')}
             </Typography>
 
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
@@ -25,14 +27,14 @@ const Reports: React.FC = () => {
                     }}
                 >
                     <Tab
-                        label="Rapport Financier"
+                        label={t('reports.tabs.financial')}
                         sx={{
                             '&.Mui-selected': { color: '#2e7d32' },
                             color: 'text.secondary'
                         }}
                     />
                     <Tab
-                        label="Rapport de Note"
+                        label={t('reports.tabs.grades')}
                         sx={{
                             '&.Mui-selected': { color: '#2e7d32' },
                             color: 'text.secondary'
@@ -46,10 +48,10 @@ const Reports: React.FC = () => {
                     <Box>
                         <Paper sx={{ p: 3, mb: 3 }}>
                             <Typography variant="h6" gutterBottom>
-                                Rapport Financier
+                                {t('reports.tabs.financial')}
                             </Typography>
                             <Typography color="text.secondary">
-                                Module en cours de développement...
+                                {t('reports.messages.inDevelopment')}
                             </Typography>
                         </Paper>
                     </Box>
@@ -61,10 +63,10 @@ const Reports: React.FC = () => {
                     <Box>
                         <Paper sx={{ p: 3, mb: 3 }}>
                             <Typography variant="h6" gutterBottom>
-                                Rapport de Note
+                                {t('reports.tabs.grades')}
                             </Typography>
                             <Typography color="text.secondary">
-                                Module en cours de développement...
+                                {t('reports.messages.inDevelopment')}
                             </Typography>
                         </Paper>
                     </Box>

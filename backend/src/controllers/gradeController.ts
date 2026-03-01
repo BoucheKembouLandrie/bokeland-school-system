@@ -84,6 +84,11 @@ export const getGradesByClass = async (req: Request, res: Response) => {
 export const saveGrades = async (req: Request, res: Response) => {
     try {
         const { grades } = req.body; // Expecting an array of grade objects
+        const schoolYearId = req.headers['x-school-year-id'];
+
+        if (!schoolYearId) {
+            return res.status(400).json({ message: 'School Year ID is required' });
+        }
 
         if (!Array.isArray(grades)) {
             return res.status(400).json({ message: 'Invalid input: grades must be an array' });
@@ -92,7 +97,7 @@ export const saveGrades = async (req: Request, res: Response) => {
         const results = [];
 
         for (const gradeData of grades) {
-            const { eleve_id, matiere_id, trimestre, annee_scolaire, note } = gradeData;
+            const { eleve_id, matiere_id, trimestre, note } = gradeData;
 
             // Check if grade exists
             let grade = await Grade.findOne({
@@ -100,7 +105,7 @@ export const saveGrades = async (req: Request, res: Response) => {
                     eleve_id,
                     matiere_id,
                     trimestre,
-                    annee_scolaire
+                    school_year_id: schoolYearId
                 }
             });
 
@@ -113,7 +118,8 @@ export const saveGrades = async (req: Request, res: Response) => {
                     eleve_id,
                     matiere_id,
                     trimestre,
-                    annee_scolaire,
+                    school_year_id: schoolYearId,
+                    annee_scolaire: gradeData.annee_scolaire || '2024-2025', // Keep for legacy compatibility
                     note
                 });
             }

@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import api from '../services/api';
 import { useSchoolYear } from '../contexts/SchoolYearContext';
+import { useTranslation } from 'react-i18next';
 
 interface TeacherTransferModalProps {
     open: boolean;
@@ -14,6 +15,7 @@ interface TeacherTransferModalProps {
 }
 
 const TeacherTransferModal: React.FC<TeacherTransferModalProps> = ({ open, onClose }) => {
+    const { t } = useTranslation();
     const { currentYear } = useSchoolYear();
 
     // Source State
@@ -114,7 +116,7 @@ const TeacherTransferModal: React.FC<TeacherTransferModalProps> = ({ open, onClo
 
             const res = await api.post('/teachers/action/transfer', payload);
 
-            setMessage({ type: 'success', text: `Transfert réussi ! ${res.data.count} enseignant(s) transféré(s).` });
+            setMessage({ type: 'success', text: `${t('dashboard.transferModals.messages.success')} ${res.data.count} ${t('dashboard.sidebar.staff').toLowerCase()} transféré(s).` });
 
             // Refresh Destination List
             const destRes = await api.get('/teachers', {
@@ -126,7 +128,7 @@ const TeacherTransferModal: React.FC<TeacherTransferModalProps> = ({ open, onClo
             setSelectAll(false);
 
         } catch (error) {
-            setMessage({ type: 'error', text: 'Erreur lors du transfert.' });
+            setMessage({ type: 'error', text: t('dashboard.transferModals.messages.error') });
             console.error(error);
         } finally {
             setTransferring(false);
@@ -135,7 +137,7 @@ const TeacherTransferModal: React.FC<TeacherTransferModalProps> = ({ open, onClo
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xl" fullWidth>
-            <DialogTitle>Transfert d'Enseignants</DialogTitle>
+            <DialogTitle>{t('dashboard.transferModals.titles.teachers')}</DialogTitle>
             <DialogContent dividers>
                 {transferring && <LinearProgress sx={{ mb: 2 }} />}
                 {message && <Alert severity={message.type} sx={{ mb: 2 }}>{message.text}</Alert>}
@@ -144,10 +146,10 @@ const TeacherTransferModal: React.FC<TeacherTransferModalProps> = ({ open, onClo
 
                     {/* LEFT: SOURCE */}
                     <Grid size={{ xs: 6 }} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                        <Typography variant="h6" gutterBottom>Source (Année Courante)</Typography>
+                        <Typography variant="h6" gutterBottom>{t('dashboard.transferModals.source')}</Typography>
 
                         <Box sx={{ mb: 2 }}>
-                            <Typography variant="subtitle2" sx={{ mb: 1 }}>Sélectionner les enseignants</Typography>
+                            <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('dashboard.transferModals.select.teachers')}</Typography>
                         </Box>
 
                         {/* Select All Checkbox */}
@@ -162,7 +164,7 @@ const TeacherTransferModal: React.FC<TeacherTransferModalProps> = ({ open, onClo
                                             disableRipple
                                         />
                                     </ListItemIcon>
-                                    <ListItemText primary="Tous les enseignants" primaryTypographyProps={{ fontWeight: 'bold' }} />
+                                    <ListItemText primary={t('dashboard.transferModals.select.allTeachers')} primaryTypographyProps={{ fontWeight: 'bold' }} />
                                 </ListItemButton>
                             </ListItem>
                         </Box>
@@ -193,7 +195,7 @@ const TeacherTransferModal: React.FC<TeacherTransferModalProps> = ({ open, onClo
                                     </ListItem>
                                 ))}
                                 {sourceTeachers.length === 0 && !loading && (
-                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>Aucun enseignant</Typography>
+                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>{t('dashboard.transferModals.empty.teachers')}</Typography>
                                 )}
                             </List>
                         </Paper>
@@ -201,12 +203,12 @@ const TeacherTransferModal: React.FC<TeacherTransferModalProps> = ({ open, onClo
 
                     {/* RIGHT: DESTINATION */}
                     <Grid size={{ xs: 6 }} sx={{ display: 'flex', flexDirection: 'column', height: '100%', borderLeft: '1px solid #eee', pl: 3 }}>
-                        <Typography variant="h6" gutterBottom>Destination</Typography>
+                        <Typography variant="h6" gutterBottom>{t('dashboard.transferModals.destination')}</Typography>
 
                         <Box sx={{ mb: 2 }}>
                             <TextField
                                 select
-                                label="Année Scolaire"
+                                label={t('dashboard.transferModals.schoolYear')}
                                 fullWidth
                                 value={destYearId}
                                 onChange={(e) => setDestYearId(e.target.value)}
@@ -217,7 +219,7 @@ const TeacherTransferModal: React.FC<TeacherTransferModalProps> = ({ open, onClo
                             </TextField>
                         </Box>
 
-                        <Typography variant="subtitle2" sx={{ mb: 1 }}>Enseignants dans l'année de destination :</Typography>
+                        <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('dashboard.transferModals.destinationLabel.teachers')}</Typography>
 
                         <Paper sx={{ flexGrow: 1, overflow: 'auto', bgcolor: '#f5f5f5', border: '1px solid #ddd' }}>
                             <List dense>
@@ -232,7 +234,7 @@ const TeacherTransferModal: React.FC<TeacherTransferModalProps> = ({ open, onClo
                                     </ListItem>
                                 ))}
                                 {destTeachers.length === 0 && (
-                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>Aucun enseignant</Typography>
+                                    <Typography sx={{ p: 2, color: 'text.secondary' }}>{t('dashboard.transferModals.empty.teachers')}</Typography>
                                 )}
                             </List>
                         </Paper>
@@ -240,13 +242,13 @@ const TeacherTransferModal: React.FC<TeacherTransferModalProps> = ({ open, onClo
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Annuler</Button>
+                <Button onClick={onClose}>{t('dashboard.transferModals.cancel')}</Button>
                 <Button
                     variant="contained"
                     onClick={handleTransfer}
                     disabled={transferring || selectedTeacherIds.length === 0 || !destYearId}
                 >
-                    Valider le transfert {selectedTeacherIds.length > 0 && `(${selectedTeacherIds.length})`}
+                    {t('dashboard.transferModals.validate')} {selectedTeacherIds.length > 0 && `(${selectedTeacherIds.length})`}
                 </Button>
             </DialogActions>
         </Dialog>

@@ -6,6 +6,7 @@ interface SchoolYear {
     name: string;
     startYear: number;
     endYear: number;
+    is_active?: boolean;
 }
 
 interface SchoolYearContextType {
@@ -28,45 +29,60 @@ export const SchoolYearProvider: React.FC<{ children: ReactNode }> = ({ children
     });
     const [loading, setLoading] = useState(false);
 
-    const fetchYears = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/school-years');
-            setYears(response.data);
-
-            // Auto-select first year if none selected
-            // Auto-select based on current date if none selected
-            if (!currentYear && response.data.length > 0) {
-                const now = new Date();
-                const month = now.getMonth(); // 0-11
-                const currentCalendarYear = now.getFullYear();
-
-                // Logic: 
-                // Aug (7) to Dec (11) -> Start Year = Current Year
-                // Jan (0) to Jul (6) -> Start Year = Current Year - 1
-                const targetStartYear = month >= 7 ? currentCalendarYear : currentCalendarYear - 1;
-
-                const matchingYear = response.data.find((y: SchoolYear) => y.startYear === targetStartYear);
-
-                if (matchingYear) {
-                    selectYear(matchingYear);
-                } else {
-                    // Fallback to the most recent one (assuming list is sorted or just taking first)
-                    selectYear(response.data[0]);
-                }
-            }
-        } catch (error) {
-            console.error('Failed to fetch school years:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const selectYear = (year: SchoolYear) => {
         setCurrentYear(year);
         localStorage.setItem('currentSchoolYear', JSON.stringify(year));
         // Force full page reload to ensure clean state
         window.location.href = '/';
+    };
+
+    const fetchYears = async () => {
+        try {
+            setLoading(true);
+            console.log('🔍 [SchoolYearContext] Fetching school years...');
+            const response = await api.get('/school-years');
+            console.log('📅 [SchoolYearContext] Received years:', response.data);
+            setYears(response.data);
+
+            console.log('🔍 [SchoolYearContext] Current year from state:', currentYear);
+
+            // Logic to determine the active year
+            // 1. Prioritize the one marked 'is_active' in DB
+            const activeYearFromDB = response.data.find((y: SchoolYear) => y.is_active);
+
+            if (!currentYear) {
+                if (activeYearFromDB) {
+                    console.log('✅ [SchoolYearContext] Found active year from DB:', activeYearFromDB);
+                    selectYear(activeYearFromDB);
+                } else if (response.data.length > 0) {
+                    // Fallback to first one if no active year
+                    console.log('⚠️ [SchoolYearContext] No active year, using first:', response.data[0]);
+                    selectYear(response.data[0]);
+                } else {
+                    console.warn('⚠️ [SchoolYearContext] No years available in database!');
+                }
+            } else {
+                // Verify if currentYear is still valid
+                const stillExists = response.data.find((y: SchoolYear) => y.id === currentYear.id);
+                if (!stillExists) {
+                    console.warn('⚠️ [SchoolYearContext] Current year invalid, resetting...');
+                    if (activeYearFromDB) {
+                        selectYear(activeYearFromDB);
+                    } else if (response.data.length > 0) {
+                        selectYear(response.data[0]);
+                    } else {
+                        setCurrentYear(null);
+                        localStorage.removeItem('currentSchoolYear');
+                    }
+                } else {
+                    console.log('✅ [SchoolYearContext] Using existing current year:', currentYear);
+                }
+            }
+        } catch (error) {
+            console.error('❌ [SchoolYearContext] Failed to fetch school years:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const createYear = async (name: string) => {

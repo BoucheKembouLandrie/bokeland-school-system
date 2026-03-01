@@ -6,6 +6,7 @@ const router = Router();
 
 router.use(authenticateToken);
 
+router.post('/batch', saveGrades);
 router.post('/bulk', saveGrades);
 router.get('/stats/subjects', getSubjectStats);
 router.get('/success-rate', getSuccessRate);

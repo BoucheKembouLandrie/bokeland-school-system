@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5005/api',
+    // Use window.location.hostname to allow access from other devices in the network
+    baseURL: `http://${window.location.hostname}:5006/api`,
 });
 
 api.interceptors.request.use((config) => {
@@ -37,9 +38,13 @@ api.interceptors.response.use(
             localStorage.removeItem('isAuth');
             localStorage.removeItem('user');
 
-            // Prevent infinite loop if already on login page
-            if (window.location.pathname !== '/login') {
+            // Prevent infinite loop if already on login page or if performing onboarding/activation
+            const currentPath = window.location.pathname;
+            if (currentPath !== '/login' && currentPath !== '/welcome' && currentPath !== '/activation') {
+                console.warn('Authentication/License error, redirecting to login from:', currentPath);
                 window.location.href = '/login';
+            } else {
+                console.warn('Authentication/License error on protected page, ignoring redirect:', currentPath);
             }
         }
         return Promise.reject(error);

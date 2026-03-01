@@ -20,9 +20,38 @@ app.use(express.urlencoded({ extended: true }));
 
 // Debug Middleware
 app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] ${req.method} ${req.url}`);
+
+    // Log to file
+    const fs = require('fs');
+    const path = require('path');
+    const logPath = path.join(__dirname, '../request_monitor.log');
+    const logEntry = `${timestamp} - ${req.method} ${req.url} - Headers: ${JSON.stringify(req.headers)}\n`;
+    try {
+        fs.appendFileSync(logPath, logEntry, 'utf8');
+    } catch (e) {
+        // ignore logging error
+    }
+
     next();
 });
+
+import { licenseMiddleware } from './middleware/licenseMiddleware';
+import localLicenseRoutes from './routes/licenseRoutes';
+import { checkLicense } from './services/licenseService';
+
+// Initialize License Check on Startup
+// Initialize License Check on Startup - MOVED TO SERVER.TS
+// checkLicense(true).then(status => {
+//     console.log('--- LICENSE STATUS ---');
+//     console.log(status);
+//     console.log('----------------------');
+// });
+
+// Apply License Middleware globally (it will skip its own routes internally)
+app.use(licenseMiddleware);
+app.use('/api/license', localLicenseRoutes);
 
 // Direct Debug Route
 app.get('/api/schedules-direct', (req, res) => {
@@ -110,6 +139,8 @@ import suggestionRoutes from './routes/suggestionRoutes';
 import dataRoutes from './routes/dataRoutes';
 import schoolYearRoutes from './routes/schoolYearRoutes';
 import scheduleRoutes from './routes/scheduleRoutes';
+import onboardingRoutes from './routes/onboardingRoutes';
+console.log('Finished importing routes in app.ts');
 import path from 'path';
 
 app.use('/api/auth', authRoutes);
@@ -118,6 +149,7 @@ app.use('/api/classes', classRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/grades', gradeRoutes);
+app.use('/api/notes', gradeRoutes); // Alias for frontend compatibility
 app.use('/api/payments', paymentRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/settings', settingsRoutes);
@@ -127,6 +159,7 @@ app.use('/api/staff', staffRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/suggestions', suggestionRoutes);
 app.use('/api/data', dataRoutes);
+app.use('/api/onboarding', onboardingRoutes);
 import examRuleRoutes from './routes/examRuleRoutes';
 
 // ... existing routes ...
@@ -146,6 +179,20 @@ app.use('/uploads', express.static(uploadsPath));
 // Health Check
 app.get('/', (req, res) => {
     res.send('Leuana School API is running');
+});
+
+// Global Error Handler
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error('GLOBAL ERROR:', err);
+    const fs = require('fs');
+    const path = require('path');
+    const logPath = path.join(__dirname, '../backend_error.log');
+    const timestamp = new Date().toISOString();
+    fs.appendFileSync(logPath, `[${timestamp}] ${err.stack || err.message}\n`);
+
+    if (!res.headersSent) {
+        res.status(500).json({ message: 'Internal Server Error', error: err.message });
+    }
 });
 
 app.get('/api/debug-db', async (req, res) => {

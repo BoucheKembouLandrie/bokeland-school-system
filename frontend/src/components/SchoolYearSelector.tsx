@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSchoolYear } from '../contexts/SchoolYearContext';
 import { Add as Plus, Delete as Trash2 } from '@mui/icons-material';
 import { Tabs, Tab, IconButton, Menu, MenuItem, Box, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Typography, Tooltip, LinearProgress } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 const SchoolYearSelector: React.FC = () => {
+    const { t } = useTranslation();
     const { years, currentYear, selectYear, createYear, deleteYear } = useSchoolYear();
     const [contextMenu, setContextMenu] = useState<{ mouseX: number; mouseY: number; id: number } | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,7 +63,7 @@ const SchoolYearSelector: React.FC = () => {
                 setIsModalOpen(false);
             } catch (err: any) {
                 // Display error in modal
-                setError(err?.response?.data?.message || 'Erreur lors de la création');
+                setError(err?.response?.data?.message || t('schoolYearSelector.createDialog.error'));
             } finally {
                 setIsSubmitting(false);
             }
@@ -138,7 +140,7 @@ const SchoolYearSelector: React.FC = () => {
                         />
                     ))}
                 </Tabs>
-                <Tooltip title="Nouvelle année scolaire">
+                <Tooltip title={t('schoolYearSelector.tooltips.newYear')}>
                     <IconButton
                         size="small"
                         onClick={() => setIsModalOpen(true)}
@@ -172,25 +174,24 @@ const SchoolYearSelector: React.FC = () => {
             >
                 <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
                     <Trash2 fontSize="small" sx={{ mr: 1 }} />
-                    Supprimer l'année
+                    {t('schoolYearSelector.actions.delete')}
                 </MenuItem>
             </Menu>
 
             {/* Create Modal */}
             <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <form onSubmit={handleCreate}>
-                    <DialogTitle>Nouvelle Année Scolaire</DialogTitle>
+                    <DialogTitle>{t('schoolYearSelector.createDialog.title')}</DialogTitle>
                     <DialogContent>
                         <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-                            Entrez le nom de la nouvelle année (ex: 2025-2026).
-                            Une fois créée, l'interface se rechargera automatiquement.
+                            {t('schoolYearSelector.createDialog.description')}
                         </Typography>
 
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
                             <TextField
                                 autoFocus
                                 margin="dense"
-                                label="Début"
+                                label={t('schoolYearSelector.createDialog.startLabel')}
                                 type="text"
                                 variant="outlined"
                                 value={startYear}
@@ -217,7 +218,7 @@ const SchoolYearSelector: React.FC = () => {
                             <TextField
                                 inputRef={endYearRef}
                                 margin="dense"
-                                label="Fin"
+                                label={t('schoolYearSelector.createDialog.endLabel')}
                                 type="text"
                                 variant="outlined"
                                 value={endYear}
@@ -246,7 +247,7 @@ const SchoolYearSelector: React.FC = () => {
                             }}
                             disabled={isSubmitting}
                         >
-                            Annuler
+                            {t('schoolYearSelector.actions.cancel')}
                         </Button>
                         <Button
                             type="submit"
@@ -254,7 +255,7 @@ const SchoolYearSelector: React.FC = () => {
                             color="primary"
                             disabled={isSubmitting || startYear.length !== 4 || endYear.length !== 4}
                         >
-                            {isSubmitting ? 'Création...' : 'Créer'}
+                            {isSubmitting ? t('schoolYearSelector.actions.creating') : t('schoolYearSelector.actions.create')}
                         </Button>
                     </DialogActions>
                 </form>
@@ -262,16 +263,16 @@ const SchoolYearSelector: React.FC = () => {
 
             {/* Loading Dialog */}
             <Dialog open={isSubmitting} disableEscapeKeyDown>
-                <DialogTitle>Création de l'environnement...</DialogTitle>
+                <DialogTitle>{t('schoolYearSelector.loadingDialog.title')}</DialogTitle>
                 <DialogContent sx={{ width: '400px', textAlign: 'center', py: 3 }}>
                     <Typography variant="body1" sx={{ mb: 2 }}>
-                        Configuration de l'année scolaire <strong>{startYear}-{endYear}</strong>
+                        {t('schoolYearSelector.loadingDialog.configuring')} <strong>{startYear}-{endYear}</strong>
                     </Typography>
                     <Box sx={{ width: '100%' }}>
                         <LinearProgress />
                     </Box>
                     <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                        Veuillez patienter pendant la création de la base de données isolée...
+                        {t('schoolYearSelector.loadingDialog.waitMessage')}
                     </Typography>
                 </DialogContent>
             </Dialog>

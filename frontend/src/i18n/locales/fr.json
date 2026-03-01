@@ -1,0 +1,1339 @@
+{
+    "welcome": {
+        "title": "Bienvenue",
+        "subtitle": "Activez votre logiciel pour commencer votre période d'essai de 33 jours.",
+        "step": "Étape {{current}} sur {{total}}",
+        "language": {
+            "title": "Choisissez votre langue",
+            "description": "Sélectionnez la langue de l'application",
+            "french": "Français",
+            "english": "English"
+        },
+        "schoolInfo": {
+            "title": "Informations de l'établissement",
+            "description": "Veuillez renseigner les informations de votre établissement",
+            "schoolName": "Nom de l'établissement",
+            "schoolNamePlaceholder": "Ex: Collège Saint-Michel",
+            "email": "Adresse Email",
+            "emailPlaceholder": "contact@ecole.com",
+            "phone": "Numéro de Téléphone",
+            "phonePlaceholder": "123456789",
+            "country": "Pays",
+            "countryPlaceholder": "Sélectionnez votre pays",
+            "location": "Localisation / Adresse",
+            "locationPlaceholder": "Ex: Douala, Cameroun"
+        },
+        "confirmation": {
+            "title": "Confirmation",
+            "description": "Veuillez vérifier vos informations",
+            "schoolName": "Nom de l'établissement",
+            "email": "Email",
+            "phone": "Téléphone",
+            "country": "Pays",
+            "location": "Localisation",
+            "language": "Langue"
+        },
+        "buttons": {
+            "next": "Suivant",
+            "previous": "Précédent",
+            "submit": "Activer maintenant",
+            "skip": "Passer"
+        },
+        "validation": {
+            "required": "Ce champ est requis",
+            "invalidEmail": "Adresse email invalide",
+            "invalidPhone": "Numéro de téléphone invalide"
+        }
+    },
+    "countries": {
+        "DZ": "Algérie",
+        "AO": "Angola",
+        "BJ": "Bénin",
+        "BW": "Botswana",
+        "BF": "Burkina Faso",
+        "BI": "Burundi",
+        "CM": "Cameroun",
+        "CV": "Cap-Vert",
+        "CF": "République Centrafricaine",
+        "TD": "Tchad",
+        "KM": "Comores",
+        "CG": "Congo (Brazzaville)",
+        "CD": "Congo (Kinshasa)",
+        "CI": "Côte d'Ivoire",
+        "DJ": "Djibouti",
+        "EG": "Égypte",
+        "GQ": "Guinée Équatoriale",
+        "ER": "Érythrée",
+        "SZ": "Eswatini",
+        "ET": "Éthiopie",
+        "GA": "Gabon",
+        "GM": "Gambie",
+        "GH": "Ghana",
+        "GN": "Guinée",
+        "GW": "Guinée-Bissau",
+        "KE": "Kenya",
+        "LS": "Lesotho",
+        "LR": "Libéria",
+        "LY": "Libye",
+        "MG": "Madagascar",
+        "MW": "Malawi",
+        "ML": "Mali",
+        "MR": "Mauritanie",
+        "MU": "Maurice",
+        "MA": "Maroc",
+        "MZ": "Mozambique",
+        "NA": "Namibie",
+        "NE": "Niger",
+        "NG": "Nigéria",
+        "RW": "Rwanda",
+        "ST": "São Tomé-et-Príncipe",
+        "SN": "Sénégal",
+        "SC": "Seychelles",
+        "SL": "Sierra Leone",
+        "SO": "Somalie",
+        "ZA": "Afrique du Sud",
+        "SS": "Soudan du Sud",
+        "SD": "Soudan",
+        "TZ": "Tanzanie",
+        "TG": "Togo",
+        "TN": "Tunisie",
+        "UG": "Ouganda",
+        "ZM": "Zambie",
+        "ZW": "Zimbabwe"
+    },
+    "common": {
+        "loading": "Chargement...",
+        "error": "Erreur",
+        "success": "Succès",
+        "cancel": "Annuler",
+        "save": "Enregistrer",
+        "delete": "Supprimer",
+        "edit": "Modifier",
+        "add": "Ajouter",
+        "search": "Rechercher",
+        "filter": "Filtrer",
+        "export": "Exporter",
+        "import": "Importer",
+        "print": "Imprimer",
+        "close": "Fermer",
+        "confirm": "Confirmer",
+        "yes": "Oui",
+        "no": "Non"
+    },
+    "login": {
+        "title": "Connexion",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "submit": "se connecter",
+        "forgotPassword": "Mot de passe oublié ?",
+        "mentions": "Mentions légales",
+        "version": "Version 1.0.0",
+        "error": "Identifiants incorrects"
+    },
+    "sidebar": {
+        "dashboard": "Tableau de Bord",
+        "classes": "Classes",
+        "staff": "Personnel",
+        "subjects": "Matières",
+        "students": "Élèves",
+        "planning": "Planning",
+        "exams": "Examens",
+        "payments": "Pensions",
+        "attendance": "Présences",
+        "users": "Utilisateurs",
+        "expenses": "Charges",
+        "settings": "Paramètres",
+        "logout": "Déconnexion",
+        "version": "Version"
+    },
+    "titles": {
+        "dashboard": "Tableau de Bord",
+        "classes": "Gestion des Classes",
+        "staff": "Gestion du Personnel",
+        "subjects": "Gestion des Matières",
+        "students": "Gestion des Élèves",
+        "planning": "Planning Scolaire",
+        "exams": "Gestion des Examens",
+        "payments": "Gestion des Pensions",
+        "attendance": "Gestion des Présences",
+        "users": "Gestion des Utilisateurs",
+        "expenses": "Gestion des Charges",
+        "settings": "Paramètres Généraux"
+    },
+    "dashboard": {
+        "welcome": "Bienvenue dans le système de gestion scolaire {{name}}",
+        "subtitle": "Utilisez le menu de gauche pour naviguer entre les différents modules.",
+        "stats": {
+            "students": "ÉLÈVES",
+            "classes": "CLASSES",
+            "teachers": "ENSEIGNANTS",
+            "payments": "PAIEMENTS"
+        },
+        "financial": {
+            "title": "Aperçu Financier (Année Scolaire)",
+            "period": "Période : Août {{startYear}} - Juillet {{endYear}}",
+            "income": "Total Entrées",
+            "expenses": "Total Sorties"
+        },
+        "successRate": {
+            "title": "Taux de Réussite",
+            "subtitle": "Réussite: Moyenne ≥ 10/20",
+            "success": "Réussite",
+            "failure": "Échec",
+            "evaluations": "Évaluations",
+            "classes": "Classes",
+            "placeholder": {
+                "evaluation": "Sélectionner une évaluation",
+                "class": "Sélectionner une classe"
+            }
+        },
+        "transfer": {
+            "title": "Transfert de données",
+            "subtitle": "transfert d'une année scolaire à une autre",
+            "classes": "transfert de classes",
+            "admin": "transfert administratif",
+            "teachers": "transfert d'enseignants",
+            "students": "transfert d'élèves",
+            "subjects": "transfert de matieres",
+            "config": "transfert des configurations de bulletin"
+        },
+        "transferModals": {
+            "source": "Source (Année Courante)",
+            "destination": "Destination",
+            "cancel": "Annuler",
+            "validate": "Valider le transfert",
+            "schoolYear": "Année Scolaire",
+            "select": {
+                "class": "Sélectionner la classe",
+                "subjects": "Sélectionner les matières",
+                "teachers": "Sélectionner les enseignants",
+                "allSubjects": "Toutes les matières",
+                "allTeachers": "Tous les enseignants",
+                "allClasses": "Toutes les classes",
+                "staff": "Sélectionner le personnel",
+                "allStaff": "Tout le personnel",
+                "passed": "Sélectionner Admis (≥10)",
+                "failed": "Sélectionner Échoués (<10)"
+            },
+            "destinationLabel": {
+                "subjects": "Matières dans l'année de destination :",
+                "students": "Élèves dans la classe de destination :",
+                "teachers": "Enseignants dans l'année de destination :",
+                "classes": "Classes dans l'année de destination :",
+                "staff": "Personnel dans l'année de destination :"
+            },
+            "empty": {
+                "subjects": "Aucune matière",
+                "students": "Aucun élève",
+                "teachers": "Aucun enseignant",
+                "classes": "Aucune classe",
+                "staff": "Aucun personnel",
+                "class": "Classe vide"
+            },
+            "titles": {
+                "subjects": "Transfert de Matières",
+                "students": "Transfert d'Élèves",
+                "teachers": "Transfert d'Enseignants",
+                "classes": "Transfert de Classes",
+                "staff": "Transfert du Personnel Administratif",
+                "config": "Transfert des configurations de bulletin"
+            },
+            "messages": {
+                "subjectWarning": "Note: Les matières transférées devront être réassignées à des enseignants et classes dans la nouvelle année.",
+                "success": "Transfert réussi !",
+                "error": "Erreur lors du transfert.",
+                "selectYears": "Veuillez sélectionner les années source et cible",
+                "diffYears": "L'année source et l'année cible doivent être différentes",
+                "configWarning": "Les configurations de {{source}} seront copiées vers {{target}}. Les configurations existantes dans l'année cible ne seront pas modifiées.",
+                "errorConfig": "Erreur lors du transfert des configurations"
+            },
+            "sourceYear": "Année source",
+            "targetYear": "Année cible",
+            "loadingConfig": "Chargement des configurations...",
+            "foundConfig": "{{count}} configuration(s) trouvée(s) dans l'année {{year}}",
+            "transfer": "Transférer",
+            "transferring": "Transfert en cours..."
+        },
+        "classes": {
+            "validation": {
+                "libelleRequired": "Libellé requis",
+                "levelRequired": "Niveau requis",
+                "yearRequired": "Année scolaire requise",
+                "pensionPositive": "La pension doit être un nombre positif"
+            },
+            "messages": {
+                "loadError": "Erreur lors du chargement des classes",
+                "saveError": "Erreur lors de l'enregistrement",
+                "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette classe ?",
+                "deleteError": "Erreur lors de la suppression"
+            },
+            "fields": {
+                "libelle": "Libellé",
+                "level": "Niveau",
+                "year": "Année",
+                "pension": "Pension (FCFA)",
+                "studentCount": "Nombre d'élèves",
+                "actions": "Actions",
+                "schoolYear": "Année scolaire"
+            },
+            "titles": {
+                "edit": "Modifier la classe",
+                "add": "Ajouter une classe"
+            },
+            "actions": {
+                "newClass": "Nouvelle classe",
+                "cancel": "Annuler",
+                "edit": "Modifier",
+                "save": "Enregistrer",
+                "add": "Ajouter"
+            }
+        },
+        "students": {
+            "validation": {
+                "nomRequired": "Nom requis",
+                "prenomRequired": "Prénom requis",
+                "dobRequired": "Date de naissance requise",
+                "categoryRequired": "Catégorie requise",
+                "addressRequired": "Adresse requise",
+                "parentTelRequired": "Téléphone parent requis",
+                "classRequired": "Classe requise"
+            },
+            "messages": {
+                "loadError": "Erreur lors du chargement des élèves",
+                "saveError": "Erreur lors de l'enregistrement",
+                "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet élève ?",
+                "deleteError": "Erreur lors de la suppression",
+                "noStudentsFound": "Aucun élève trouvé"
+            },
+            "fields": {
+                "matricule": "Matricule",
+                "nom": "Nom",
+                "prenom": "Prénom",
+                "dob": "Date de naissance",
+                "sexe": "Sexe",
+                "class": "Classe",
+                "category": "Catégorie",
+                "parentTel": "Téléphone Parent",
+                "actions": "Actions",
+                "male": "Masculin",
+                "female": "Féminin",
+                "notRepeater": "Non redoublant(e)",
+                "repeater": "Redoublant(e)",
+                "address": "Adresse",
+                "selectClass": "Sélectionner une classe",
+                "select": "Sélectionner"
+            },
+            "filters": {
+                "allClasses": "Toutes les classes",
+                "searchPlaceholder": "Rechercher par nom ou prénom",
+                "studentLabel": "Élève"
+            },
+            "titles": {
+                "edit": "Modifier l'élève",
+                "add": "Ajouter un élève"
+            },
+            "actions": {
+                "newStudent": "Nouvel élève",
+                "cancel": "Annuler",
+                "edit": "Modifier",
+                "add": "Ajouter"
+            }
+        },
+        "teachers": {
+            "validation": {
+                "nomRequired": "Nom requis",
+                "prenomRequired": "Prénom requis",
+                "telRequired": "Téléphone requis",
+                "emailInvalid": "Email invalide",
+                "emailRequired": "Email requis",
+                "salaryRequired": "Salaire requis"
+            },
+            "messages": {
+                "loadError": "Erreur lors du chargement des enseignants",
+                "saveError": "Erreur lors de l'enregistrement",
+                "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet enseignant ?",
+                "deleteError": "Erreur lors de la suppression"
+            },
+            "fields": {
+                "nom": "Nom",
+                "prenom": "Prénom",
+                "tel": "Téléphone",
+                "email": "Email",
+                "salary": "Salaire",
+                "actions": "Actions"
+            },
+            "titles": {
+                "edit": "Modifier l'enseignant",
+                "add": "Ajouter un enseignant"
+            },
+            "actions": {
+                "newTeacher": "Nouvel enseignant",
+                "cancel": "Annuler",
+                "edit": "Modifier",
+                "add": "Ajouter"
+            }
+        },
+        "staff": {
+            "tabs": {
+                "teachers": "Enseignants",
+                "administration": "Administration"
+            },
+            "validation": {
+                "titleRequired": "Titre requis",
+                "nomRequired": "Nom requis",
+                "prenomRequired": "Prénom requis",
+                "telRequired": "Téléphone requis",
+                "emailInvalid": "Email invalide",
+                "emailRequired": "Email requis",
+                "salaryRequired": "Salaire requis"
+            },
+            "messages": {
+                "loadError": "Erreur lors du chargement du personnel",
+                "saveError": "Erreur lors de l'enregistrement",
+                "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce membre du personnel ?",
+                "deleteError": "Erreur lors de la suppression"
+            },
+            "fields": {
+                "title": "Titre",
+                "nom": "Nom",
+                "prenom": "Prénom",
+                "tel": "Téléphone",
+                "email": "Email",
+                "salary": "Salaire",
+                "actions": "Actions",
+                "titlePlaceholder": "Titre (ex: Comptable, Secrétaire)"
+            },
+            "titles": {
+                "edit": "Modifier le poste",
+                "add": "Ajouter un poste"
+            },
+            "actions": {
+                "newPosition": "Ajouter un poste",
+                "cancel": "Annuler",
+                "save": "Enregistrer"
+            }
+        },
+        "subjects": {
+            "validation": {
+                "nameRequired": "Nom de la matière requis",
+                "teacherRequired": "Enseignant requis",
+                "classRequired": "Classe requise",
+                "coefficientPositive": "Le coefficient doit être un nombre positif"
+            },
+            "messages": {
+                "loadError": "Erreur lors du chargement des données",
+                "saveError": "Erreur lors de l'enregistrement",
+                "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette matière ?",
+                "deleteError": "Erreur lors de la suppression",
+                "noSubjectsFound": "Aucune matière trouvée"
+            },
+            "fields": {
+                "name": "Nom",
+                "coefficient": "Coefficient",
+                "teacher": "Enseignant",
+                "class": "Classe",
+                "actions": "Actions",
+                "selectTeacher": "Sélectionner un enseignant",
+                "selectClass": "Sélectionner une classe"
+            },
+            "filters": {
+                "allClasses": "Toutes les classes"
+            },
+            "titles": {
+                "edit": "Modifier la matière",
+                "add": "Ajouter une matière"
+            },
+            "actions": {
+                "newSubject": "Nouvelle matière",
+                "cancel": "Annuler",
+                "edit": "Modifier",
+                "add": "Ajouter"
+            }
+        },
+        "payments": {
+            "validation": {
+                "amountPositive": "Le montant doit être positif",
+                "dateRequired": "Date requise",
+                "motifRequired": "Motif requis"
+            },
+            "messages": {
+                "loadError": "Erreur lors du chargement des données",
+                "selectStudentRequired": "Veuillez sélectionner un élève",
+                "exceedsPension": "Désolé mais la somme totale des tranches doit être inférieure ou égale à la pension.",
+                "saveError": "Erreur lors de l'enregistrement du paiement",
+                "paymentSuccess": "Tranche ajoutée avec succès !",
+                "noStudentsFound": "Aucun élève trouvé",
+                "noPayments": "Aucun paiement enregistré pour cet élève."
+            },
+            "defaults": {
+                "tranchePrefix": "Tranche "
+            },
+            "fields": {
+                "class": "Classe",
+                "selectClass": "Sélectionner une classe",
+                "student": "Élève",
+                "motif": "Intitulé",
+                "date": "Date",
+                "amount": "Montant (FCFA)",
+                "amountInCurrency": "Montant (en FCFA)"
+            },
+            "actions": {
+                "validate": "Valider",
+                "addTranche": "Ajouter une tranche"
+            },
+            "summary": {
+                "totalPension": "Pension Totale",
+                "alreadyPaid": "Déjà Payé",
+                "remaining": "Reste à Payer"
+            },
+            "titles": {
+                "addTranche": "Ajouter une tranche"
+            }
+        },
+        "planning": {
+            "days": {
+                "monday": "Lundi",
+                "tuesday": "Mardi",
+                "wednesday": "Mercredi",
+                "thursday": "Jeudi",
+                "friday": "Vendredi",
+                "saturday": "Samedi",
+                "sunday": "Dimanche"
+            },
+            "messages": {
+                "saveError": "Erreur lors de la sauvegarde du planning",
+                "deleteConfirm": "Supprimer ce créneau ?",
+                "noClasses": "Aucune classe trouvée. Veuillez créer des classes dans l'onglet \"Classes\"."
+            },
+            "titles": {
+                "add": "Ajouter un planning",
+                "edit": "Modifier le planning"
+            },
+            "actions": {
+                "addSchedule": "Ajouter un planning",
+                "cancel": "Annuler",
+                "validate": "Valider"
+            },
+            "fields": {
+                "selectClass": "Sélectionner la classe",
+                "noClassesAvailable": "Aucune classe disponible",
+                "selectSubject": "Sélectionner la matière",
+                "selectClassFirst": "Veuillez d'abord sélectionner une classe",
+                "dayOfWeek": "Jour de la semaine",
+                "startTime": "Heure de début",
+                "endTime": "Heure de fin"
+            }
+        },
+        "exams": {
+            "tabs": {
+                "evaluations": "Évaluations",
+                "configurations": "Configurations",
+                "grades": "Notes",
+                "annualGrades": "Note annuelle",
+                "printing": "Impression"
+            },
+            "common": {
+                "add": "Ajouter",
+                "edit": "Modifier",
+                "delete": "Supprimer",
+                "cancel": "Annuler",
+                "validate": "Valider",
+                "save": "Enregistrer",
+                "actions": "Actions",
+                "action": "Action",
+                "evaluation": "Évaluation",
+                "selectEvaluation": "Sélectionner une évaluation",
+                "class": "Classe",
+                "selectClass": "Sélectionner une classe",
+                "student": "Élève",
+                "noStudentsFound": "Aucun élève trouvé",
+                "lastName": "Nom",
+                "firstName": "Prénom"
+            },
+            "evaluations": {
+                "validation": {
+                    "nameRequired": "Nom de l'évaluation requis",
+                    "startDateRequired": "Date de début requise",
+                    "endDateRequired": "Date de fin requise"
+                },
+                "messages": {
+                    "loadError": "Erreur lors du chargement des évaluations",
+                    "saveError": "Erreur lors de l'enregistrement",
+                    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette évaluation ?",
+                    "deleteError": "Erreur lors de la suppression",
+                    "noEvaluations": "Aucune évaluation créée"
+                },
+                "titles": {
+                    "add": "Ajouter une évaluation",
+                    "edit": "Modifier l'évaluation"
+                },
+                "actions": {
+                    "add": "Ajouter une évaluation"
+                },
+                "fields": {
+                    "name": "Nom de l'évaluation",
+                    "startDate": "Date de début",
+                    "endDate": "Date de fin"
+                },
+                "table": {
+                    "name": "Évaluation"
+                }
+            },
+            "configurations": {
+                "categories": {
+                    "nonRepeater": "Non redoublant(e)",
+                    "repeater": "Redoublant(e)"
+                },
+                "statuses": {
+                    "admitted": "Admis(e) en classe supérieure",
+                    "repeats": "Redouble la classe",
+                    "excluded": "Exclu(e)"
+                },
+                "validation": {
+                    "invalidAverageInterval": "L'intervalle de moyenne est invalide (Min < Max).",
+                    "invalidAbsenceInterval": "L'intervalle d'absence est invalide (Min < Max).",
+                    "averageBounds": "Les moyennes doivent être entre 0 et 20."
+                },
+                "messages": {
+                    "addSuccess": "Logique ajoutée avec succès.",
+                    "addError": "Erreur lors de l'ajout de la logique.",
+                    "deleteConfirm": "Voulez-vous vraiment supprimer cette logique ?",
+                    "deleteSuccess": "Logique supprimée avec succès.",
+                    "deleteError": "Erreur lors de la suppression.",
+                    "noRules": "Aucune règle définie"
+                },
+                "fields": {
+                    "category": "Catégorie",
+                    "average": "Moyenne de note",
+                    "unjustifiedAbsence": "Absence non justifiée",
+                    "status": "Status"
+                },
+                "table": {
+                    "average": "Moyenne",
+                    "absences": "Absences"
+                }
+            },
+            "grades": {
+                "messages": {
+                    "selectFields": "Veuillez sélectionner une évaluation, une classe et un élève.",
+                    "loadError": "Erreur lors du chargement des données.",
+                    "noGradesToSave": "Aucune note à enregistrer.",
+                    "saveSuccess": "Notes enregistrées avec succès !",
+                    "saveError": "Erreur lors de l'enregistrement des notes."
+                },
+                "table": {
+                    "subject": "Matière",
+                    "coefficient": "Coefficient",
+                    "grade20": "Note / 20",
+                    "finalGrade": "Note Finale",
+                    "observation": "Observation"
+                }
+            },
+            "printing": {
+                "title": "Impression des bulletins",
+                "messages": {
+                    "selectFields": "Veuillez sélectionner une évaluation et une classe.",
+                    "studentsLoadError": "Erreur lors du chargement des élèves.",
+                    "selectStudent": "Veuillez sélectionner au moins un élève.",
+                    "reportLoadError": "Erreur lors de la récupération des données du bulletin."
+                },
+                "studentList": "Liste des élèves",
+                "printSelection": "Imprimer la sélection",
+                "report": {
+                    "title": "BULLETIN DE NOTE",
+                    "studentName": "nom de l'élève :",
+                    "class": "classe :",
+                    "evaluation": "évaluation :",
+                    "principal": "Le principal",
+                    "table": {
+                        "subject": "matière",
+                        "grade": "note",
+                        "coefficient": "coefficient",
+                        "totalGrade": "note totale",
+                        "observation": "observation"
+                    },
+                    "summary": {
+                        "average": "moyenne",
+                        "rank": "rang"
+                    }
+                }
+            },
+            "observations": {
+                "mediocre": "Médiocre",
+                "fair": "Assez bien",
+                "good": "Bien",
+                "veryGood": "Très bien",
+                "excellent": "Excellent"
+            }
+        },
+        "suggestion": {
+            "title": "Boîte à Suggestions",
+            "subtitle": "Partagez vos idées pour améliorer le logiciel",
+            "name": "Nom",
+            "email": "Email",
+            "message": "Message",
+            "send": "Envoyer",
+            "successTitle": "Merci !",
+            "successMessage": "Votre suggestion a été envoyée avec succès.",
+            "close": "Fermer"
+        }
+    },
+    "classes": {
+        "validation": {
+            "libelleRequired": "Libellé requis",
+            "levelRequired": "Niveau requis",
+            "yearRequired": "Année scolaire requise",
+            "pensionPositive": "La pension doit être un nombre positif"
+        },
+        "messages": {
+            "loadError": "Erreur lors du chargement des classes",
+            "saveError": "Erreur lors de l'enregistrement",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette classe ?",
+            "deleteError": "Erreur lors de la suppression"
+        },
+        "fields": {
+            "libelle": "Libellé",
+            "level": "Niveau",
+            "year": "Année",
+            "pension": "Pension (FCFA)",
+            "studentCount": "Nombre d'élèves",
+            "actions": "Actions",
+            "schoolYear": "Année scolaire"
+        },
+        "titles": {
+            "edit": "Modifier la classe",
+            "add": "Ajouter une classe"
+        },
+        "actions": {
+            "newClass": "Nouvelle classe",
+            "cancel": "Annuler",
+            "edit": "Modifier",
+            "save": "Enregistrer",
+            "add": "Ajouter"
+        }
+    },
+    "students": {
+        "validation": {
+            "nomRequired": "Nom requis",
+            "prenomRequired": "Prénom requis",
+            "dobRequired": "Date de naissance requise",
+            "categoryRequired": "Catégorie requise",
+            "addressRequired": "Adresse requise",
+            "parentTelRequired": "Téléphone parent requis",
+            "classRequired": "Classe requise"
+        },
+        "messages": {
+            "loadError": "Erreur lors du chargement des élèves",
+            "saveError": "Erreur lors de l'enregistrement",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet élève ?",
+            "deleteError": "Erreur lors de la suppression",
+            "noStudentsFound": "Aucun élève trouvé"
+        },
+        "fields": {
+            "matricule": "Matricule",
+            "nom": "Nom",
+            "prenom": "Prénom",
+            "dob": "Date de naissance",
+            "sexe": "Sexe",
+            "class": "Classe",
+            "category": "Catégorie",
+            "parentTel": "Téléphone Parent",
+            "actions": "Actions",
+            "male": "Masculin",
+            "female": "Féminin",
+            "notRepeater": "Non redoublant(e)",
+            "repeater": "Redoublant(e)",
+            "address": "Adresse",
+            "selectClass": "Sélectionner une classe",
+            "select": "Sélectionner"
+        },
+        "filters": {
+            "allClasses": "Toutes les classes",
+            "searchPlaceholder": "Rechercher par nom ou prénom",
+            "studentLabel": "Élève"
+        },
+        "titles": {
+            "edit": "Modifier l'élève",
+            "add": "Ajouter un élève"
+        },
+        "actions": {
+            "newStudent": "Nouvel élève",
+            "cancel": "Annuler",
+            "edit": "Modifier",
+            "add": "Ajouter"
+        }
+    },
+    "teachers": {
+        "validation": {
+            "nomRequired": "Nom requis",
+            "prenomRequired": "Prénom requis",
+            "telRequired": "Téléphone requis",
+            "emailInvalid": "Email invalide",
+            "emailRequired": "Email requis",
+            "salaryRequired": "Salaire requis"
+        },
+        "messages": {
+            "loadError": "Erreur lors du chargement des enseignants",
+            "saveError": "Erreur lors de l'enregistrement",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet enseignant ?",
+            "deleteError": "Erreur lors de la suppression"
+        },
+        "fields": {
+            "nom": "Nom",
+            "prenom": "Prénom",
+            "tel": "Téléphone",
+            "email": "Email",
+            "salary": "Salaire",
+            "actions": "Actions"
+        },
+        "titles": {
+            "edit": "Modifier l'enseignant",
+            "add": "Ajouter un enseignant"
+        },
+        "actions": {
+            "newTeacher": "Nouvel enseignant",
+            "cancel": "Annuler",
+            "edit": "Modifier",
+            "add": "Ajouter"
+        }
+    },
+    "staff": {
+        "tabs": {
+            "teachers": "Enseignants",
+            "administration": "Administration"
+        },
+        "validation": {
+            "titleRequired": "Titre requis",
+            "nomRequired": "Nom requis",
+            "prenomRequired": "Prénom requis",
+            "telRequired": "Téléphone requis",
+            "emailInvalid": "Email invalide",
+            "emailRequired": "Email requis",
+            "salaryRequired": "Salaire requis"
+        },
+        "messages": {
+            "loadError": "Erreur lors du chargement du personnel",
+            "saveError": "Erreur lors de l'enregistrement",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce membre du personnel ?",
+            "deleteError": "Erreur lors de la suppression"
+        },
+        "fields": {
+            "title": "Titre",
+            "nom": "Nom",
+            "prenom": "Prénom",
+            "tel": "Téléphone",
+            "email": "Email",
+            "salary": "Salaire",
+            "actions": "Actions",
+            "titlePlaceholder": "Titre (ex: Comptable, Secrétaire)"
+        },
+        "titles": {
+            "edit": "Modifier le poste",
+            "add": "Ajouter un poste"
+        },
+        "actions": {
+            "newPosition": "Ajouter un poste",
+            "cancel": "Annuler",
+            "save": "Enregistrer"
+        }
+    },
+    "subjects": {
+        "validation": {
+            "nameRequired": "Nom de la matière requis",
+            "teacherRequired": "Enseignant requis",
+            "classRequired": "Classe requise",
+            "coefficientPositive": "Le coefficient doit être un nombre positif"
+        },
+        "messages": {
+            "loadError": "Erreur lors du chargement des données",
+            "saveError": "Erreur lors de l'enregistrement",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette matière ?",
+            "deleteError": "Erreur lors de la suppression",
+            "noSubjectsFound": "Aucune matière trouvée"
+        },
+        "fields": {
+            "name": "Nom",
+            "coefficient": "Coefficient",
+            "teacher": "Enseignant",
+            "class": "Classe",
+            "actions": "Actions",
+            "selectTeacher": "Sélectionner un enseignant",
+            "selectClass": "Sélectionner une classe"
+        },
+        "filters": {
+            "allClasses": "Toutes les classes"
+        },
+        "titles": {
+            "edit": "Modifier la matière",
+            "add": "Ajouter une matière"
+        },
+        "actions": {
+            "newSubject": "Nouvelle matière",
+            "cancel": "Annuler",
+            "edit": "Modifier",
+            "add": "Ajouter"
+        }
+    },
+    "payments": {
+        "validation": {
+            "amountPositive": "Le montant doit être positif",
+            "dateRequired": "Date requise",
+            "motifRequired": "Motif requis"
+        },
+        "messages": {
+            "loadError": "Erreur lors du chargement des données",
+            "selectStudentRequired": "Veuillez sélectionner un élève",
+            "exceedsPension": "Désolé mais la somme totale des tranches doit être inférieure ou égale à la pension.",
+            "saveError": "Erreur lors de l'enregistrement du paiement",
+            "paymentSuccess": "Tranche ajoutée avec succès !",
+            "noStudentsFound": "Aucun élève trouvé",
+            "noPayments": "Aucun paiement enregistré pour cet élève."
+        },
+        "defaults": {
+            "tranchePrefix": "Tranche "
+        },
+        "fields": {
+            "class": "Classe",
+            "selectClass": "Sélectionner une classe",
+            "student": "Élève",
+            "motif": "Intitulé",
+            "date": "Date",
+            "amount": "Montant (FCFA)",
+            "amountInCurrency": "Montant (en FCFA)"
+        },
+        "actions": {
+            "validate": "Valider",
+            "addTranche": "Ajouter une tranche"
+        },
+        "summary": {
+            "totalPension": "Pension Totale",
+            "alreadyPaid": "Déjà Payé",
+            "remaining": "Reste à Payer"
+        },
+        "titles": {
+            "addTranche": "Ajouter une tranche"
+        }
+    },
+    "planning": {
+        "days": {
+            "monday": "Lundi",
+            "tuesday": "Mardi",
+            "wednesday": "Mercredi",
+            "thursday": "Jeudi",
+            "friday": "Vendredi",
+            "saturday": "Samedi",
+            "sunday": "Dimanche"
+        },
+        "messages": {
+            "saveError": "Erreur lors de la sauvegarde du planning",
+            "deleteConfirm": "Supprimer ce créneau ?",
+            "noClasses": "Aucune classe trouvée. Veuillez créer des classes dans l'onglet \"Classes\"."
+        },
+        "titles": {
+            "add": "Ajouter un planning",
+            "edit": "Modifier le planning"
+        },
+        "actions": {
+            "addSchedule": "Ajouter un planning",
+            "cancel": "Annuler",
+            "validate": "Valider"
+        },
+        "fields": {
+            "selectClass": "Sélectionner la classe",
+            "noClassesAvailable": "Aucune classe disponible",
+            "selectSubject": "Sélectionner la matière",
+            "selectClassFirst": "Veuillez d'abord sélectionner une classe",
+            "dayOfWeek": "Jour de la semaine",
+            "startTime": "Heure de début",
+            "endTime": "Heure de fin"
+        }
+    },
+    "exams": {
+        "tabs": {
+            "evaluations": "Évaluations",
+            "configurations": "Configurations",
+            "grades": "Notes",
+            "annualGrades": "Note annuelle",
+            "printing": "Impression"
+        },
+        "common": {
+            "add": "Ajouter",
+            "edit": "Modifier",
+            "delete": "Supprimer",
+            "cancel": "Annuler",
+            "validate": "Valider",
+            "save": "Enregistrer",
+            "actions": "Actions",
+            "action": "Action",
+            "evaluation": "Évaluation",
+            "selectEvaluation": "Sélectionner une évaluation",
+            "class": "Classe",
+            "selectClass": "Sélectionner une classe",
+            "student": "Élève",
+            "noStudentsFound": "Aucun élève trouvé",
+            "lastName": "Nom",
+            "firstName": "Prénom"
+        },
+        "evaluations": {
+            "validation": {
+                "nameRequired": "Nom de l'évaluation requis",
+                "startDateRequired": "Date de début requise",
+                "endDateRequired": "Date de fin requise"
+            },
+            "messages": {
+                "loadError": "Erreur lors du chargement des évaluations",
+                "saveError": "Erreur lors de l'enregistrement",
+                "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette évaluation ?",
+                "deleteError": "Erreur lors de la suppression",
+                "noEvaluations": "Aucune évaluation créée"
+            },
+            "titles": {
+                "add": "Ajouter une évaluation",
+                "edit": "Modifier l'évaluation"
+            },
+            "actions": {
+                "add": "Ajouter une évaluation"
+            },
+            "fields": {
+                "name": "Nom de l'évaluation",
+                "startDate": "Date de début",
+                "endDate": "Date de fin"
+            },
+            "table": {
+                "name": "Évaluation"
+            }
+        },
+        "configurations": {
+            "categories": {
+                "nonRepeater": "Non redoublant(e)",
+                "repeater": "Redoublant(e)"
+            },
+            "statuses": {
+                "admitted": "Admis(e) en classe supérieure",
+                "repeats": "Redouble la classe",
+                "excluded": "Exclu(e)"
+            },
+            "validation": {
+                "invalidAverageInterval": "L'intervalle de moyenne est invalide (Min < Max).",
+                "invalidAbsenceInterval": "L'intervalle d'absence est invalide (Min < Max).",
+                "averageBounds": "Les moyennes doivent être entre 0 et 20."
+            },
+            "messages": {
+                "addSuccess": "Logique ajoutée avec succès.",
+                "addError": "Erreur lors de l'ajout de la logique.",
+                "deleteConfirm": "Voulez-vous vraiment supprimer cette logique ?",
+                "deleteSuccess": "Logique supprimée avec succès.",
+                "deleteError": "Erreur lors de la suppression.",
+                "noRules": "Aucune règle définie"
+            },
+            "fields": {
+                "category": "Catégorie",
+                "average": "Moyenne de note",
+                "unjustifiedAbsence": "Absence non justifiée",
+                "status": "Status"
+            },
+            "table": {
+                "average": "Moyenne",
+                "absences": "Absences"
+            }
+        },
+        "grades": {
+            "messages": {
+                "selectFields": "Veuillez sélectionner une évaluation, une classe et un élève.",
+                "loadError": "Erreur lors du chargement des données.",
+                "noGradesToSave": "Aucune note à enregistrer.",
+                "saveSuccess": "Notes enregistrées avec succès !",
+                "saveError": "Erreur lors de l'enregistrement des notes."
+            },
+            "table": {
+                "subject": "Matière",
+                "coefficient": "Coefficient",
+                "grade20": "Note / 20",
+                "finalGrade": "Note Finale",
+                "observation": "Observation"
+            }
+        },
+        "printing": {
+            "title": "Impression des bulletins",
+            "messages": {
+                "selectFields": "Veuillez sélectionner une évaluation et une classe.",
+                "studentsLoadError": "Erreur lors du chargement des élèves.",
+                "selectStudent": "Veuillez sélectionner au moins un élève.",
+                "reportLoadError": "Erreur lors de la récupération des données du bulletin."
+            },
+            "studentList": "Liste des élèves",
+            "printSelection": "Imprimer la sélection",
+            "report": {
+                "title": "BULLETIN DE NOTE",
+                "studentName": "nom de l'élève :",
+                "class": "classe :",
+                "evaluation": "évaluation :",
+                "principal": "Le principal",
+                "table": {
+                    "subject": "matière",
+                    "grade": "note",
+                    "coefficient": "coefficient",
+                    "totalGrade": "note totale",
+                    "observation": "observation"
+                },
+                "summary": {
+                    "average": "moyenne",
+                    "rank": "rang"
+                }
+            }
+        },
+        "observations": {
+            "mediocre": "Médiocre",
+            "fair": "Assez bien",
+            "good": "Bien",
+            "veryGood": "Très bien",
+            "excellent": "Excellent"
+        }
+    },
+    "users": {
+        "validation": {
+            "usernameRequired": "Nom d'utilisateur requis (min 3 caractères)",
+            "passwordRequired": "Mot de passe requis (min 6 caractères)",
+            "emailInvalid": "Email invalide"
+        },
+        "messages": {
+            "loadError": "Erreur lors du chargement des données",
+            "saveError": "Erreur lors de l'enregistrement",
+            "deleteError": "Erreur lors de la suppression",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
+            "cannotDeleteDefault": "Le compte administrateur par défaut ne peut pas être supprimé"
+        },
+        "fields": {
+            "username": "Nom d'utilisateur",
+            "password": "Mot de passe",
+            "email": "Adresse email",
+            "role": "Rôle",
+            "teacher": "Enseignant",
+            "actions": "Actions",
+            "emailPlaceholder": "utilisateur@example.com",
+            "passwordPlaceholder": "Laisser vide pour ne pas changer",
+            "selectTeacher": "Sélectionner un enseignant",
+            "permissions": "Permissions (onglets accessibles)"
+        },
+        "roles": {
+            "admin": "Administrateur",
+            "secretary": "Secrétaire",
+            "teacher": "Enseignant"
+        },
+        "permissions": {
+            "eleves": "Élèves",
+            "classes": "Classes",
+            "enseignants": "Enseignants",
+            "matieres": "Matières",
+            "notes": "Notes",
+            "paiements": "Paiements",
+            "presences": "Présences",
+            "parametres": "Paramètres"
+        },
+        "titles": {
+            "edit": "Modifier l'utilisateur",
+            "add": "Nouvel utilisateur"
+        },
+        "actions": {
+            "newUser": "Nouvel utilisateur",
+            "cancel": "Annuler",
+            "edit": "Modifier",
+            "create": "Créer"
+        },
+        "labels": {
+            "default": "PAR DÉFAUT"
+        }
+    },
+    "attendance": {
+        "validation": {
+            "dateRequired": "Date requise",
+            "classRequired": "Classe requise",
+            "studentRequired": "Élève requis",
+            "reasonRequired": "Motif requis",
+            "timeRequired": "Heure requise"
+        },
+        "messages": {
+            "loadError": "Erreur lors du chargement des données",
+            "saveError": "Erreur lors de l'enregistrement",
+            "deleteError": "Erreur lors de la suppression",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet enregistrement ?",
+            "noStudentFound": "Aucun élève trouvé"
+        },
+        "fields": {
+            "date": "Date",
+            "class": "Classe",
+            "student": "Élève",
+            "reason": "Motif",
+            "time": "Heure",
+            "period": "Periode",
+            "name": "Nom",
+            "actions": "Actions",
+            "minutes": "Minutes",
+            "selectClass": "Sélectionner une classe",
+            "allClasses": "Toutes les classes"
+        },
+        "reasons": {
+            "justified": "absence justifiée",
+            "unjustified": "absence non justifiée"
+        },
+        "titles": {
+            "edit": "Modifier la présence",
+            "add": "Ajouter une présence"
+        },
+        "actions": {
+            "addAttendance": "Ajouter une présence",
+            "cancel": "Annuler",
+            "edit": "Modifier",
+            "save": "Enregistrer",
+            "reset": "Réinitialiser"
+        }
+    },
+    "expenses": {
+        "validation": {
+            "amountPositive": "Le montant doit être positif",
+            "dateRequired": "Date requise",
+            "titleRequired": "Le titre est requis",
+            "personRequired": "Veuillez sélectionner une personne"
+        },
+        "messages": {
+            "loadError": "Erreur lors du chargement des données",
+            "saveError": "Erreur lors de l'enregistrement",
+            "deleteError": "Erreur lors de la suppression",
+            "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette charge ?",
+            "salaryExists": "Cette personne a déjà un salaire enregistré pour",
+            "noExpenseFound": "Aucune charge trouvée",
+            "noSalaryFound": "Aucun salaire enregistré"
+        },
+        "tabs": {
+            "general": "Charges Diverses",
+            "salaries": "Salaires"
+        },
+        "fields": {
+            "date": "Date",
+            "title": "Titre",
+            "description": "Description",
+            "amount": "Montant (FCFA)",
+            "actions": "Actions",
+            "name": "Nom",
+            "status": "Statut",
+            "startDate": "Date début",
+            "endDate": "Date fin",
+            "search": "Recherche",
+            "searchPlaceholder": "Mot-clé...",
+            "titlePlaceholder": "Titre (ex: Achat craie)",
+            "personnelType": "Type de personnel",
+            "paymentReceived": "Paiement reçu"
+        },
+        "personnelTypes": {
+            "teacher": "Enseignant",
+            "staff": "Administration"
+        },
+        "titles": {
+            "editExpense": "Modifier la charge",
+            "addExpense": "Ajouter une charge",
+            "editSalary": "Modifier le salaire",
+            "addSalary": "Nouveau salaire"
+        },
+        "actions": {
+            "newExpense": "Nouvelle charge",
+            "cancel": "Annuler",
+            "save": "Enregistrer"
+        }
+    },
+    "settings": {
+        "title": "Paramètres de l'école",
+        "logoHelp": "logo (taille recommandée à 111 x 111 px)",
+        "messages": {
+            "loadError": "Erreur lors du chargement des paramètres.",
+            "updateSuccess": "Paramètre mis à jour avec succès.",
+            "updateError": "Erreur lors de la mise à jour.",
+            "uploadSuccess": "Logo téléchargé avec succès.",
+            "uploadError": "Erreur lors du téléchargement du logo.",
+            "exportSuccess": "Exportation réussie.",
+            "exportError": "Erreur lors de l'exportation.",
+            "importSuccess": "Importation réussie.",
+            "importError": "Erreur lors de l'importation. Vérifiez le fichier.",
+            "resetSuccess": "Base de données vidée avec succès.",
+            "resetError": "Erreur lors de la réinitialisation.",
+            "processing": "Traitement en cours..."
+        },
+        "fields": {
+            "schoolName": "Nom de l'établissement",
+            "website": "site internet",
+            "address": "localisation",
+            "phone": "numero de téléphone",
+            "email": "adresse email",
+            "dateFormat": "format de date",
+            "phonePlaceholder": "600000000"
+        },
+        "dataManagement": {
+            "title": "Gestion des Données",
+            "export": "Exporter les données",
+            "import": "Importer des données",
+            "delete": "Supprimer les données"
+        },
+        "importDialog": {
+            "title": "Mode d'importation",
+            "description": "Des données existent déjà dans la base de données. Comment voulez-vous gérer les enregistrements en double ?",
+            "skipTitle": "Ignorer les doublons",
+            "skipDescription": "Ne pas importer les enregistrements qui ont le même ID",
+            "updateTitle": "Mettre à jour les existants",
+            "updateDescription": "Remplacer les données existantes avec celles du fichier",
+            "duplicateTitle": "Créer des doublons",
+            "duplicateDescription": "Créer de nouveaux enregistrements avec de nouveaux IDs",
+            "cancel": "Annuler"
+        },
+        "resetDialog": {
+            "title": "Confirmation de suppression",
+            "description": "Êtes-vous sûr de vouloir supprimer TOUTES les données du logiciel ? Cette action est irréversible et effacera tous les élèves, classes, notes, paiements, etc.",
+            "cancel": "Annuler",
+            "confirm": "Confirmer la suppression"
+        }
+    },
+    "reports": {
+        "title": "Rapports",
+        "tabs": {
+            "financial": "Rapport Financier",
+            "grades": "Rapport de Note"
+        },
+        "messages": {
+            "inDevelopment": "Module en cours de développement..."
+        }
+    },
+    "schoolYearSelector": {
+        "tooltips": {
+            "newYear": "Nouvelle année scolaire"
+        },
+        "actions": {
+            "delete": "Supprimer l'année",
+            "cancel": "Annuler",
+            "create": "Créer",
+            "creating": "Création..."
+        },
+        "createDialog": {
+            "title": "Nouvelle Année Scolaire",
+            "description": "Entrez le nom de la nouvelle année (ex: 2025-2026). Une fois créée, l'interface se rechargera automatiquement.",
+            "startLabel": "Début",
+            "endLabel": "Fin",
+            "error": "Erreur lors de la création"
+        },
+        "loadingDialog": {
+            "title": "Création de l'environnement...",
+            "configuring": "Configuration de l'année scolaire",
+            "waitMessage": "Veuillez patienter pendant la création de la base de données isolée..."
+        }
+    },
+    "licenseBanner": {
+        "refreshText": "Actualisez pour vérifier votre temps • Connecté",
+        "timeLeft": "Il vous reste",
+        "days": "jours",
+        "needTime": "Besoin de plus de temps ?",
+        "extendNow": "Prolongez dès maintenant",
+        "renewHere": "Renouveler ici",
+        "status": {
+            "active": "ABONNEMENT ACTIF",
+            "trial": "MODE ESSAI",
+            "expired": "EXPIRÉ"
+        }
+    }
+}

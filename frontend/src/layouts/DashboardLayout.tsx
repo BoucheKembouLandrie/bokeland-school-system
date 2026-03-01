@@ -4,34 +4,37 @@ import { Menu as MenuIcon, Dashboard, People, School, Payment, EventAvailable, S
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../App';
 import SchoolYearSelector from '../components/SchoolYearSelector';
+import { useTranslation } from 'react-i18next';
 
 import { useSettings } from '../contexts/SettingsContext';
 import { BASE_URL } from '../config';
+import LicenseUpgradeModal from '../components/LicenseUpgradeModal';
 
 const drawerWidth = 240;
 
-// Define menu items with specific colors for icons
-const menuItems = [
-    { text: 'Dashboard', title: 'Tableau de Bord', icon: <Dashboard />, path: '/', color: '#1976d2' }, // Blue
-    { text: 'Classes', title: 'Gestion des Classes', icon: <AccountBalance />, path: '/classes', color: '#e65100' }, // Orange
-    { text: 'Staff', title: 'Gestion du Personnel', icon: <People />, path: '/staff', color: '#c2185b' }, // Pink (Admin color)
-    { text: 'Matières', title: 'Gestion des Matières', icon: <Book />, path: '/subjects', color: '#00897b' }, // Teal
-    { text: 'Élèves', title: 'Gestion des Élèves', icon: <School />, path: '/students', color: '#5e35b1' }, // Deep Purple
-    { text: 'Planning', title: 'Planning Scolaire', icon: <DateRange />, path: '/planning', color: '#2e7d32' }, // Green
-    { text: 'Examens', title: 'Gestion des Examens', icon: <Assignment />, path: '/examens', color: '#d32f2f' }, // Red
-
-    { text: 'Pensions', title: 'Gestion des Pensions', icon: <Payment />, path: '/payments', color: '#fbc02d' }, // Yellow
-    { text: 'Présences', title: 'Gestion des Présences', icon: <EventAvailable />, path: '/attendance', color: '#1e88e5' }, // Blue
-    { text: 'Utilisateurs', title: 'Gestion des Utilisateurs', icon: <AccountCircle />, path: '/users', color: '#8e24aa' }, // Purple
-    { text: 'Charges', title: 'Gestion des Charges', icon: <PriceChange />, path: '/expenses', color: '#795548' }, // Brown
-    { text: 'Paramètres', title: 'Paramètres Généraux', icon: <Settings />, path: '/settings', color: '#607d8b' }, // Blue Grey
-];
-
 const DashboardLayout: React.FC = () => {
+    const { t } = useTranslation();
     const [mobileOpen, setMobileOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const { logout, hasPermission } = useAuthContext();
+    const { settings } = useSettings();
+
+    // Define menu items with specific colors for icons and translations
+    const menuItems = [
+        { text: t('sidebar.dashboard'), title: t('titles.dashboard'), icon: <Dashboard />, path: '/', color: '#1976d2' }, // Blue
+        { text: t('sidebar.classes'), title: t('titles.classes'), icon: <AccountBalance />, path: '/classes', color: '#e65100' }, // Orange
+        { text: t('sidebar.staff'), title: t('titles.staff'), icon: <People />, path: '/staff', color: '#c2185b' }, // Pink (Admin color)
+        { text: t('sidebar.subjects'), title: t('titles.subjects'), icon: <Book />, path: '/subjects', color: '#00897b' }, // Teal
+        { text: t('sidebar.students'), title: t('titles.students'), icon: <School />, path: '/students', color: '#5e35b1' }, // Deep Purple
+        { text: t('sidebar.planning'), title: t('titles.planning'), icon: <DateRange />, path: '/planning', color: '#2e7d32' }, // Green
+        { text: t('sidebar.exams'), title: t('titles.exams'), icon: <Assignment />, path: '/examens', color: '#d32f2f' }, // Red
+        { text: t('sidebar.payments'), title: t('titles.payments'), icon: <Payment />, path: '/payments', color: '#fbc02d' }, // Yellow
+        { text: t('sidebar.attendance'), title: t('titles.attendance'), icon: <EventAvailable />, path: '/attendance', color: '#1e88e5' }, // Blue
+        { text: t('sidebar.users'), title: t('titles.users'), icon: <AccountCircle />, path: '/users', color: '#8e24aa' }, // Purple
+        { text: t('sidebar.expenses'), title: t('titles.expenses'), icon: <PriceChange />, path: '/expenses', color: '#795548' }, // Brown
+        { text: t('sidebar.settings'), title: t('titles.settings'), icon: <Settings />, path: '/settings', color: '#607d8b' }, // Blue Grey
+    ];
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -41,9 +44,6 @@ const DashboardLayout: React.FC = () => {
         logout();
         navigate('/login');
     };
-
-    // ... inside component
-    const { settings } = useSettings();
 
     // Map menu paths to permission keys
     const getPermissionKey = (path: string): string => {
@@ -76,7 +76,11 @@ const DashboardLayout: React.FC = () => {
             <SchoolYearSelector />
             <Toolbar sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
                 <img
-                    src={settings?.logo_url ? `${BASE_URL}${settings.logo_url}` : "/logo.jpg"}
+                    src={settings?.logo_url
+                        ? (settings.logo_url === '/default-logo.png'
+                            ? '/default-logo.png'
+                            : (settings.logo_url.startsWith('http') ? settings.logo_url : `${BASE_URL}${settings.logo_url}`))
+                        : "/logo.jpg"}
                     alt={settings?.school_name || "BOKELAND SCHOOL SYSTEM Management Software"}
                     style={{ width: '111px', height: '111px', objectFit: 'contain' }}
                 />
@@ -119,13 +123,13 @@ const DashboardLayout: React.FC = () => {
                 <ListItem disablePadding sx={{ mt: 2, borderTop: '1px solid #eee' }}>
                     <ListItemButton onClick={handleLogout}>
                         <ListItemIcon sx={{ color: '#d32f2f', minWidth: 40 }}><ExitToApp /></ListItemIcon>
-                        <ListItemText primary="Déconnexion" primaryTypographyProps={{ color: '#d32f2f' }} />
+                        <ListItemText primary={t('sidebar.logout')} primaryTypographyProps={{ color: '#d32f2f' }} />
                     </ListItemButton>
                 </ListItem>
             </List>
             <Box sx={{ p: 2, textAlign: 'center' }}>
                 <Typography variant="caption" sx={{ color: '#9e9e9e', fontSize: '0.7rem' }}>
-                    Version 1.0.0
+                    {t('sidebar.version')} 1.0.0
                 </Typography>
             </Box>
         </Box>
@@ -158,7 +162,7 @@ const DashboardLayout: React.FC = () => {
                     <Typography variant="h6" noWrap component="div">
                         {(() => {
                             const currentItem = menuItems.find(item => item.path === location.pathname);
-                            return currentItem?.title || currentItem?.text || 'Tableau de Bord';
+                            return currentItem?.title || currentItem?.text || t('titles.dashboard');
                         })()}
                     </Typography>
                 </Toolbar>
@@ -198,6 +202,7 @@ const DashboardLayout: React.FC = () => {
                 sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` }, backgroundColor: '#f5f5f5', minHeight: '100vh' }}
             >
                 <Toolbar />
+                <LicenseUpgradeModal />
                 <Outlet />
             </Box>
         </Box>

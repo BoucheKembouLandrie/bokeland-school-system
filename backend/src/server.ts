@@ -1,9 +1,10 @@
 import app from './app';
 import { sequelize } from './models';
 
-const PORT = 5005; // Force port to bypass .env
-console.log("!!! FORCING PORT 5005 - IGNORE ENV !!!");
+const PORT = process.env.PORT || 5006; // Force port to bypass .env
+console.log("!!! FORCING PORT 5006 - IGNORE ENV !!!");
 console.log("!!! SERVER LOADING NEW CODE - TIMESTAMP " + Date.now() + " !!!");
+
 
 const startServer = async () => {
     try {
@@ -11,10 +12,17 @@ const startServer = async () => {
         console.log('Database connected successfully.');
 
         // Sync models (use { force: true } only for development to reset DB)
-        // await sequelize.sync({ alter: true });
+        // await sequelize.sync({ alter: true }); // Disabled - columns already added manually
         await sequelize.sync();
-        // await sequelize.sync();
         console.log('Models synchronized.');
+
+        // Initialize License Check
+        const { checkLicense } = require('./services/licenseService');
+        checkLicense(true).then((status: any) => {
+            console.log('--- LICENSE STATUS ---');
+            console.log(status);
+            console.log('----------------------');
+        });
 
         const server = app.listen(Number(PORT), '0.0.0.0', () => {
             console.log(`Server is running on port ${PORT}`);
@@ -35,3 +43,5 @@ const startServer = async () => {
 startServer();
 // Forced restart for controller update
 
+
+// Forced restart for fix check

@@ -21,22 +21,14 @@ import {
     Autocomplete
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import api from '../services/api';
 import { formatDate } from '../utils/formatDate';
-
-// Schema pour l'ajout d'une tranche
-const paymentSchema = z.object({
-    montant: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-        message: 'Le montant doit être positif',
-    }),
-    date_paiement: z.string().min(1, 'Date requise'),
-    motif: z.string().min(1, 'Motif requis'),
-});
-
-type PaymentFormData = z.infer<typeof paymentSchema>;
+import { useTranslation } from 'react-i18next';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 interface Payment {
     id: number;
@@ -62,6 +54,19 @@ interface Class {
 }
 
 const Payments: React.FC = () => {
+    const { t } = useTranslation();
+
+    // Schema pour l'ajout d'une tranche
+    const paymentSchema = z.object({
+        montant: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+            message: t('payments.validation.amountPositive'),
+        }),
+        date_paiement: z.string().min(1, t('payments.validation.dateRequired')),
+        motif: z.string().min(1, t('payments.validation.motifRequired')),
+    });
+
+    type PaymentFormData = z.infer<typeof paymentSchema>;
+
     // Data states
     const [payments, setPayments] = useState<Payment[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
@@ -77,11 +82,11 @@ const Payments: React.FC = () => {
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<PaymentFormData>({
+    const { register, handleSubmit, reset, control, formState: { errors } } = useForm<PaymentFormData>({
         resolver: zodResolver(paymentSchema),
         defaultValues: {
             date_paiement: new Date().toISOString().split('T')[0],
-            motif: 'Tranche '
+            motif: t('payments.defaults.tranchePrefix')
         }
     });
 
@@ -103,14 +108,14 @@ const Payments: React.FC = () => {
             setError('');
         } catch (err) {
             console.error('Error fetching data', err);
-            setError('Erreur lors du chargement des données');
+            setError(t('payments.messages.loadError'));
         } finally {
             setLoading(false);
         }
     };
 
     // Filter students based on selected class
-    const filteredStudents = students.filter(s => s.classe_id.toString() === selectedClassId);
+    const filteredStudents = students.filter(s => s.classe_id && s.classe_id.toString() === selectedClassId);
 
     // Filter payments for the validated student
     const studentPayments = validatedStudent
@@ -118,17 +123,17 @@ const Payments: React.FC = () => {
         : [];
 
     // Calculate totals
-    const totalPaid = studentPayments.reduce((sum, p) => sum + Number(p.montant), 0);
-    const selectedClass = classes.find(c => c.id.toString() === selectedClassId);
-    const classPension = selectedClass ? Number(selectedClass.pension) : 0;
+    const totalPaid = studentPayments.reduce((sum, p) => sum + Number(p.montant || 0), 0);
+    const selectedClass = classes.find(c => c.id && c.id.toString() === selectedClassId);
+    const classPension = selectedClass ? Number(selectedClass.pension || 0) : 0;
     const remaining = Math.max(0, classPension - totalPaid);
 
     const handleValidateSelection = () => {
         if (!selectedStudentId) {
-            setError('Veuillez sélectionner un élève');
+            setError(t('payments.messages.selectStudentRequired'));
             return;
         }
-        const student = students.find(s => s.id.toString() === selectedStudentId);
+        const student = students.find(s => s.id && s.id.toString() === selectedStudentId);
         setValidatedStudent(student || null);
         setError('');
         setSuccessMessage('');
@@ -137,7 +142,7 @@ const Payments: React.FC = () => {
         const nextTrancheIndex = payments.filter(p => p.eleve_id.toString() === selectedStudentId).length + 1;
         reset({
             date_paiement: new Date().toISOString().split('T')[0],
-            motif: `Tranche ${nextTrancheIndex}`,
+            motif: `${t('payments.defaults.tranchePrefix')}${nextTrancheIndex}`,
             montant: ''
         });
     };
@@ -149,7 +154,7 @@ const Payments: React.FC = () => {
 
         // Validation: Total must not exceed pension
         if (totalPaid + newAmount > classPension) {
-            setError('Désolé mais la somme totale des tranches doit être inférieure ou égale à la pension.');
+            setError(t('payments.messages.exceedsPension'));
             return;
         }
 
@@ -167,18 +172,18 @@ const Payments: React.FC = () => {
             const response = await api.get('/payments');
             setPayments(response.data);
 
-            setSuccessMessage('Tranche ajoutée avec succès !');
+            setSuccessMessage(t('payments.messages.paymentSuccess'));
             setError('');
 
             // Reset form but keep date and update motif
             reset({
                 date_paiement: new Date().toISOString().split('T')[0],
-                motif: `Tranche ${studentPayments.length + 2}`, // +2 because we just added one (length not updated yet in this render cycle)
+                motif: `${t('payments.defaults.tranchePrefix')}${studentPayments.length + 2}`, // +2 because we just added one (length not updated yet in this render cycle)
                 montant: ''
             });
         } catch (err) {
             console.error('Error saving payment', err);
-            setError('Erreur lors de l\'enregistrement du paiement');
+            setError(t('payments.messages.saveError'));
         }
     };
 
@@ -200,7 +205,7 @@ const Payments: React.FC = () => {
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <TextField
                             select
-                            label="Classe"
+                            label={t('payments.fields.class')}
                             fullWidth
                             value={selectedClassId}
                             onChange={(e) => {
@@ -212,7 +217,7 @@ const Payments: React.FC = () => {
                             InputLabelProps={{ shrink: true }}
                         >
                             <MenuItem value="">
-                                Sélectionner une classe
+                                {t('payments.fields.selectClass')}
                             </MenuItem>
                             {classes.map((classe) => (
                                 <MenuItem key={classe.id} value={classe.id.toString()}>
@@ -224,18 +229,18 @@ const Payments: React.FC = () => {
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Autocomplete
                             options={filteredStudents}
-                            getOptionLabel={(option) => `${option.nom} ${option.prenom}`}
+                            getOptionLabel={(option) => `${option.nom || ''} ${option.prenom || ''}`}
                             value={filteredStudents.find(s => s.id.toString() === selectedStudentId) || null}
                             onChange={(_, newValue) => setSelectedStudentId(newValue ? newValue.id.toString() : '')}
                             disabled={!selectedClassId}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="Élève"
+                                    label={t('payments.fields.student')}
                                     InputLabelProps={{ shrink: true }}
                                 />
                             )}
-                            noOptionsText="Aucun élève trouvé"
+                            noOptionsText={t('payments.messages.noStudentsFound')}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                         />
                     </Grid>
@@ -259,7 +264,7 @@ const Payments: React.FC = () => {
                                 color: 'white'
                             }}
                         >
-                            Valider
+                            {t('payments.actions.validate')}
                         </Button>
                     </Grid>
                 </Grid>
@@ -274,16 +279,16 @@ const Payments: React.FC = () => {
                     <Card sx={{ mb: 4, bgcolor: '#f5f5f5' }}>
                         <CardContent>
                             <Grid container spacing={2}>
-                                <Grid item xs={12} md={4}>
-                                    <Typography variant="subtitle2" color="text.secondary">Pension Totale</Typography>
+                                <Grid size={{ xs: 12, md: 4 }}>
+                                    <Typography variant="subtitle2" color="text.secondary">{t('payments.summary.totalPension')}</Typography>
                                     <Typography variant="h6">{classPension.toLocaleString()} FCFA</Typography>
                                 </Grid>
-                                <Grid item xs={12} md={4}>
-                                    <Typography variant="subtitle2" color="text.secondary">Déjà Payé</Typography>
+                                <Grid size={{ xs: 12, md: 4 }}>
+                                    <Typography variant="subtitle2" color="text.secondary">{t('payments.summary.alreadyPaid')}</Typography>
                                     <Typography variant="h6" color="primary.main">{totalPaid.toLocaleString()} FCFA</Typography>
                                 </Grid>
-                                <Grid item xs={12} md={4}>
-                                    <Typography variant="subtitle2" color="text.secondary">Reste à Payer</Typography>
+                                <Grid size={{ xs: 12, md: 4 }}>
+                                    <Typography variant="subtitle2" color="text.secondary">{t('payments.summary.remaining')}</Typography>
                                     <Typography variant="h6" color={remaining === 0 ? 'success.main' : 'error.main'}>
                                         {remaining.toLocaleString()} FCFA
                                     </Typography>
@@ -294,39 +299,49 @@ const Payments: React.FC = () => {
 
                     {/* Add Payment Section */}
                     <Paper sx={{ p: 3, mb: 4, border: '1px solid #e0e0e0' }}>
-                        <Typography variant="h6" sx={{ mb: 2 }}>Ajouter une tranche</Typography>
+                        <Typography variant="h6" sx={{ mb: 2 }}>{t('payments.titles.addTranche')}</Typography>
                         <Grid container spacing={2} alignItems="flex-start">
-                            <Grid item xs={12} md={3}>
+                            <Grid size={{ xs: 12, md: 3 }}>
                                 <TextField
-                                    label="Intitulé"
+                                    label={t('payments.fields.motif')}
                                     fullWidth
                                     {...register('motif')}
                                     error={!!errors.motif}
-                                    helperText={errors.motif?.message}
+                                    helperText={errors.motif?.message?.toString()}
                                 />
                             </Grid>
-                            <Grid item xs={12} md={3}>
-                                <TextField
-                                    label="Date"
-                                    type="date"
-                                    fullWidth
-                                    {...register('date_paiement')}
-                                    error={!!errors.date_paiement}
-                                    helperText={errors.date_paiement?.message}
-                                    InputLabelProps={{ shrink: true }}
+                            <Grid size={{ xs: 12, md: 3 }}>
+                                <Controller
+                                    name="date_paiement"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <DatePicker
+                                            label={t('payments.fields.date')}
+                                            value={field.value ? dayjs(field.value) : null}
+                                            onChange={(newValue) => field.onChange(newValue ? newValue.format('YYYY-MM-DD') : '')}
+                                            slotProps={{
+                                                textField: {
+                                                    fullWidth: true,
+                                                    error: !!errors.date_paiement,
+                                                    helperText: errors.date_paiement?.message?.toString(),
+                                                    InputLabelProps: { shrink: true }
+                                                }
+                                            }}
+                                        />
+                                    )}
                                 />
                             </Grid>
-                            <Grid item xs={12} md={3}>
+                            <Grid size={{ xs: 12, md: 3 }}>
                                 <TextField
-                                    label="Montant (FCFA)"
+                                    label={t('payments.fields.amount')}
                                     type="number"
                                     fullWidth
                                     {...register('montant')}
                                     error={!!errors.montant}
-                                    helperText={errors.montant?.message}
+                                    helperText={errors.montant?.message?.toString()}
                                 />
                             </Grid>
-                            <Grid item xs={12} md={3}>
+                            <Grid size={{ xs: 12, md: 3 }}>
                                 <Button
                                     variant="contained"
                                     fullWidth
@@ -340,7 +355,7 @@ const Payments: React.FC = () => {
                                         color: 'white'
                                     }}
                                 >
-                                    Ajouter une tranche
+                                    {t('payments.actions.addTranche')}
                                 </Button>
                             </Grid>
                         </Grid>
@@ -348,12 +363,12 @@ const Payments: React.FC = () => {
 
                     {/* Payments List */}
                     <TableContainer component={Paper} variant="outlined" sx={{ maxHeight: 586 }}>
-                        <Table size="small" stickyHeader>
+                        <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Intitulé</TableCell>
-                                    <TableCell>Date</TableCell>
-                                    <TableCell>Montant (en FCFA)</TableCell>
+                                    <TableCell>{t('payments.fields.motif')}</TableCell>
+                                    <TableCell>{t('payments.fields.date')}</TableCell>
+                                    <TableCell>{t('payments.fields.amountInCurrency')}</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -367,7 +382,7 @@ const Payments: React.FC = () => {
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={3} align="center">Aucun paiement enregistré pour cet élève.</TableCell>
+                                        <TableCell colSpan={3} align="center">{t('payments.messages.noPayments')}</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>

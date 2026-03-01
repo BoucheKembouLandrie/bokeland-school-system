@@ -111,23 +111,12 @@ export const createPayment = async (req: Request, res: Response) => {
 
         console.log(`✅ Payment created: ${payment.id}`);
 
-        // Update client subscription
+        // Update client
         const currentEnd = new Date(client.subscription_end_date);
         const now = new Date();
-        const isExpired = currentEnd < now;
-
-        // CRITICAL FIX: If expired, ALWAYS start fresh from today
-        // If still active, extend from current end date
-        const baseDate = isExpired ? now : currentEnd;
+        const baseDate = currentEnd > now ? currentEnd : now;
         const newEnd = new Date(baseDate);
         newEnd.setDate(newEnd.getDate() + (days || 444));
-
-        console.log(`🔄 Extending subscription for ${client.school_name}:`, {
-            was_expired: isExpired,
-            old_expiration: currentEnd.toISOString(),
-            new_expiration: newEnd.toISOString(),
-            days_added: days || 444
-        });
 
         client.subscription_end_date = newEnd;
         client.status = 'ACTIVE';
@@ -204,16 +193,19 @@ export const downloadInvoice = async (req: Request, res: Response) => {
         }
 
         // --- HEADER ---
-        // Always show logo (no text fallback)
-        if (logoPath && fs.existsSync(logoPath)) {
-            try {
+        // --- HEADER ---
+        // Try to load logo
+        try {
+            if (logoPath && fs.existsSync(logoPath)) {
                 doc.image(logoPath, 50, 45, { width: 150 });
                 doc.moveDown();
-            } catch (e) {
-                console.error('Error loading logo:', e);
+            } else {
+                console.log('DEBUG: Logo file not found or not configured at:', logoPath);
+                doc.fontSize(20).font('Helvetica-Bold').text('BOKELAND SCHOOL SYSTEM', 50, 57);
             }
-        } else {
-            console.warn('Company logo not configured or not found');
+        } catch (e) {
+            console.error('DEBUG: Error loading logo:', e);
+            doc.fontSize(20).font('Helvetica-Bold').text('BOKELAND SCHOOL SYSTEM', 50, 57);
         }
 
         doc.fontSize(10).font('Helvetica').text('Solution de Gestion Scolaire', 200, 65, { align: 'right' });
@@ -258,10 +250,9 @@ export const downloadInvoice = async (req: Request, res: Response) => {
         // --- TABLE ROW ---
         const rowTop = tableTop + 30;
         doc.font('Helvetica');
-        doc.text('Abonnement Licence Logiciel BOKELAND SCHOOL SYSTEM', 50, rowTop);
+        doc.text('Abonnement Licence Logiciel Leuana School', 50, rowTop);
         doc.text(`${payment.days_added} Jours`, 300, rowTop, { width: 90, align: 'right' });
-        doc.text(`${Number(payment.amount).toLocaleString()}`, 400, rowTop, { width: 70, align: 'right' });
-        doc.text('FCFA', 475, rowTop);
+        doc.text(`${Number(payment.amount).toLocaleString()} FCFA`, 400, rowTop, { width: 90, align: 'right' });
 
         doc.moveTo(50, rowTop + 20).lineTo(550, rowTop + 20).stroke();
 
@@ -269,8 +260,7 @@ export const downloadInvoice = async (req: Request, res: Response) => {
         const totalTop = rowTop + 40;
         doc.font('Helvetica-Bold').fontSize(14);
         doc.text('TOTAL PAYÉ:', 300, totalTop);
-        doc.text(`${Number(payment.amount).toLocaleString()}`, 400, totalTop, { width: 70, align: 'right' });
-        doc.text('FCFA', 475, totalTop);
+        doc.text(`${Number(payment.amount).toLocaleString()} FCFA`, 400, totalTop, { width: 90, align: 'right' });
 
         // --- SIGNATURE ---
         // Add signature section at bottom right
@@ -282,19 +272,15 @@ export const downloadInvoice = async (req: Request, res: Response) => {
             { underline: true }
         );
 
-        // Load and display signature
         try {
             let signaturePath = null;
             if (configSignature && configSignature.value) {
                 const relativePath = configSignature.value.replace(/^\/+/, '');
                 signaturePath = path.join(__dirname, '../../public', relativePath);
-                console.log('Signature path:', signaturePath);
             }
 
             if (signaturePath && fs.existsSync(signaturePath)) {
-                doc.image(signaturePath, 350, signatureTop + 20, { width: 180, height: 80, fit: [180, 80] });
-            } else {
-                console.warn('Company signature not configured or not found at:', signaturePath);
+                doc.image(signaturePath, 340, signatureTop + 20, { width: 200 });
             }
         } catch (e) {
             console.error('Error loading signature:', e);

@@ -18,8 +18,8 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
         try {
             setLoading(true);
             setError('');
-            console.log('Sending request to:', 'http://localhost:5005/api/admin/login');
-            const response = await axios.post('http://localhost:5005/api/admin/login', { password });
+            console.log('Sending request to:', 'http://localhost:3001/api/admin/login');
+            const response = await axios.post('http://localhost:3001/api/admin/login', { password });
             console.log('Response received:', response.data);
 
             if (response.data.success) {

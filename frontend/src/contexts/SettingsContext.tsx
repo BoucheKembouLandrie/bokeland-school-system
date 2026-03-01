@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import api from '../services/api';
+import i18n from '../i18n/config';
 
 interface SchoolSettings {
     id: number;
@@ -8,7 +9,13 @@ interface SchoolSettings {
     address: string;
     phone: string;
     email: string;
+
     logo_url: string;
+    date_format: string;
+    country_code?: string;
+    country?: string;
+    language?: string;
+    is_onboarding_complete?: boolean;
 }
 
 interface SettingsContextType {
@@ -27,6 +34,18 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
         try {
             const response = await api.get('/settings');
             setSettings(response.data);
+
+            // Apply Database Settings to App State
+            if (response.data.date_format) {
+                localStorage.setItem('date_format', response.data.date_format);
+            }
+
+            // Enforce Language from Database
+            if (response.data.language) {
+                if (i18n.language !== response.data.language) {
+                    i18n.changeLanguage(response.data.language);
+                }
+            }
         } catch (error) {
             console.error('Error fetching settings:', error);
         } finally {

@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { Add, Delete } from '@mui/icons-material';
 import api from '../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface ExamRule {
     id?: number;
@@ -28,23 +29,46 @@ interface ExamRule {
     status: string;
 }
 
-const CATEGORIES = ['Non redoublant(e)', 'Redoublant(e)'];
-const STATUSES = ['Admis(e) en classe supérieure', 'Redouble la classe', 'Exclu(e)'];
-
 const ConfigurationsTab: React.FC = () => {
+    const { t } = useTranslation();
     const [rules, setRules] = useState<ExamRule[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
+    // Dynamic Constants for dropdowns (using t)
+    const CATEGORIES = [
+        t('exams.configurations.categories.nonRepeater'),
+        t('exams.configurations.categories.repeater')
+    ];
+    const STATUSES = [
+        t('exams.configurations.statuses.admitted'),
+        t('exams.configurations.statuses.repeats'),
+        t('exams.configurations.statuses.excluded')
+    ];
+
     const [newRule, setNewRule] = useState<ExamRule>({
-        category: 'Non redoublant(e)',
+        category: CATEGORIES[0], // Set default to localized if possible
         min_average: 0,
         max_average: 20,
         min_absence: 0,
         max_absence: 1000,
-        status: 'Exclu(e)'
+        status: STATUSES[2] // Default suspended/excluded? Original was 'Exclu(e)' which is index 2
     });
+
+    // Update defaults when language changes or on mount
+    useEffect(() => {
+        setNewRule(prev => ({
+            ...prev,
+            // Only update category/status if they match old defaults? 
+            // Better to just let user select, but we need valid defaults.
+            // If user changes language mid-session, defaults might look weird if not updated, but standard usage is picking.
+            // Let's just keep logic simple.
+            category: prev.category || CATEGORIES[0],
+            status: prev.status || STATUSES[2]
+        }));
+    }, [t]);
+
 
     useEffect(() => {
         fetchRules();
@@ -65,17 +89,17 @@ const ConfigurationsTab: React.FC = () => {
 
         // Validation 1: Interval Logic
         if (newRule.min_average >= newRule.max_average) {
-            setError('L\'intervalle de moyenne est invalide (Min < Max).');
+            setError(t('exams.configurations.validation.invalidAverageInterval'));
             return;
         }
         if (newRule.min_absence >= newRule.max_absence) {
-            setError('L\'intervalle d\'absence est invalide (Min < Max).');
+            setError(t('exams.configurations.validation.invalidAbsenceInterval'));
             return;
         }
 
         // Validation 2: Values must be within bounds
         if (newRule.min_average < 0 || newRule.max_average > 20) {
-            setError('Les moyennes doivent être entre 0 et 20.');
+            setError(t('exams.configurations.validation.averageBounds'));
             return;
         }
 
@@ -83,34 +107,34 @@ const ConfigurationsTab: React.FC = () => {
         setLoading(true);
         try {
             await api.post('/exam-rules', newRule);
-            setSuccess('Logique ajoutée avec succès.');
+            setSuccess(t('exams.configurations.messages.addSuccess'));
             fetchRules();
             // Reset form
             setNewRule({
-                category: 'Non redoublant(e)',
+                category: CATEGORIES[0],
                 min_average: 0,
                 max_average: 20,
                 min_absence: 0,
                 max_absence: 1000,
-                status: 'Exclu(e)'
+                status: STATUSES[2]
             });
         } catch (err: any) {
             console.error('Error adding rule', err);
-            setError(err.response?.data?.message || 'Erreur lors de l\'ajout de la logique.');
+            setError(err.response?.data?.message || t('exams.configurations.messages.addError'));
         } finally {
             setLoading(false);
         }
     };
 
     const handleDeleteRule = async (id: number) => {
-        if (!window.confirm('Voulez-vous vraiment supprimer cette logique ?')) return;
+        if (!window.confirm(t('exams.configurations.messages.deleteConfirm'))) return;
         try {
             await api.delete(`/exam-rules/${id}`);
-            setSuccess('Logique supprimée avec succès.');
+            setSuccess(t('exams.configurations.messages.deleteSuccess'));
             fetchRules();
         } catch (err) {
             console.error('Error deleting rule', err);
-            setError('Erreur lors de la suppression.');
+            setError(t('exams.configurations.messages.deleteError'));
         }
     };
 
@@ -125,7 +149,7 @@ const ConfigurationsTab: React.FC = () => {
                 <Box sx={{ display: 'flex', gap: 2 }}>
                     <Box sx={{ flex: 1 }}>
                         <Typography variant="caption" sx={{ mb: 0.5, display: 'block', color: 'text.secondary' }}>
-                            Catégorie
+                            {t('exams.configurations.fields.category')}
                         </Typography>
                         <TextField
                             select
@@ -142,7 +166,7 @@ const ConfigurationsTab: React.FC = () => {
 
                     <Box sx={{ flex: 1 }}>
                         <Typography variant="caption" sx={{ mb: 0.5, display: 'block', color: 'text.secondary', textAlign: 'center' }}>
-                            Moyenne de note
+                            {t('exams.configurations.fields.average')}
                         </Typography>
                         <Box sx={{ display: 'flex', gap: 1 }}>
                             <TextField
@@ -168,7 +192,7 @@ const ConfigurationsTab: React.FC = () => {
 
                     <Box sx={{ flex: 1 }}>
                         <Typography variant="caption" sx={{ mb: 0.5, display: 'block', color: 'text.secondary', textAlign: 'center' }}>
-                            Absence non justifiée
+                            {t('exams.configurations.fields.unjustifiedAbsence')}
                         </Typography>
                         <Box sx={{ display: 'flex', gap: 1 }}>
                             <TextField
@@ -194,7 +218,7 @@ const ConfigurationsTab: React.FC = () => {
 
                     <Box sx={{ flex: 1 }}>
                         <Typography variant="caption" sx={{ mb: 0.5, display: 'block', color: 'text.secondary' }}>
-                            Status
+                            {t('exams.configurations.fields.status')}
                         </Typography>
                         <TextField
                             select
@@ -224,7 +248,7 @@ const ConfigurationsTab: React.FC = () => {
                             px: 4
                         }}
                     >
-                        Valider
+                        {t('exams.common.validate')}
                     </Button>
                 </Box>
             </Paper>
@@ -234,11 +258,11 @@ const ConfigurationsTab: React.FC = () => {
                 <Table size="small">
                     <TableHead>
                         <TableRow sx={{ bgcolor: '#f5f5f5' }}>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Catégorie</TableCell>
-                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Moyenne</TableCell>
-                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Absences</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
-                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Action</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>{t('exams.configurations.table.average')}</TableCell>
+                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>{t('exams.configurations.table.average')}</TableCell>
+                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>{t('exams.configurations.table.absences')}</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>{t('exams.configurations.fields.status')}</TableCell>
+                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>{t('exams.common.action')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -265,7 +289,7 @@ const ConfigurationsTab: React.FC = () => {
                         {rules.length === 0 && (
                             <TableRow>
                                 <TableCell colSpan={5} align="center" sx={{ py: 3, color: 'text.secondary' }}>
-                                    Aucune règle définie
+                                    {t('exams.configurations.messages.noRules')}
                                 </TableCell>
                             </TableRow>
                         )}

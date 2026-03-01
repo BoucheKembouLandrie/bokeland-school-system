@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Box, Tabs, Tab } from '@mui/material';
+import { Box, Tabs, Tab, Typography } from '@mui/material';
 import EvaluationsTab from './EvaluationsTab';
 import GradesTab from './GradesTab';
+import AnnualGradesTab from './AnnualGradesTab';
 import PrintingTab from './PrintingTab';
 import ConfigurationsTab from './ConfigurationsTab';
+import { useTranslation } from 'react-i18next';
 
 const Examens: React.FC = () => {
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState(0);
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -25,28 +28,45 @@ const Examens: React.FC = () => {
                     }}
                 >
                     <Tab
-                        label="Évaluations"
+                        label={t('exams.tabs.evaluations')}
                         sx={{
                             '&.Mui-selected': { color: '#d32f2f', fontWeight: 'bold' },
                             color: 'text.secondary'
                         }}
                     />
                     <Tab
-                        label="Configurations"
+                        label={t('exams.tabs.configurations')}
                         sx={{
                             '&.Mui-selected': { color: '#d32f2f', fontWeight: 'bold' },
                             color: 'text.secondary'
                         }}
                     />
                     <Tab
-                        label="Notes"
+                        label={t('exams.tabs.grades')}
                         sx={{
                             '&.Mui-selected': { color: '#d32f2f', fontWeight: 'bold' },
                             color: 'text.secondary'
                         }}
                     />
                     <Tab
-                        label="Impression"
+                        label={
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <Typography sx={{ fontWeight: 'inherit', fontSize: 'inherit' }}>IMPRESSION</Typography>
+                                <Typography variant="caption" sx={{ fontStyle: 'italic', textTransform: 'none' }}>(annuelle)</Typography>
+                            </Box>
+                        }
+                        sx={{
+                            '&.Mui-selected': { color: '#d32f2f', fontWeight: 'bold' },
+                            color: 'text.secondary'
+                        }}
+                    />
+                    <Tab
+                        label={
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <Typography sx={{ fontWeight: 'inherit', fontSize: 'inherit' }}>IMPRESSION</Typography>
+                                <Typography variant="caption" sx={{ fontStyle: 'italic', textTransform: 'none' }}>(par évaluation)</Typography>
+                            </Box>
+                        }
                         sx={{
                             '&.Mui-selected': { color: '#d32f2f', fontWeight: 'bold' },
                             color: 'text.secondary'
@@ -65,10 +85,14 @@ const Examens: React.FC = () => {
                 {activeTab === 2 && <GradesTab />}
             </div>
             <div role="tabpanel" hidden={activeTab !== 3}>
-                {activeTab === 3 && <PrintingTab />}
+                {activeTab === 3 && <AnnualGradesTab />}
+            </div>
+            <div role="tabpanel" hidden={activeTab !== 4}>
+                {activeTab === 4 && <PrintingTab />}
             </div>
         </Box>
     );
 };
 
 export default Examens;
+

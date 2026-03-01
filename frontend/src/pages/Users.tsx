@@ -21,22 +21,24 @@ import {
     MenuItem,
     Chip,
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, Visibility, VisibilityOff } from '@mui/icons-material';
+import { InputAdornment } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import api from '../services/api';
+import { useTranslation } from 'react-i18next';
 
-const schema = z.object({
-    username: z.string().min(3, 'Nom d\'utilisateur requis (min 3 caractères)'),
-    password: z.string().min(6, 'Motif requis'),
-    email: z.string().email('Email invalide').optional().or(z.literal('')),
+const createSchema = (t: any) => z.object({
+    username: z.string().min(3, t('users.validation.usernameRequired')),
+    password: z.string().min(6, t('users.validation.passwordRequired')),
+    email: z.string().email(t('users.validation.emailInvalid')).optional().or(z.literal('')),
     role: z.enum(['admin', 'secretary', 'teacher']),
     teacher_id: z.string().optional(),
     permissions: z.array(z.string()).optional(),
 });
 
-type FormData = z.infer<typeof schema>;
+type FormData = z.infer<ReturnType<typeof createSchema>>;
 
 interface User {
     id: number;
@@ -49,6 +51,8 @@ interface User {
 }
 
 const Users: React.FC = () => {
+    const { t } = useTranslation();
+    const schema = createSchema(t);
     const [users, setUsers] = useState<User[]>([]);
     const [teachers, setTeachers] = useState<any[]>([]);
     const [open, setOpen] = useState(false);
@@ -57,6 +61,8 @@ const Users: React.FC = () => {
     const [error, setError] = useState('');
     const [selectedRole, setSelectedRole] = useState<string>('teacher');
     const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+    const [showPassword, setShowPassword] = useState(false);
+    const [isDefaultUser, setIsDefaultUser] = useState(false);
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema),
@@ -82,7 +88,7 @@ const Users: React.FC = () => {
             setError('');
         } catch (err) {
             console.error('Error fetching users', err);
-            setError('Erreur lors du chargement des données');
+            setError(t('users.messages.loadError'));
         } finally {
             setLoading(false);
         }
@@ -113,18 +119,15 @@ const Users: React.FC = () => {
             setError('');
         } catch (err: any) {
             console.error('Error saving user', err);
-            setError(err.response?.data?.message || 'Erreur lors de l\'enregistrement');
+            setError(err.response?.data?.message || t('users.messages.saveError'));
         }
     };
 
     const handleEdit = (user: User) => {
-        if (user.is_default) {
-            alert('Le compte administrateur par défaut ne peut pas être modifié');
-            return;
-        }
         setEditingId(user.id);
         setSelectedRole(user.role);
         setSelectedPermissions(user.permissions || []);
+        setIsDefaultUser(!!user.is_default);
         reset({
             username: user.username,
             email: user.email || '',
@@ -138,17 +141,17 @@ const Users: React.FC = () => {
     const handleDelete = async (id: number) => {
         const user = users.find(u => u.id === id);
         if (user?.is_default) {
-            alert('Le compte administrateur par défaut ne peut pas être supprimé');
+            alert(t('users.messages.cannotDeleteDefault'));
             return;
         }
-        if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+        if (confirm(t('users.messages.deleteConfirm'))) {
             try {
                 await api.delete(`/users/${id}`);
                 fetchUsers();
                 setError('');
             } catch (err: any) {
                 console.error('Error deleting user', err);
-                setError(err.response?.data?.message || 'Erreur lors de la suppression');
+                setError(err.response?.data?.message || t('users.messages.deleteError'));
             }
         }
     };
@@ -158,6 +161,7 @@ const Users: React.FC = () => {
         setEditingId(null);
         setSelectedRole('teacher');
         setSelectedPermissions([]);
+        setIsDefaultUser(false);
         reset();
     };
 
@@ -187,7 +191,7 @@ const Users: React.FC = () => {
                     onClick={() => setOpen(true)}
                     sx={{ backgroundColor: '#8e24aa', '&:hover': { backgroundColor: '#6a1b9a' } }}
                 >
-                    Nouvel utilisateur
+                    {t('users.actions.newUser')}
                 </Button>
             </Box>
 
@@ -197,10 +201,10 @@ const Users: React.FC = () => {
                 <Table size="small" stickyHeader>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Nom d'utilisateur</TableCell>
-                            <TableCell>Email</TableCell>
-                            <TableCell>Rôle</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell>{t('users.fields.username')}</TableCell>
+                            <TableCell>{t('users.fields.email')}</TableCell>
+                            <TableCell>{t('users.fields.role')}</TableCell>
+                            <TableCell>{t('users.fields.actions')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -208,12 +212,12 @@ const Users: React.FC = () => {
                             <TableRow key={user.id} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f6edf8' } }}>
                                 <TableCell>
                                     {user.username}
-                                    {user.is_default && <Chip label="PAR DÉFAUT" size="small" color="warning" sx={{ ml: 1 }} />}
+                                    {user.is_default && <Chip label={t('users.labels.default')} size="small" color="warning" sx={{ ml: 1 }} />}
                                 </TableCell>
                                 <TableCell>{user.email || '-'}</TableCell>
                                 <TableCell>
                                     <Chip
-                                        label={user.role.toUpperCase()}
+                                        label={t(`users.roles.${user.role}`)}
                                         color={getRoleColor(user.role) as any}
                                         size="small"
                                     />
@@ -222,7 +226,6 @@ const Users: React.FC = () => {
                                     <IconButton
                                         onClick={() => handleEdit(user)}
                                         color="primary"
-                                        disabled={user.is_default}
                                     >
                                         <Edit />
                                     </IconButton>
@@ -241,61 +244,74 @@ const Users: React.FC = () => {
             </TableContainer>
 
             <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-                <DialogTitle>{editingId ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'}</DialogTitle>
+                <DialogTitle>{editingId ? t('users.titles.edit') : t('users.titles.add')}</DialogTitle>
                 <DialogContent>
                     <Box component="form" sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                         <TextField
-                            label="Nom d'utilisateur"
+                            label={t('users.fields.username')}
                             {...register('username')}
                             error={!!errors.username}
-                            helperText={errors.username?.message}
+                            helperText={isDefaultUser ? 'Non modifiable pour le compte par défaut' : errors.username?.message}
                             fullWidth
+                            disabled={isDefaultUser}
+                            sx={isDefaultUser ? { backgroundColor: '#f5f5f5' } : {}}
                         />
                         <TextField
-                            label="Mot de passe"
-                            type="password"
+                            label={t('users.fields.password')}
+                            type={showPassword ? 'text' : 'password'}
                             {...register('password')}
                             error={!!errors.password}
                             helperText={errors.password?.message}
                             fullWidth
-                            placeholder={editingId ? "Laisser vide pour ne pas changer" : ""}
+                            placeholder={editingId ? t('users.fields.passwordPlaceholder') : ""}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={() => setShowPassword(prev => !prev)}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
+                        <TextField
+                            label={`${t('users.fields.email')} (${t('common.optional', 'optionnel')})`}
+                            type="email"
+                            {...register('email')}
+                            error={!!errors.email}
+                            helperText={errors.email?.message}
+                            fullWidth
+                            placeholder={t('users.fields.emailPlaceholder')}
                         />
                         <TextField
                             select
-                            label="Rôle"
+                            label={t('users.fields.role')}
                             {...register('role')}
                             error={!!errors.role}
                             helperText={errors.role?.message}
                             fullWidth
                             value={selectedRole}
                             onChange={(e) => setSelectedRole(e.target.value)}
+                            disabled={isDefaultUser}
+                            sx={isDefaultUser ? { backgroundColor: '#f5f5f5' } : {}}
                         >
-                            <MenuItem value="admin">Administrateur</MenuItem>
-                            <MenuItem value="secretary">Secrétaire</MenuItem>
-                            <MenuItem value="teacher">Enseignant</MenuItem>
+                            <MenuItem value="admin">{t('users.roles.admin')}</MenuItem>
+                            <MenuItem value="secretary">{t('users.roles.secretary')}</MenuItem>
+                            <MenuItem value="teacher">{t('users.roles.teacher')}</MenuItem>
                         </TextField>
 
-                        {selectedRole === 'admin' && (
-                            <TextField
-                                label="Adresse email"
-                                type="email"
-                                {...register('email')}
-                                error={!!errors.email}
-                                helperText={errors.email?.message}
-                                fullWidth
-                                placeholder="utilisateur@example.com"
-                            />
-                        )}
-
-                        {selectedRole === 'teacher' && (
+                        {!isDefaultUser && selectedRole === 'teacher' && (
                             <TextField
                                 select
-                                label="Enseignant"
+                                label={t('users.fields.teacher')}
                                 {...register('teacher_id')}
                                 fullWidth
                                 defaultValue=""
                             >
-                                <MenuItem value="">Sélectionner un enseignant</MenuItem>
+                                <MenuItem value="">{t('users.fields.selectTeacher')}</MenuItem>
                                 {teachers.map((teacher) => (
                                     <MenuItem key={teacher.id} value={teacher.id.toString()}>
                                         {teacher.nom} {teacher.prenom}
@@ -304,14 +320,14 @@ const Users: React.FC = () => {
                             </TextField>
                         )}
 
-                        {selectedRole === 'secretary' && (
+                        {!isDefaultUser && selectedRole === 'secretary' && (
                             <Box>
-                                <Typography variant="subtitle2" sx={{ mb: 1 }}>Permissions (onglets accessibles)</Typography>
+                                <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('users.fields.permissions')}</Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                                     {['eleves', 'classes', 'enseignants', 'matieres', 'notes', 'paiements', 'presences', 'parametres'].map((perm) => (
                                         <Chip
                                             key={perm}
-                                            label={perm}
+                                            label={t(`users.permissions.${perm}`)}
                                             onClick={() => {
                                                 setSelectedPermissions(prev =>
                                                     prev.includes(perm)
@@ -329,9 +345,9 @@ const Users: React.FC = () => {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Annuler</Button>
+                    <Button onClick={handleClose}>{t('users.actions.cancel')}</Button>
                     <Button onClick={handleSubmit(onSubmit)} variant="contained">
-                        {editingId ? 'Modifier' : 'Créer'}
+                        {editingId ? t('users.actions.edit') : t('users.actions.create')}
                     </Button>
                 </DialogActions>
             </Dialog>

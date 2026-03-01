@@ -1,0 +1,53 @@
+<?php 
+$s2=mysqli_query($mysqli, "select *from annee_scolaire order by nom_annee_scolaire asc");
+?>
+<?php $id= $_SESSION['id_membre_sco'];
+	 $a=mysqli_fetch_array(mysqli_query($mysqli, "select *from statut_personnel where id_statut_personnel=$id"));
+	   ?>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="blurBg-true" style="background-color:#d3d9eb">
+
+
+
+<!-- Start Formoid form-->
+<link rel="stylesheet" href="infoetablissement_files/formoid1/formoid-default-skyblue.css" type="text/css" />
+<script type="text/javascript" src="infoetablissement_files/formoid1/jquery.min.js"></script>
+
+<form class="formoid-default-skyblue" style="background-color:#ebecff;font-size:20px;font-family:'Palatino Linotype','Book Antiqua',Palatino,serif;color:#585166;max-width:900px;min-width:150px" method="post">
+<div class="title"><h2 style="color:#03C;">Modifications</h2></div>
+
+    <div class="element-input">
+    <label class="title">Nouveau mot de passe<span class="required"></span></label>
+    <input class="large" type="text" name="pass" value="<?php if(isset($_POST['pass'])) {echo $_POST['pass'];}?>" value="<?php echo $a['pass_statut_personnel']; ?>" required placeholder=""/></div>
+	<input type="hidden"  name="id_statut_personnel" value="<?php if(isset($_POST['id_statut_personnel'])) {echo $_POST['id_statut_personnel'];}?>" value="<?php echo $a['id_statut_personnel']; ?>"/>
+	<div class="submit">
+    <input type="submit" value="Valider"/></div>
+    
+</form><p class="frmd"><a href="#"></p><script type="text/javascript" src="infoetablissement_files/formoid1/formoid-default-skyblue.js"></script>
+<!-- Stop Formoid form-->
+
+
+
+</body>
+</html>
+<?php 
+if(isset($_POST['pass']))
+{ $pass=$_POST['pass'];
+$id_statut_personnel=$_POST['id_statut_personnel'];
+
+ 	  if(mysqli_query($mysqli, 'update statut_personnel set pass_statut_personnel="'.$pass.'" where id_statut_personnel="'.$id_statut_personnel.'"'))
+    { echo'<script language="javascript"> alert("Modification effectuée!!! ")</script>'; 
+	echo'<script language="javascript"> document.location.href="statut_profil.php";</script>';
+  exit();}
+  else { echo $message='<script language="javascript"> alert("Erreur pendant la modification")</script>'; exit();}
+ 
+}
+  
+
+?>

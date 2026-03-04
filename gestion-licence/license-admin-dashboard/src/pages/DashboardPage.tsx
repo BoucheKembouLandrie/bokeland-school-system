@@ -348,117 +348,127 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
 
             {/* ─── TAB: CONFIGURATION ─── */}
             {currentTab === 2 && (
-                <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 680, mx: 'auto' }}>
-                    {/* Tarif */}
-                    <Paper sx={{ p: 4, borderRadius: 4, mb: 3 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-                            <Avatar sx={{ background: 'linear-gradient(135deg,#7C6EF1,#5B4FCC)', width: 42, height: 42 }}>
-                                <Shield sx={{ fontSize: 20 }} />
-                            </Avatar>
-                            <Box>
-                                <Typography sx={{ fontWeight: 700, fontSize: '1.05rem' }}>Tarification</Typography>
-                                <Typography sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>Prix annuel affiché aux clients</Typography>
-                            </Box>
-                        </Box>
-                        <TextField
-                            fullWidth
-                            label="Tarif Annuel d'Abonnement (FCFA)"
-                            type="number"
-                            value={annualRate}
-                            onChange={(e) => setAnnualRate(e.target.value)}
-                            sx={{ mb: 3 }}
-                            helperText="Ce montant sera affiché lors du renouvellement de licence."
-                        />
-                        <Button variant="contained" color="primary" onClick={handleUpdateRate} disabled={configLoading} fullWidth sx={{ py: 1.5 }}>
-                            {configLoading ? 'Sauvegarde...' : 'Sauvegarder les modifications'}
-                        </Button>
-                    </Paper>
+                <Box sx={{ p: { xs: 2, md: 4 } }}>
+                    <Grid container spacing={3} alignItems="stretch">
 
-                    {/* Logo */}
-                    <Paper sx={{ p: 4, borderRadius: 4, mb: 3 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-                            <Avatar sx={{ background: 'linear-gradient(135deg,#2DD4BF,#059669)', width: 42, height: 42 }}>
-                                <Business sx={{ fontSize: 20 }} />
-                            </Avatar>
-                            <Box>
-                                <Typography sx={{ fontWeight: 700, fontSize: '1.05rem' }}>Logo de l'Entreprise</Typography>
-                                <Typography sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>PNG recommandé — Visible sur les factures PDF</Typography>
-                            </Box>
-                        </Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                            <Box sx={{
-                                width: '100%', height: 120, borderRadius: 3, border: '2px dashed rgba(255,255,255,0.1)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
-                                bgcolor: 'rgba(255,255,255,0.02)'
-                            }}>
-                                <img
-                                    src="http://localhost:5005/uploads/company_logo.png"
-                                    alt="Logo"
-                                    style={{ maxHeight: 100, maxWidth: '80%', objectFit: 'contain' }}
-                                    onError={(e) => (e.currentTarget.style.display = 'none')}
+                        {/* ── Col 1 : Tarification ── */}
+                        <Grid size={{ xs: 12, md: 4 }}>
+                            <Paper sx={{ p: 3.5, borderRadius: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+                                    <Avatar sx={{ background: 'linear-gradient(135deg,#7C6EF1,#5B4FCC)', width: 42, height: 42 }}>
+                                        <Shield sx={{ fontSize: 20 }} />
+                                    </Avatar>
+                                    <Box>
+                                        <Typography sx={{ fontWeight: 700, fontSize: '1.05rem' }}>Tarification</Typography>
+                                        <Typography sx={{ fontSize: '0.78rem', color: 'text.secondary' }}>Prix annuel affiché aux clients</Typography>
+                                    </Box>
+                                </Box>
+                                <TextField
+                                    fullWidth
+                                    label="Tarif Annuel (FCFA)"
+                                    type="number"
+                                    value={annualRate}
+                                    onChange={(e) => setAnnualRate(e.target.value)}
+                                    sx={{ mb: 2 }}
+                                    helperText="Affiché lors du renouvellement de licence."
                                 />
-                            </Box>
-                            <input accept="image/*" style={{ display: 'none' }} id="logo-input" type="file"
-                                onChange={(e) => { if (e.target.files?.[0]) { setLogoFile(e.target.files[0]); } }} />
-                            <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
-                                <label htmlFor="logo-input" style={{ flex: 1 }}>
-                                    <Button variant="outlined" component="span" fullWidth startIcon={<Edit />}
-                                        sx={{ borderColor: 'rgba(124,110,241,0.4)', color: '#7C6EF1' }}>
-                                        {logoFile ? logoFile.name : 'Choisir un fichier'}
-                                    </Button>
-                                </label>
-                                {logoFile && (
-                                    <Button variant="contained" onClick={() => handleUpload(logoFile, 'logo')}
-                                        sx={{ background: 'linear-gradient(135deg,#7C6EF1,#5B4FCC)' }}>
-                                        Uploader
-                                    </Button>
-                                )}
-                            </Box>
-                        </Box>
-                    </Paper>
+                                <Button variant="contained" color="primary" onClick={handleUpdateRate} disabled={configLoading} fullWidth sx={{ py: 1.4, mt: 'auto' }}>
+                                    {configLoading ? 'Sauvegarde...' : 'Sauvegarder'}
+                                </Button>
+                            </Paper>
+                        </Grid>
 
-                    {/* Signature */}
-                    <Paper sx={{ p: 4, borderRadius: 4 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-                            <Avatar sx={{ background: 'linear-gradient(135deg,#FBBF24,#D97706)', width: 42, height: 42 }}>
-                                <Edit sx={{ fontSize: 20 }} />
-                            </Avatar>
-                            <Box>
-                                <Typography sx={{ fontWeight: 700, fontSize: '1.05rem' }}>Signature de l'Entreprise</Typography>
-                                <Typography sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>PNG transparent — Apparaît en bas des reçus</Typography>
-                            </Box>
-                        </Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                            <Box sx={{
-                                width: '100%', height: 120, borderRadius: 3, border: '2px dashed rgba(255,255,255,0.1)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
-                                bgcolor: 'rgba(255,255,255,0.02)'
-                            }}>
-                                <img
-                                    src="http://localhost:5005/uploads/company_signature.png"
-                                    alt="Signature"
-                                    style={{ maxHeight: 100, maxWidth: '80%', objectFit: 'contain' }}
-                                    onError={(e) => (e.currentTarget.style.display = 'none')}
-                                />
-                            </Box>
-                            <input accept="image/*" style={{ display: 'none' }} id="sig-input" type="file"
-                                onChange={(e) => { if (e.target.files?.[0]) { setSigFile(e.target.files[0]); } }} />
-                            <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
-                                <label htmlFor="sig-input" style={{ flex: 1 }}>
-                                    <Button variant="outlined" component="span" fullWidth startIcon={<Edit />}
-                                        sx={{ borderColor: 'rgba(251,191,36,0.4)', color: '#FBBF24' }}>
-                                        {sigFile ? sigFile.name : 'Choisir un fichier'}
-                                    </Button>
-                                </label>
-                                {sigFile && (
-                                    <Button variant="contained" onClick={() => handleUpload(sigFile, 'signature')}
-                                        sx={{ background: 'linear-gradient(135deg,#FBBF24,#D97706)', color: '#1a1a1a' }}>
-                                        Uploader
-                                    </Button>
-                                )}
-                            </Box>
-                        </Box>
-                    </Paper>
+                        {/* ── Col 2 : Logo ── */}
+                        <Grid size={{ xs: 12, md: 4 }}>
+                            <Paper sx={{ p: 3.5, borderRadius: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+                                    <Avatar sx={{ background: 'linear-gradient(135deg,#2DD4BF,#059669)', width: 42, height: 42 }}>
+                                        <Business sx={{ fontSize: 20 }} />
+                                    </Avatar>
+                                    <Box>
+                                        <Typography sx={{ fontWeight: 700, fontSize: '1.05rem' }}>Logo de l'Entreprise</Typography>
+                                        <Typography sx={{ fontSize: '0.78rem', color: 'text.secondary' }}>PNG recommandé — Factures PDF</Typography>
+                                    </Box>
+                                </Box>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1 }}>
+                                    <Box sx={{
+                                        flex: 1, minHeight: 130, borderRadius: 3, border: '2px dashed rgba(255,255,255,0.1)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+                                        bgcolor: 'rgba(255,255,255,0.02)'
+                                    }}>
+                                        <img
+                                            src="http://localhost:5005/uploads/company_logo.png"
+                                            alt="Logo"
+                                            style={{ maxHeight: 110, maxWidth: '90%', objectFit: 'contain' }}
+                                            onError={(e) => (e.currentTarget.style.display = 'none')}
+                                        />
+                                    </Box>
+                                    <input accept="image/*" style={{ display: 'none' }} id="logo-input" type="file"
+                                        onChange={(e) => { if (e.target.files?.[0]) setLogoFile(e.target.files[0]); }} />
+                                    <Box sx={{ display: 'flex', gap: 1.5 }}>
+                                        <label htmlFor="logo-input" style={{ flex: 1 }}>
+                                            <Button variant="outlined" component="span" fullWidth startIcon={<Edit />} size="small"
+                                                sx={{ borderColor: 'rgba(45,212,191,0.4)', color: '#2DD4BF' }}>
+                                                {logoFile ? logoFile.name.slice(0, 14) + '…' : 'Choisir un fichier'}
+                                            </Button>
+                                        </label>
+                                        {logoFile && (
+                                            <Button variant="contained" size="small" onClick={() => handleUpload(logoFile, 'logo')}
+                                                sx={{ background: 'linear-gradient(135deg,#2DD4BF,#059669)', color: '#fff', whiteSpace: 'nowrap' }}>
+                                                Uploader
+                                            </Button>
+                                        )}
+                                    </Box>
+                                </Box>
+                            </Paper>
+                        </Grid>
+
+                        {/* ── Col 3 : Signature ── */}
+                        <Grid size={{ xs: 12, md: 4 }}>
+                            <Paper sx={{ p: 3.5, borderRadius: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+                                    <Avatar sx={{ background: 'linear-gradient(135deg,#FBBF24,#D97706)', width: 42, height: 42 }}>
+                                        <Edit sx={{ fontSize: 20 }} />
+                                    </Avatar>
+                                    <Box>
+                                        <Typography sx={{ fontWeight: 700, fontSize: '1.05rem' }}>Signature de l'Entreprise</Typography>
+                                        <Typography sx={{ fontSize: '0.78rem', color: 'text.secondary' }}>PNG transparent — Bas des reçus</Typography>
+                                    </Box>
+                                </Box>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1 }}>
+                                    <Box sx={{
+                                        flex: 1, minHeight: 130, borderRadius: 3, border: '2px dashed rgba(255,255,255,0.1)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+                                        bgcolor: 'rgba(255,255,255,0.02)'
+                                    }}>
+                                        <img
+                                            src="http://localhost:5005/uploads/company_signature.png"
+                                            alt="Signature"
+                                            style={{ maxHeight: 110, maxWidth: '90%', objectFit: 'contain' }}
+                                            onError={(e) => (e.currentTarget.style.display = 'none')}
+                                        />
+                                    </Box>
+                                    <input accept="image/*" style={{ display: 'none' }} id="sig-input" type="file"
+                                        onChange={(e) => { if (e.target.files?.[0]) { setSigFile(e.target.files[0]); } }} />
+                                    <Box sx={{ display: 'flex', gap: 1.5 }}>
+                                        <label htmlFor="sig-input" style={{ flex: 1 }}>
+                                            <Button variant="outlined" component="span" fullWidth startIcon={<Edit />} size="small"
+                                                sx={{ borderColor: 'rgba(251,191,36,0.4)', color: '#FBBF24' }}>
+                                                {sigFile ? sigFile.name.slice(0, 14) + '…' : 'Choisir un fichier'}
+                                            </Button>
+                                        </label>
+                                        {sigFile && (
+                                            <Button variant="contained" size="small" onClick={() => handleUpload(sigFile, 'signature')}
+                                                sx={{ background: 'linear-gradient(135deg,#FBBF24,#D97706)', color: '#1a1a1a', whiteSpace: 'nowrap' }}>
+                                                Uploader
+                                            </Button>
+                                        )}
+                                    </Box>
+                                </Box>
+                            </Paper>
+                        </Grid>
+
+                    </Grid>
                 </Box>
             )}
 

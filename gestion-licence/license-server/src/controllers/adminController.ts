@@ -129,12 +129,22 @@ export const deleteClient = async (req: Request, res: Response) => {
 
 export const getConfig = async (req: Request, res: Response) => {
     try {
-        const config = await Config.findByPk('annual_subscription_rate');
-        res.json({ annual_subscription_rate: config ? config.value : '144000' });
+        const [rateConf, logoConf, sigConf] = await Promise.all([
+            Config.findByPk('annual_subscription_rate'),
+            Config.findByPk('company_logo'),
+            Config.findByPk('company_signature'),
+        ]);
+        console.log('DEBUG getConfig — signature value:', sigConf?.value);
+        res.json({
+            annual_subscription_rate: rateConf ? rateConf.value : '144000',
+            company_logo: logoConf ? logoConf.value : null,
+            company_signature: sigConf ? sigConf.value : null,
+        });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch config' });
     }
 };
+
 
 export const updateConfig = async (req: Request, res: Response) => {
     try {

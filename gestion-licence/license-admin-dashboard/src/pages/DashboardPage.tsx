@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
     Box, AppBar, Toolbar, Typography, Button, Paper, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, Chip, IconButton, Dialog, DialogTitle,
     DialogContent, DialogActions, TextField, Select, MenuItem, FormControl, InputLabel,
-    Grid, Card, CardContent, Tabs, Tab, Avatar
+    Grid, Card, CardContent, Tabs, Tab, Avatar, Badge
 } from '@mui/material';
 import {
     Edit, Delete, Logout, Group, CheckCircle, AccessTime, Cancel,
-    Business, Phone, Email, LocationOn, CalendarToday, Shield
+    Business, Phone, Email, LocationOn, CalendarToday, Shield, Groups
 } from '@mui/icons-material';
 import axios from 'axios';
 import FinancesPage from './FinancesPage';
+import CommunautePageAdmin from './CommunautePageAdmin';
 
 interface Client {
     id: number;
@@ -212,6 +213,7 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
                     <Tab icon={<Group sx={{ fontSize: 17 }} />} iconPosition="start" label="Clients" />
                     <Tab icon={<Shield sx={{ fontSize: 17 }} />} iconPosition="start" label="Finances" />
                     <Tab icon={<Business sx={{ fontSize: 17 }} />} iconPosition="start" label="Configuration" />
+                    <Tab icon={<Groups sx={{ fontSize: 17 }} />} iconPosition="start" label="Communauté" />
                 </Tabs>
             </AppBar>
 
@@ -469,6 +471,13 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
                         </Grid>
 
                     </Grid>
+                </Box>
+            )}
+
+            {/* ─── TAB: COMMUNAUTÉ ─── */}
+            {currentTab === 3 && (
+                <Box sx={{ p: { xs: 2, md: 3 } }}>
+                    <CommunautePageAdmin />
                 </Box>
             )}
 

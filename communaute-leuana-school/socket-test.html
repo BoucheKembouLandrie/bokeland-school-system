@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket.IO Test</title>
+</head>
+<body>
+    <h1>Testing Socket.IO Connection</h1>
+    <div id="status">Connecting...</div>
+
+    <!-- Need absolute CDN links -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+        const statusDiv = document.getElementById('status');
+        
+        // This simulates CommunautePageAdmin or CommunautePage
+        const socket = io("http://localhost:5007", {
+            auth: {
+                schoolEmail: "test@leuena.com",
+            },
+            transports: ['websocket', 'polling']
+        });
+
+        socket.on('connect', () => {
+            statusDiv.innerHTML = "<b>Connected successfully!</b> IDE: " + socket.id;
+        });
+
+        socket.on('connect_error', (error) => {
+            statusDiv.innerHTML = "<b style='color:red'>Connect Error:</b> " + error.message;
+        });
+
+        socket.on('auth_error', (data) => {
+            statusDiv.innerHTML = "<b style='color:orange'>Auth Error:</b> " + (data.message || data);
+        });
+
+        socket.on('disconnect', (reason) => {
+            statusDiv.innerHTML = "<b>Disconnected:</b> " + reason;
+        });
+    </script>
+</body>
+</html>

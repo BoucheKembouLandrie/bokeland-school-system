@@ -68,6 +68,10 @@ export const updateClientStatus = async (req: Request, res: Response) => {
             client.status = status;
         }
 
+        if (req.body.community_banned !== undefined) {
+            client.community_banned = req.body.community_banned;
+        }
+
         if (days) {
             const currentEnd = new Date(client.subscription_end_date);
             const now = new Date();
@@ -105,6 +109,25 @@ export const updateClientStatus = async (req: Request, res: Response) => {
         await client.save();
         res.json(client);
     } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+export const communityBan = async (req: Request, res: Response) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({ error: 'Email required' });
+        }
+        const client = await Client.findOne({ where: { email } });
+        if (!client) {
+            return res.status(404).json({ error: 'Client not found' });
+        }
+        client.community_banned = true;
+        await client.save();
+        res.json({ message: 'Client blocked from community' });
+    } catch (error) {
+        console.error('Error banning client:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };

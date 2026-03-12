@@ -3,7 +3,7 @@ import {
     Box, AppBar, Toolbar, Typography, Button, Paper, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, Chip, IconButton, Dialog, DialogTitle,
     DialogContent, DialogActions, TextField, Select, MenuItem, FormControl, InputLabel,
-    Grid, Card, CardContent, Tabs, Tab, Avatar, Badge
+    Grid, Card, CardContent, Tabs, Tab, Avatar, Badge, Switch, FormControlLabel
 } from '@mui/material';
 import {
     Edit, Delete, Logout, Group, CheckCircle, AccessTime, Cancel,
@@ -26,6 +26,7 @@ interface Client {
     subscription_end_date: string;
     status: 'TRIAL' | 'ACTIVE' | 'EXPIRED' | 'BANNED';
     last_checkin?: string;
+    community_banned?: boolean;
 }
 
 interface Stats {
@@ -83,8 +84,9 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
     const [stats, setStats] = useState<Stats>({ total: 0, active: 0, trial: 0, expired: 0 });
     const [editDialog, setEditDialog] = useState(false);
     const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-    const [newStatus, setNewStatus] = useState('');
+    const [newStatus, setNewStatus] = useState<'TRIAL' | 'ACTIVE' | 'EXPIRED' | 'BANNED' | ''>('');
     const [extensionDays, setExtensionDays] = useState('');
+    const [communityBanned, setCommunityBanned] = useState<boolean>(false);
     const [annualRate, setAnnualRate] = useState('144000');
     const [configLoading, setConfigLoading] = useState(false);
     const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -111,6 +113,7 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
         setSelectedClient(client);
         setNewStatus(client.status);
         setExtensionDays('');
+        setCommunityBanned(!!client.community_banned);
         setEditDialog(true);
     };
 
@@ -120,7 +123,7 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
             const days = extensionDays ? parseInt(extensionDays) : 0;
             if (days > 0 && newStatus === 'TRIAL' && days > 33) { alert("Max 33 jours pour un essai."); return; }
             if (days > 0 && newStatus === 'ACTIVE' && days > 444) { alert("Max 444 jours pour un abonnement actif."); return; }
-            const payload: any = { status: newStatus };
+            const payload: any = { status: newStatus, community_banned: communityBanned };
             if (days > 0) payload.days = days;
             await axios.put(`http://localhost:5005/api/admin/clients/${selectedClient.id}`, payload);
             setEditDialog(false);
@@ -476,7 +479,7 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
 
             {/* ─── TAB: COMMUNAUTÉ ─── */}
             {currentTab === 3 && (
-                <Box sx={{ p: { xs: 2, md: 3 } }}>
+                <Box sx={{ p: 0 }}>
                     <CommunautePageAdmin />
                 </Box>
             )}
@@ -515,6 +518,26 @@ const DashboardPage = ({ onLogout }: DashboardPageProps) => {
                                 inputProps={{ min: 1, max: newStatus === 'TRIAL' ? 33 : 444 }}
                             />
                         )}
+
+                        <Box sx={{ mt: 1, p: 2, bgcolor: 'rgba(0,0,0,0.02)', borderRadius: 2, border: '1px solid rgba(0,0,0,0.05)' }}>
+                            <FormControlLabel
+                                control={
+                                    <Switch 
+                                        checked={!communityBanned} 
+                                        onChange={(e) => setCommunityBanned(!e.target.checked)} 
+                                        color={!communityBanned ? "success" : "error"}
+                                    />
+                                }
+                                label={
+                                    <Typography sx={{ fontSize: '0.9rem', fontWeight: 500 }}>
+                                        {!communityBanned ? '🟢 Accès au Chat Autorisé' : '🔴 Banni du Chat (Accès bloqué)'}
+                                    </Typography>
+                                }
+                            />
+                            <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', mt: 0.5, ml: 4 }}>
+                                Désactivez ceci pour empêcher l'établissement d'envoyer ou de voir les nouveaux messages sur la communauté.
+                            </Typography>
+                        </Box>
                     </Box>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>

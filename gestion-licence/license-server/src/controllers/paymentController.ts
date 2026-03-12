@@ -175,16 +175,36 @@ export const downloadInvoice = async (req: Request, res: Response) => {
 
         doc.pipe(res);
 
-        // Resolve paths first
-        let logoPath = null;
+        // Resolve paths robustly using process.cwd() (works with ts-node and compiled)
+        const uploadsBase = path.resolve(process.cwd(), 'public', 'uploads');
+        let logoPath: string | null = null;
+        let signaturePath: string | null = null;
+
         try {
             if (configLogo && configLogo.value) {
-                const relativePath = configLogo.value.replace(/^\/+/, '');
-                logoPath = path.join(__dirname, '../../public', relativePath);
+                const filename = path.basename(configLogo.value);
+                logoPath = path.join(uploadsBase, filename);
+                if (!fs.existsSync(logoPath)) {
+                    // fallback: full relative path from config
+                    const rel = configLogo.value.replace(/^\/+/, '');
+                    logoPath = path.resolve(process.cwd(), rel);
+                }
             }
-        } catch (e) {
-            console.error('Error resolving logo path:', e);
-        }
+        } catch (e) { console.error('Error resolving logo path:', e); }
+
+        try {
+            if (configSignature && configSignature.value) {
+                const filename = path.basename(configSignature.value);
+                signaturePath = path.join(uploadsBase, filename);
+                if (!fs.existsSync(signaturePath)) {
+                    const rel = configSignature.value.replace(/^\/+/, '');
+                    signaturePath = path.resolve(process.cwd(), rel);
+                }
+            }
+        } catch (e) { console.error('Error resolving signature path:', e); }
+
+        console.log('PDF paths — logo:', logoPath, '| exists:', logoPath ? fs.existsSync(logoPath) : false);
+        console.log('PDF paths — sig: ', signaturePath, '| exists:', signaturePath ? fs.existsSync(signaturePath) : false);
 
         // --- WATERMARK ---
         if (logoPath && fs.existsSync(logoPath)) {
@@ -192,7 +212,6 @@ export const downloadInvoice = async (req: Request, res: Response) => {
             doc.translate(doc.page.width / 2, doc.page.height / 2);
             doc.rotate(-45);
             doc.opacity(0.1);
-            // Draw large centered image
             doc.image(logoPath, -300, -150, { width: 600, align: 'center', valign: 'center' });
             doc.restore();
         }
@@ -268,27 +287,27 @@ export const downloadInvoice = async (req: Request, res: Response) => {
         doc.text(`${Number(payment.amount).toLocaleString()} FCFA`, 400, totalTop, { width: 90, align: 'right' });
 
         // --- SIGNATURE ---
-        // Add signature section at bottom right
-        const signatureTop = 550;
+        const signatureTop = 530;
+
+        // Label centré sur la moitié droite
         doc.font('Helvetica-Bold').fontSize(12).text(
             'La Direction Générale',
-            350,
+            300,
             signatureTop,
-            { underline: true }
+            { align: 'center', width: 230, underline: true }
         );
 
-        try {
-            let signaturePath = null;
-            if (configSignature && configSignature.value) {
-                const relativePath = configSignature.value.replace(/^\/+/, '');
-                signaturePath = path.join(__dirname, '../../public', relativePath);
+        // Image signature sous le libellé
+        if (signaturePath && fs.existsSync(signaturePath)) {
+            try {
+                // Center horizontally in right half (page width ~595, right half starts at ~300)
+                doc.image(signaturePath, 320, signatureTop + 20, { width: 180, align: 'center' });
+                console.log('Signature image added to PDF successfully');
+            } catch (e) {
+                console.error('Error embedding signature image in PDF:', e);
             }
-
-            if (signaturePath && fs.existsSync(signaturePath)) {
-                doc.image(signaturePath, 340, signatureTop + 20, { width: 200 });
-            }
-        } catch (e) {
-            console.error('Error loading signature:', e);
+        } else {
+            console.log('Signature not found, skipping image. Path:', signaturePath);
         }
 
         // --- FOOTER ---

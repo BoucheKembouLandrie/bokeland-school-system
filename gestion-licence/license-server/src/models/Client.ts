@@ -14,6 +14,7 @@ export interface ClientAttributes {
     subscription_end_date: Date;
     status: 'TRIAL' | 'ACTIVE' | 'EXPIRED' | 'BANNED';
     last_checkin?: Date;
+    community_banned?: boolean;
 }
 
 export class Client extends Model<ClientAttributes> implements ClientAttributes {
@@ -29,6 +30,7 @@ export class Client extends Model<ClientAttributes> implements ClientAttributes 
     public subscription_end_date!: Date;
     public status!: 'TRIAL' | 'ACTIVE' | 'EXPIRED' | 'BANNED';
     public last_checkin!: Date;
+    public community_banned!: boolean;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -86,6 +88,10 @@ Client.init(
         last_checkin: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
+        },
+        community_banned: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
         },
     },
     {

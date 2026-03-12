@@ -2,7 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { adminLogin, getAllClients, getClientStats, updateClientStatus, deleteClient, getConfig, updateConfig, uploadLogo, uploadSignature, deleteAllPayments } from '../controllers/adminController';
+import { adminLogin, getAllClients, getClientStats, updateClientStatus, deleteClient, getConfig, updateConfig, uploadLogo, uploadSignature, deleteAllPayments, communityBan } from '../controllers/adminController';
 import paymentRoutes from './paymentRoutes';
 
 const router = Router();
@@ -31,6 +31,7 @@ router.post('/login', adminLogin);
 router.get('/clients', getAllClients);
 router.get('/stats', getClientStats);
 router.put('/clients/:id', updateClientStatus);
+router.put('/community-ban', communityBan);
 router.delete('/clients/:id', deleteClient);
 router.get('/config', getConfig);
 router.put('/config', updateConfig);

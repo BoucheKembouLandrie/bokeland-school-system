@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     Box, Typography, Paper, TextField, IconButton, Avatar,
-    CircularProgress, Tooltip, Badge, Chip
+    CircularProgress, Tooltip, Chip
 } from '@mui/material';
 import {
-    Send, Mic, Stop, AttachFile, Close, Reply, WifiOff, Delete
+    Send, Mic, Stop, AttachFile, Close, Reply, WifiOff, Delete, Block
 } from '@mui/icons-material';
 import { io, Socket } from 'socket.io-client';
 
-const LICENSE_SERVER = 'http://localhost:5005';
+const COMMUNITY_SERVER = 'http://localhost:5007';
 const ADMIN_TOKEN = 'bokeland-admin-secret-2025';
 
 interface Message {
@@ -23,6 +23,7 @@ interface Message {
     reply_preview: string | null;
     deleted: boolean;
     created_at: string;
+    sender_logo: string | null;
 }
 
 function formatTime(dateStr: string) {
@@ -57,6 +58,7 @@ const CommunautePageAdmin: React.FC<CommunautePageAdminProps> = ({ onUnreadChang
     const [recording, setRecording] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
     const [connected, setConnected] = useState(false);
+    const [mySenderKey, setMySenderKey] = useState('admin');
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -76,28 +78,26 @@ const CommunautePageAdmin: React.FC<CommunautePageAdminProps> = ({ onUnreadChang
     }, []);
 
     useEffect(() => {
-        fetch(`${LICENSE_SERVER}/api/community/messages`)
+        fetch(`${COMMUNITY_SERVER}/api/community/messages`)
             .then(r => r.json())
             .then(data => { setMessages(data); setLoading(false); })
             .catch(() => setLoading(false));
     }, []);
 
     useEffect(() => {
-        const s = io(LICENSE_SERVER, {
+        const s = io(COMMUNITY_SERVER, {
             auth: { adminToken: ADMIN_TOKEN },
-            transports: ['websocket'],
+            transports: ['websocket', 'polling'],
         });
         s.on('connect', () => setConnected(true));
         s.on('disconnect', () => setConnected(false));
+        s.on('connected_as', ({ senderKey }: { senderKey: string }) => setMySenderKey(senderKey));
         s.on('new_message', (msg: Message) => {
             setMessages(prev => [...prev.slice(-332), msg]);
             onUnreadChange?.(1);
         });
         s.on('message_deleted', ({ id }: { id: number }) => {
-            setMessages(prev => prev.map(m => m.id === id
-                ? { ...m, deleted: true, content: '🚫 Ce message a été supprimé par l\'administrateur.', file_url: null }
-                : m
-            ));
+            setMessages(prev => prev.filter(m => m.id !== id));
         });
         s.on('online_count', (n: number) => setOnlineCount(n));
         s.on('user_typing', ({ name }: { name: string }) => {
@@ -134,7 +134,7 @@ const CommunautePageAdmin: React.FC<CommunautePageAdminProps> = ({ onUnreadChang
         const fd = new FormData();
         fd.append('file', file);
         try {
-            const res = await fetch(`${LICENSE_SERVER}/api/community/upload`, { method: 'POST', body: fd });
+            const res = await fetch(`${COMMUNITY_SERVER}/api/community/upload`, { method: 'POST', body: fd });
             const { url } = await res.json();
             const type = file.type.startsWith('audio') ? 'audio' : 'image';
             socket?.emit('send_message', {
@@ -171,22 +171,35 @@ const CommunautePageAdmin: React.FC<CommunautePageAdminProps> = ({ onUnreadChang
         socket?.emit('delete_message', { id });
     };
 
+    const blockUser = (targetSenderKey: string, targetSchoolName: string) => {
+        if (!window.confirm(`Voulez-vous vraiment bannir l'établissement "${targetSchoolName}" de la communauté en ligne ? Cette action supprimera également tous ses messages.`)) return;
+        socket?.emit('block_user', { targetSenderKey });
+    };
+
     const renderMessage = (msg: Message) => {
-        const isAdminMsg = msg.sender_key === 'admin';
-        const color = isAdminMsg ? '#d97706' : hashColor(msg.sender_name);
+        const isAdminMsg = msg.sender_key === mySenderKey;
+        const isAdminSender = !!msg.is_admin;
+        const color = isAdminSender ? '#d97706' : hashColor(msg.sender_name);
         return (
-            <Box key={msg.id} sx={{ display: 'flex', flexDirection: isAdminMsg ? 'row-reverse' : 'row', mb: 1, alignItems: 'flex-end', gap: 1 }}>
-                {!isAdminMsg && (
-                    <Avatar sx={{ width: 32, height: 32, fontSize: '0.72rem', bgcolor: color, flexShrink: 0 }}>
-                        {getInitials(msg.sender_name)}
-                    </Avatar>
-                )}
+            <Box key={msg.id} sx={{ display: 'flex', flexDirection: isAdminMsg ? 'row-reverse' : 'row', mb: 1.5, alignItems: 'flex-end', gap: 1 }}>
+                {/* Avatar avec logo ou initiales */}
+                <Avatar 
+                    src={isAdminSender ? '/logo-bokeland-school-system.png' : (msg.sender_logo && msg.sender_logo !== '/default-logo.png' ? msg.sender_logo : undefined)}
+                    sx={{ width: 32, height: 32, fontSize: '0.72rem', bgcolor: color, flexShrink: 0, order: isAdminMsg ? 1 : 0 }}
+                >
+                    {!isAdminSender && (!msg.sender_logo || msg.sender_logo === '/default-logo.png') ? getInitials(msg.sender_name) : null}
+                </Avatar>
                 <Box sx={{ maxWidth: '72%' }}>
-                    {!isAdminMsg && (
-                        <Typography sx={{ fontSize: '0.7rem', color, fontWeight: 700, ml: 1, mb: 0.3 }}>
-                            {msg.sender_name}
-                        </Typography>
-                    )}
+                    {/* Nom + couronne — TOUJOURS visible */}
+                    <Typography sx={{
+                        fontSize: '0.7rem',
+                        color: isAdminSender ? '#d97706' : color,
+                        fontWeight: 700,
+                        ml: 1, mb: 0.3,
+                        textAlign: isAdminMsg ? 'right' : 'left'
+                    }}>
+                        {isAdminSender ? '👑 ' : '🏫 '}{msg.sender_name}
+                    </Typography>
                     <Paper elevation={0} sx={{
                         p: '8px 12px',
                         borderRadius: isAdminMsg ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
@@ -199,12 +212,12 @@ const CommunautePageAdmin: React.FC<CommunautePageAdminProps> = ({ onUnreadChang
                             </Box>
                         )}
                         {msg.type === 'image' && msg.file_url && !msg.deleted ? (
-                            <img src={`${LICENSE_SERVER}${msg.file_url}`} alt="img"
+                            <img src={`${COMMUNITY_SERVER}${msg.file_url}`} alt="img"
                                 style={{ maxWidth: 220, maxHeight: 220, borderRadius: 8, display: 'block', cursor: 'pointer' }}
-                                onClick={() => window.open(`${LICENSE_SERVER}${msg.file_url!}`, '_blank')}
+                                onClick={() => window.open(`${COMMUNITY_SERVER}${msg.file_url!}`, '_blank')}
                             />
                         ) : msg.type === 'audio' && msg.file_url && !msg.deleted ? (
-                            <audio controls src={`${LICENSE_SERVER}${msg.file_url}`} style={{ maxWidth: 220, height: 36 }} />
+                            <audio controls src={`${COMMUNITY_SERVER}${msg.file_url}`} style={{ maxWidth: 220, height: 36 }} />
                         ) : msg.type === 'link' && !msg.deleted ? (
                             <Typography sx={{ fontSize: '0.88rem', color: '#1976d2', wordBreak: 'break-all' }}>
                                 <a href={msg.content} target="_blank" rel="noreferrer">{msg.content}</a>
@@ -222,18 +235,26 @@ const CommunautePageAdmin: React.FC<CommunautePageAdminProps> = ({ onUnreadChang
                     <Box sx={{ display: 'flex', gap: 0.5, mt: 0.3 }}>
                         {!msg.deleted && (
                             <Tooltip title="Répondre">
-                                <IconButton size="small" onClick={() => setReplyTo(msg)} sx={{ opacity: 0.5, '&:hover': { opacity: 1 } }}>
-                                    <Reply sx={{ fontSize: 14 }} />
+                                <IconButton size="small" onClick={() => setReplyTo(msg)} sx={{ color: '#555', opacity: 0.7, '&:hover': { opacity: 1, color: '#1976d2' } }}>
+                                    <Reply sx={{ fontSize: 16 }} />
                                 </IconButton>
                             </Tooltip>
                         )}
                         {!msg.deleted && !isAdminMsg && (
-                            <Tooltip title="Supprimer ce message">
-                                <IconButton size="small" onClick={() => deleteMessage(msg.id)}
-                                    sx={{ opacity: 0.5, '&:hover': { opacity: 1, color: '#d32f2f' } }}>
-                                    <Delete sx={{ fontSize: 14 }} />
-                                </IconButton>
-                            </Tooltip>
+                            <>
+                                <Tooltip title="Supprimer ce message">
+                                    <IconButton size="small" onClick={() => deleteMessage(msg.id)}
+                                        sx={{ color: '#555', opacity: 0.7, '&:hover': { opacity: 1, color: '#f57c00' } }}>
+                                        <Delete sx={{ fontSize: 16 }} />
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Bannir cet établissement">
+                                    <IconButton size="small" onClick={() => blockUser(msg.sender_key, msg.sender_name)}
+                                        sx={{ color: '#555', opacity: 0.7, '&:hover': { opacity: 1, color: '#d32f2f' } }}>
+                                        <Block sx={{ fontSize: 16 }} />
+                                    </IconButton>
+                                </Tooltip>
+                            </>
                         )}
                     </Box>
                 </Box>
@@ -242,7 +263,7 @@ const CommunautePageAdmin: React.FC<CommunautePageAdminProps> = ({ onUnreadChang
     };
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)', bgcolor: '#f0f2f5', borderRadius: 2, overflow: 'hidden' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 114px)', bgcolor: '#f0f2f5', borderRadius: 0, borderTop: 'none', overflow: 'hidden' }}>
             {/* Header */}
             <Box sx={{ bgcolor: '#075e54', px: 2, py: 1.2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <Avatar sx={{ bgcolor: '#d97706', width: 40, height: 40 }}>👑</Avatar>
@@ -305,7 +326,13 @@ const CommunautePageAdmin: React.FC<CommunautePageAdminProps> = ({ onUnreadChang
                     onChange={e => handleTyping(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
                     disabled={!connected}
-                    sx={{ bgcolor: '#fff', borderRadius: 6, '& .MuiOutlinedInput-root': { borderRadius: 6, fieldset: { border: 'none' } } }}
+                    sx={{
+                        bgcolor: '#fff',
+                        borderRadius: 6,
+                        '& .MuiOutlinedInput-root': { borderRadius: 6, fieldset: { border: 'none' } },
+                        '& .MuiInputBase-input': { color: '#1a1a1a' },
+                        '& .MuiInputBase-input::placeholder': { color: '#888', opacity: 1 },
+                    }}
                 />
                 {text.trim() ? (
                     <IconButton onClick={sendMessage} disabled={!connected}

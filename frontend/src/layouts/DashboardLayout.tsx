@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Box, CssBaseline, AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton } from '@mui/material';
-import { Menu as MenuIcon, Dashboard, People, School, Payment, EventAvailable, Settings, ExitToApp, Book, AccountBalance, AccountCircle, Assignment, PriceChange, DateRange } from '@mui/icons-material';
+import React, { useState, useEffect, useRef } from 'react';
+import { Box, CssBaseline, AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, Badge } from '@mui/material';
+import { Menu as MenuIcon, Dashboard, People, School, Payment, EventAvailable, Settings, ExitToApp, Book, AccountBalance, AccountCircle, Assignment, PriceChange, DateRange, Groups } from '@mui/icons-material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../App';
 import SchoolYearSelector from '../components/SchoolYearSelector';
 import { useTranslation } from 'react-i18next';
+import { io } from 'socket.io-client';
 
 import { useSettings } from '../contexts/SettingsContext';
 import { BASE_URL } from '../config';
@@ -12,13 +13,38 @@ import LicenseUpgradeModal from '../components/LicenseUpgradeModal';
 
 const drawerWidth = 240;
 
+const COMMUNITY_SERVER = 'http://localhost:5007';
+
 const DashboardLayout: React.FC = () => {
     const { t } = useTranslation();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();
     const { logout, hasPermission } = useAuthContext();
     const { settings } = useSettings();
+    const socketRef = useRef<any>(null);
+
+    // ── Socket pour badge communauté ────────────────────────────────────────
+    useEffect(() => {
+        const email = settings?.email;
+        if (!email) return;
+        const logoUrl = settings?.logo_url ? (settings.logo_url.startsWith('http') ? settings.logo_url : `${BASE_URL}${settings.logo_url}`) : null;
+        const s = io(COMMUNITY_SERVER, { auth: { schoolEmail: email, logoUrl }, transports: ['websocket'], forceNew: true });
+        socketRef.current = s;
+        s.on('new_message', () => {
+            if (location.pathname !== '/communaute') {
+                setUnreadCount(prev => prev + 1);
+            }
+        });
+        return () => { s.disconnect(); };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [settings?.email]);
+
+    // Remettre à 0 quand on visite /communaute
+    useEffect(() => {
+        if (location.pathname === '/communaute') setUnreadCount(0);
+    }, [location.pathname]);
 
     // Define menu items with specific colors for icons and translations
     const menuItems = [
@@ -34,6 +60,7 @@ const DashboardLayout: React.FC = () => {
         { text: t('sidebar.users'), title: t('titles.users'), icon: <AccountCircle />, path: '/users', color: '#8e24aa' }, // Purple
         { text: t('sidebar.expenses'), title: t('titles.expenses'), icon: <PriceChange />, path: '/expenses', color: '#795548' }, // Brown
         { text: t('sidebar.settings'), title: t('titles.settings'), icon: <Settings />, path: '/settings', color: '#607d8b' }, // Blue Grey
+        { text: 'Communauté', title: 'Communauté', icon: <Groups />, path: '/communaute', color: '#0288d1' }, // Light Blue
     ];
 
     const handleDrawerToggle = () => {
@@ -61,6 +88,7 @@ const DashboardLayout: React.FC = () => {
             '/administration': 'administration',
             '/reports': 'rapports',
             '/planning': 'planning',
+            '/communaute': 'communaute',
         };
         return pathMap[path] || path.substring(1);
     };
@@ -94,6 +122,16 @@ const DashboardLayout: React.FC = () => {
                                 onClick={() => navigate(item.path)}
                                 selected={isSelected}
                                 sx={{
+                                    ...(item.path === '/communaute' ? {
+                                        background: `linear-gradient(90deg, transparent, rgba(2, 136, 209, 0.15), transparent)`,
+                                        backgroundSize: '200% 100%',
+                                        animation: 'shimmer 2s infinite linear',
+                                        '@keyframes shimmer': {
+                                            '0%': { backgroundPosition: '200% 0' },
+                                            '100%': { backgroundPosition: '-200% 0' }
+                                        },
+                                        borderLeft: `3px solid ${item.color}`
+                                    } : {}),
                                     '&.Mui-selected': {
                                         backgroundColor: `${item.color}15`, // Very light background of the icon color
                                         borderRight: `4px solid ${item.color}`,
@@ -107,7 +145,11 @@ const DashboardLayout: React.FC = () => {
                                 }}
                             >
                                 <ListItemIcon sx={{ color: item.color, minWidth: 40 }}>
-                                    {item.icon}
+                                    {item.path === '/communaute' && unreadCount > 0 ? (
+                                        <Badge badgeContent={unreadCount} color="error" max={99}>
+                                            {item.icon}
+                                        </Badge>
+                                    ) : item.icon}
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={item.text}
@@ -199,7 +241,7 @@ const DashboardLayout: React.FC = () => {
             </Box>
             <Box
                 component="main"
-                sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` }, backgroundColor: '#f5f5f5', minHeight: '100vh' }}
+                sx={{ flexGrow: 1, p: location.pathname === '/communaute' ? 0 : 3, width: { sm: `calc(100% - ${drawerWidth}px)` }, backgroundColor: '#f5f5f5', minHeight: '100vh' }}
             >
                 <Toolbar />
                 <LicenseUpgradeModal />

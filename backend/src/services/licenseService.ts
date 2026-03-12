@@ -48,6 +48,9 @@ export const checkLicense = async (force: boolean = false): Promise<LicenseStatu
         if (settings) {
             payload.school_name = settings.school_name;
             payload.email = settings.email;
+            payload.phone = settings.phone || null;
+            payload.address = settings.address || null;
+            payload.country = settings.country || null;
         }
 
         const response = await axios.post(`${LICENSE_SERVER_URL}/api/license/check`, payload, { timeout: 5000 });

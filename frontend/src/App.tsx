@@ -13,6 +13,7 @@ import Students from './pages/Students';
 import Classes from './pages/Classes';
 import Teachers from './pages/Teachers';
 import Subjects from './pages/Subjects';
+import { BASE_URL } from './config';
 import Examens from './pages/Examens';
 import Grades from './pages/Grades';
 import Payments from './pages/Payments';
@@ -24,6 +25,7 @@ import Staff from './pages/Staff';
 import Expenses from './pages/Expenses';
 import Planning from './pages/Planning';
 import Debug from './pages/Debug';
+import CommunautePage from './pages/CommunautePage';
 import DashboardLayout from './layouts/DashboardLayout';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext';
 import { SchoolYearProvider } from './contexts/SchoolYearContext';
@@ -120,6 +122,25 @@ const GlobalGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { settings, loading } = useSettings();
   const location = useLocation();
 
+  React.useEffect(() => {
+    if (settings?.logo_url) {
+      const isExternal = settings.logo_url.startsWith('http');
+      const faviconUrl = isExternal ? settings.logo_url : `${BASE_URL}${settings.logo_url}`;
+      let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = faviconUrl;
+    } else {
+      let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (link) {
+        link.href = '/vite.svg'; // Default logo
+      }
+    }
+  }, [settings?.logo_url]);
+
   // Don't redirect while loading settings
   if (loading) {
     return <>{children}</>;
@@ -132,9 +153,9 @@ const GlobalGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   // Then check license
   // Then check license
-  if (license.status === 'NOT_REGISTERED' && location.pathname !== '/welcome') {
-    // Force onboarding/welcome screen instead of old activation page
-    return <Navigate to="/welcome" state={{ from: location }} replace />;
+  if (license.status === 'NOT_REGISTERED' && location.pathname !== '/activation') {
+    // Force activation screen when license is wiped or blocked
+    return <Navigate to="/activation" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
@@ -192,6 +213,7 @@ const AppContent: React.FC = () => {
                     <Route path="expenses" element={<Expenses />} />
                     <Route path="planning" element={<Planning />} />
                     <Route path="debug" element={<Debug />} />
+                    <Route path="communaute" element={<CommunautePage />} />
                   </Route>
                   {/* Redirect any unknown route to login */}
                   <Route path="*" element={<Navigate to="/login" replace />} />

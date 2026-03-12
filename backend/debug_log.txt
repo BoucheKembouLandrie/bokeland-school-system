@@ -6765,3 +6765,691 @@
 [Auth] Token verified for user: {"id":1,"role":"admin","iat":1772313715,"exp":1772400115}
 [Auth] Token verified for user: {"id":1,"role":"admin","iat":1772313715,"exp":1772400115}
 [Auth] Token verified for user: {"id":1,"role":"admin","iat":1772313715,"exp":1772400115}
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-02T23:57:26.088Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-02T23:57:26.635Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-02T23:58:36.835Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-02T23:58:37.519Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T01:06:09.978Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T01:06:10.720Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T01:06:21.455Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T01:06:21.615Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T01:06:26.418Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T01:06:26.619Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T01:06:27.212Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T01:06:27.397Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T02:25:54.686Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T02:25:55.192Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T02:52:23.901Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T02:52:24.387Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T02:54:17.790Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T02:54:18.372Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[API] getAllStudents Called at 2026-03-03T03:37:04.378Z
+[API] Params - Class: undefined, Year: 4
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[API] getAllStudents Called at 2026-03-03T03:37:04.874Z
+[API] Params - Class: undefined, Year: 4
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T03:38:24.392Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T03:38:24.780Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[API] getAllStudents Called at 2026-03-03T03:54:46.445Z
+[API] Params - Class: undefined, Year: 4
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[API] getAllStudents Called at 2026-03-03T03:54:46.819Z
+[API] Params - Class: undefined, Year: 4
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[API] getAllStudents Called at 2026-03-03T03:54:47.867Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[API] getAllStudents Called at 2026-03-03T03:54:51.150Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[API] getAllStudents Called at 2026-03-03T03:54:51.990Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T03:56:19.926Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T03:56:20.471Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T04:05:34.139Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T04:05:34.595Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T04:46:38.161Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T04:46:38.347Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T04:46:39.883Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T04:46:40.081Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T04:46:40.980Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[API] getAllStudents Called at 2026-03-03T04:46:41.388Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772495845,"exp":1772582245}
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T01:35:58.579Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T01:35:58.757Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[API] getAllStudents Called at 2026-03-04T02:06:34.083Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[API] getAllStudents Called at 2026-03-04T02:06:34.973Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772509023,"exp":1772595423}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T02:36:40.425Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T02:36:41.035Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T02:36:53.985Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T02:36:54.440Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T02:37:49.691Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T02:37:49.985Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T02:38:38.682Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T02:38:38.959Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T02:41:45.435Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[API] getAllStudents Called at 2026-03-04T02:41:45.998Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1772588157,"exp":1772674557}
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[API] getAllStudents Called at 2026-03-09T01:47:50.752Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[API] getAllStudents Called at 2026-03-09T01:47:50.891Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773020870,"exp":1773107270}
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[API] getAllStudents Called at 2026-03-12T00:16:36.195Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[API] getAllStudents Called at 2026-03-12T00:16:36.520Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773274595,"exp":1773360995}
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] Invalid token error: jwt expired (Secret used: Env Var)
+[Auth] No token provided for /
+[Auth] No token provided for /
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[API] getAllStudents Called at 2026-03-12T02:07:42.197Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[API] getAllStudents Called at 2026-03-12T02:07:42.726Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[API] getAllStudents Called at 2026-03-12T03:21:46.007Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[API] getAllStudents Called at 2026-03-12T03:21:46.413Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[API] getAllStudents Called at 2026-03-12T03:51:44.472Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[API] getAllStudents Called at 2026-03-12T03:51:45.356Z
+[API] Params - Class: undefined, Year: 1
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}
+[Auth] Token verified for user: {"id":1,"role":"admin","iat":1773281261,"exp":1773367661}

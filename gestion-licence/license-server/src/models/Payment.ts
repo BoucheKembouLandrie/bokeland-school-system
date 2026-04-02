@@ -27,7 +27,7 @@ Payment.init(
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'Clients',
+                model: 'clients',
                 key: 'id'
             }
         },
@@ -44,7 +44,6 @@ Payment.init(
             type: DataTypes.STRING,
             allowNull: false,
             defaultValue: 'manual',
-            comment: 'stripe, mobile_money, bank_transfer, manual'
         },
         transaction_id: {
             type: DataTypes.STRING,
@@ -62,7 +61,6 @@ Payment.init(
             type: DataTypes.STRING,
             allowNull: false,
             defaultValue: 'completed',
-            comment: 'pending, completed, failed, refunded'
         },
         days_added: {
             type: DataTypes.INTEGER,

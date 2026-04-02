@@ -82,8 +82,9 @@ Client.init(
             allowNull: false,
         },
         status: {
-            type: DataTypes.ENUM('TRIAL', 'ACTIVE', 'EXPIRED', 'BANNED'),
+            type: DataTypes.STRING(20),
             defaultValue: 'TRIAL',
+            validate: { isIn: [['TRIAL', 'ACTIVE', 'EXPIRED', 'BANNED']] }
         },
         last_checkin: {
             type: DataTypes.DATE,

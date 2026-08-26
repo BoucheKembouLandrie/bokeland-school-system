@@ -9,24 +9,25 @@ export const publishUpdate = async (req: Request, res: Response) => {
         const { version, changelog, manifest: rawManifest } = req.body;
         let manifest = typeof rawManifest === 'string' ? JSON.parse(rawManifest) : (rawManifest || {});
 
+        const fs = require('fs');
+        const path = require('path');
+        const updatesDir = path.join(__dirname, `../../public/uploads/updates`);
+
         const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
         if (files) {
-            const fs = require('fs');
-            const path = require('path');
-            const targetDir = path.join(__dirname, `../../public/uploads/updates/${version}`);
-            if (!fs.existsSync(targetDir)) {
-                fs.mkdirSync(targetDir, { recursive: true });
+            // OPTIMISATION SERVEUR : Vider le répertoire des mises à jour existantes 
+            // pour ne garder que le dernier exécutable et économiser l'espace disque.
+            if (fs.existsSync(updatesDir)) {
+                fs.rmSync(updatesDir, { recursive: true, force: true });
             }
+            
+            const targetDir = path.join(updatesDir, version);
+            fs.mkdirSync(targetDir, { recursive: true });
 
-            if (files.frontendArchive && files.frontendArchive[0]) {
-                const fPath = path.join(targetDir, 'frontend.zip');
-                fs.renameSync(files.frontendArchive[0].path, fPath);
-                manifest.frontend_url = `/uploads/updates/${version}/frontend.zip`;
-            }
-            if (files.backendArchive && files.backendArchive[0]) {
-                const bPath = path.join(targetDir, 'backend.zip');
-                fs.renameSync(files.backendArchive[0].path, bPath);
-                manifest.backend_url = `/uploads/updates/${version}/backend.zip`;
+            if (files.installerArchive && files.installerArchive[0]) {
+                const iPath = path.join(targetDir, 'setup.exe');
+                fs.renameSync(files.installerArchive[0].path, iPath);
+                manifest.installer_url = `/uploads/updates/${version}/setup.exe`;
             }
         }
 
@@ -68,6 +69,33 @@ export const publishUpdate = async (req: Request, res: Response) => {
     }
 };
 
+export const deleteUpdate = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const update = await Update.findByPk(id);
+        
+        if (!update) {
+            return res.status(404).json({ error: 'Update not found' });
+        }
+
+        // Tenter de supprimer le fichier physique associé si c'est la seule version qui le possède
+        const fs = require('fs');
+        const path = require('path');
+        const targetDir = path.join(__dirname, `../../public/uploads/updates/${update.version}`);
+        
+        if (fs.existsSync(targetDir)) {
+            fs.rmSync(targetDir, { recursive: true, force: true });
+        }
+
+        await update.destroy(); // Suppression en base de données, la cascade devrait supprimer les UpdateDelivery
+
+        res.json({ success: true, message: 'Update deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting update:', error);
+        res.status(500).json({ error: 'Failed to delete update' });
+    }
+};
+
 export const getUpdates = async (req: Request, res: Response) => {
     try {
         const updates = await Update.findAll({
@@ -104,7 +132,7 @@ export const getLatestUpdateForClient = async (req: Request, res: Response) => {
                 model: Update,
                 as: 'update'
             }],
-            order: [[{ model: Update, as: 'update' }, 'release_date', 'ASC']]
+            order: [[{ model: Update, as: 'update' }, 'release_date', 'DESC']]
         });
 
         if (!pendingDelivery) {
@@ -148,6 +176,20 @@ export const markUpdateInstalled = async (req: Request, res: Response) => {
         delivery.status = 'INSTALLED';
         delivery.acknowledged_at = new Date(); // Using this as installation complete time
         await delivery.save();
+
+        // IMPORTANT : Si le client installe cette mise à jour, on marque automatiquement
+        // toutes ses autres livraisons en attente pour les anciennes versions comme "INSTALLED"
+        // pour qu'il ne se retrouve pas bloqué à re-télécharger d'anciennes versions écrasées.
+        const { Op } = require('sequelize');
+        await UpdateDelivery.update(
+            { status: 'INSTALLED', acknowledged_at: new Date() },
+            {
+                where: {
+                    client_id: delivery.client_id,
+                    status: { [Op.in]: ['PENDING', 'DELIVERED'] }
+                }
+            }
+        );
 
         res.json({ success: true });
     } catch (error) {

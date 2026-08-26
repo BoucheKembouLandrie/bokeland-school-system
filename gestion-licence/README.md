@@ -75,7 +75,7 @@ Bokeland School System permet de gérer les élèves, les enseignants, les class
 ### 1. Cloner le projet
 
 ```bash
-cd leuana-school
+cd bokeland-school-system
 ```
 
 ### 2. Installation du Backend
@@ -103,19 +103,19 @@ mysql -u root -p
 ```
 
 ```sql
-CREATE DATABASE leuana_school_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE bokeland_school_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 Importer le schéma :
 
 ```bash
-mysql -u root -p leuana_school_db < database/schema.sql
+mysql -u root -p bokeland_school_db < database/schema.sql
 ```
 
 (Optionnel) Importer les données de test :
 
 ```bash
-mysql -u root -p leuana_school_db < database/seed.sql
+mysql -u root -p bokeland_school_db < database/seed.sql
 ```
 
 ### 2. Configuration du Backend
@@ -127,7 +127,7 @@ PORT=5000
 DB_HOST=localhost
 DB_USER=root
 DB_PASS=votre_mot_de_passe
-DB_NAME=leuana_school_db
+DB_NAME=bokeland_school_db
 JWT_SECRET=votre_secret_jwt_tres_securise
 ```
 
@@ -184,7 +184,7 @@ Utilisez les identifiants créés avec `npm run create-admin` :
 ## 📁 Structure du projet
 
 ```
-leuana-school/
+bokeland-school-system/
 ├── backend/
 │   ├── src/
 │   │   ├── config/          # Configuration DB
@@ -302,7 +302,7 @@ PORT=5000
 DB_HOST=votre_host_production
 DB_USER=votre_user_production
 DB_PASS=votre_password_production
-DB_NAME=leuana_school_db
+DB_NAME=bokeland_school_db
 JWT_SECRET=secret_production_tres_securise
 NODE_ENV=production
 ```

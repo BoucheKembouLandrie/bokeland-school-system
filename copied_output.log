@@ -1,0 +1,5 @@
+[initDB] [dotenv@17.2.3] injecting env (0) from ..\.env -- tip: ⚙️  suppress all logs with { quiet: true }
+[initDB] Database 'leuana_school_db' ensured to exist.
+
+=== SERVER START 2026-04-05T02:55:57.688Z ===
+[server] [dotenv@17.2.3] injecting env (11) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import {
     Box, Typography, Paper, Grid, TextField, Button, Table, TableBody, TableCell,
-    TableContainer, TableHead, TableRow, Chip, Avatar
+    TableContainer, TableHead, TableRow, Chip, Avatar, LinearProgress, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
 } from '@mui/material';
-import { Upload, Publish } from '@mui/icons-material';
+import { Upload, Publish, DeleteOutline } from '@mui/icons-material';
 import { API_URL } from '../config';
 import axios from 'axios';
 
@@ -34,6 +34,9 @@ const UpdatePage = () => {
     const [changelog, setChangelog] = useState('');
     const [files, setFiles] = useState<FileList | null>(null);
     const [loading, setLoading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [updateToDelete, setUpdateToDelete] = useState<number | null>(null);
 
     const fetchUpdates = async () => {
         try {
@@ -57,6 +60,7 @@ const UpdatePage = () => {
         }
 
         setLoading(true);
+        setUploadProgress(0);
         try {
             const formData = new FormData();
             formData.append('version', version);
@@ -65,22 +69,21 @@ const UpdatePage = () => {
             const manifest = { migrations: [] };
             formData.append('manifest', JSON.stringify(manifest));
 
-            if (files) {
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    if (file.name.includes('frontend')) {
-                        formData.append('frontendArchive', file);
-                    } else if (file.name.includes('backend')) {
-                        formData.append('backendArchive', file);
-                    }
-                }
+            if (files && files.length > 0) {
+                formData.append('installerArchive', files[0]);
             }
 
             await axios.post(`${API_URL}/api/admin/updates`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: { 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: (progressEvent) => {
+                    if (progressEvent.total) {
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        setUploadProgress(percentCompleted);
+                    }
+                }
             });
 
-            alert('Mise à jour publiée avec succès !');
+            alert("Mise à jour publiée avec succès ! L'ancien fichier a été écrasé.");
             setVersion('');
             setChangelog('');
             setFiles(null);
@@ -89,6 +92,26 @@ const UpdatePage = () => {
             alert('Erreur: ' + (error.response?.data?.error || error.message));
         } finally {
             setLoading(false);
+            setUploadProgress(0);
+        }
+    };
+
+    const handleDeleteClick = (id: number) => {
+        setUpdateToDelete(id);
+        setDeleteConfirmOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (updateToDelete === null) return;
+        try {
+            await axios.delete(`${API_URL}/api/admin/updates/${updateToDelete}`);
+            alert('Mise à jour, son historique et son exécutable supprimés avec succès.');
+            fetchUpdates();
+        } catch (error: any) {
+            alert('Erreur lors de la suppression: ' + (error.response?.data?.error || error.message));
+        } finally {
+            setDeleteConfirmOpen(false);
+            setUpdateToDelete(null);
         }
     };
 
@@ -129,13 +152,12 @@ const UpdatePage = () => {
 
                             <Box sx={{ p: 3, border: '2px dashed rgba(124,110,241,0.4)', borderRadius: 2, textAlign: 'center', bgcolor: 'rgba(124,110,241,0.03)' }}>
                                 <Upload sx={{ fontSize: 32, color: '#7C6EF1', mb: 1 }} />
-                                <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, mb: 1 }}>Glissez frontend.zip et backend.zip ici</Typography>
+                                <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, mb: 1 }}>Glissez l'installateur (.exe) ici</Typography>
                                 <Typography sx={{ fontSize: '0.7rem', color: 'text.secondary', mb: 2 }}>Ou cliquez pour parcourir</Typography>
                                 
                                 <input
                                     type="file"
-                                    multiple
-                                    accept=".zip,.json"
+                                    accept=".exe"
                                     onChange={(e) => setFiles(e.target.files)}
                                     style={{ display: 'none' }}
                                     id="update-files"
@@ -147,10 +169,20 @@ const UpdatePage = () => {
                                 </label>
                                 {files && files.length > 0 && (
                                     <Typography sx={{ mt: 1, fontSize: '0.75rem', color: '#34D399', fontWeight: 600 }}>
-                                        {files.length} fichier(s) sélectionné(s)
+                                        {files[0].name} sélectionné
                                     </Typography>
                                 )}
                             </Box>
+
+                            {loading && uploadProgress > 0 && (
+                                <Box sx={{ mt: 2 }}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                        <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, color: 'text.secondary' }}>Téléchargement en cours...</Typography>
+                                        <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: '#7C6EF1' }}>{uploadProgress}%</Typography>
+                                    </Box>
+                                    <LinearProgress variant="determinate" value={uploadProgress} sx={{ height: 8, borderRadius: 4, '& .MuiLinearProgress-bar': { backgroundColor: '#7C6EF1' } }} />
+                                </Box>
+                            )}
 
                             <Button
                                 variant="contained"
@@ -168,10 +200,19 @@ const UpdatePage = () => {
                                     '&:hover': { opacity: 0.9 }
                                 }}
                             >
-                                {loading ? 'Publication...' : 'Publier la mise à jour'}
+                                {loading ? (uploadProgress > 0 ? 'Envoi...' : 'Publication...') : 'Publier la mise à jour'}
                             </Button>
                         </Box>
                     </Paper>
+
+                    {/* LÉGENDE INFORMATIVE */}
+                    <Box sx={{ p: 2, bgcolor: 'rgba(255,193,7,0.1)', borderRadius: 2, border: '1px solid rgba(255,193,7,0.2)' }}>
+                        <Typography sx={{ fontSize: '0.8rem', color: '#ffb300', fontWeight: 700, mb: 0.5 }}>À Propos du Stockage</Typography>
+                        <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
+                            Pour préserver l'espace disque du serveur, seule la <b>toute dernière version</b> conserve son lourd fichier <code>.exe</code>. 
+                            Lorsqu'une nouvelle version est publiée, le fichier précédent est automatiquement écrasé (l'historique est cependant conservé).
+                        </Typography>
+                    </Box>
                 </Grid>
 
                 {/* ── Right Column: Tracking Table ── */}
@@ -196,6 +237,7 @@ const UpdatePage = () => {
                                             <TableCell>École</TableCell>
                                             <TableCell>Statut de livraison</TableCell>
                                             <TableCell>Heure de livraison</TableCell>
+                                            <TableCell>Version</TableCell>
                                             <TableCell>Installation</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -223,6 +265,9 @@ const UpdatePage = () => {
                                                     </Typography>
                                                 </TableCell>
                                                 <TableCell>
+                                                    <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>{latestUpdate.version}</Typography>
+                                                </TableCell>
+                                                <TableCell>
                                                     {delivery.status === 'INSTALLED' ? (
                                                         <Chip size="small" label="Installé" sx={{ bgcolor: 'rgba(96,165,250,0.15)', color: '#60A5FA', fontSize: '0.7rem', fontWeight: 700 }} />
                                                     ) : (
@@ -236,12 +281,67 @@ const UpdatePage = () => {
                             </TableContainer>
                         </Paper>
                     ) : (
-                        <Paper sx={{ p: 4, borderRadius: 3, textAlign: 'center', bgcolor: 'rgba(255,255,255,0.02)' }}>
+                        <Paper sx={{ p: 4, borderRadius: 3, textAlign: 'center', bgcolor: 'rgba(255,255,255,0.02)', mb: 4 }}>
                             <Typography sx={{ color: 'text.secondary' }}>Aucune mise à jour publiée.</Typography>
+                        </Paper>
+                    )}
+
+                    {/* ── Historique Liste des Mises à jour ── */}
+                    {updates.length > 0 && (
+                        <Paper sx={{ borderRadius: 3, overflow: 'hidden', mt: 4 }}>
+                            <Box sx={{ px: 3, py: 2, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                                <Typography sx={{ fontWeight: 700, fontSize: '1rem' }}>Historique des publications</Typography>
+                            </Box>
+                            <TableContainer sx={{ maxHeight: 300 }}>
+                                <Table stickyHeader size="small">
+                                    <TableHead>
+                                        <TableRow sx={{ '& .MuiTableCell-head': { background: 'rgba(15,17,23,0.95)', fontSize: '0.8rem' } }}>
+                                            <TableCell>Version</TableCell>
+                                            <TableCell>Fichier</TableCell>
+                                            <TableCell>Date</TableCell>
+                                            <TableCell align="right">Actions</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {updates.map((upd, idx) => (
+                                            <TableRow key={upd.id}>
+                                                <TableCell sx={{ fontWeight: 600 }}>{upd.version}</TableCell>
+                                                <TableCell>
+                                                    {idx === 0 ? (
+                                                        <Chip size="small" label="Actif (.exe)" sx={{ bgcolor: 'rgba(52,211,153,0.1)', color: '#34D399', fontSize: '0.65rem' }} />
+                                                    ) : (
+                                                        <Chip size="small" label="Écrasé" sx={{ bgcolor: 'rgba(255,255,255,0.05)', color: 'text.disabled', fontSize: '0.65rem' }} />
+                                                    )}
+                                                </TableCell>
+                                                <TableCell sx={{ fontSize: '0.8rem' }}>{new Date(upd.release_date).toLocaleDateString('fr-FR')}</TableCell>
+                                                <TableCell align="right">
+                                                    <IconButton size="small" color="error" onClick={() => handleDeleteClick(upd.id)}>
+                                                        <DeleteOutline fontSize="small" />
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
                         </Paper>
                     )}
                 </Grid>
             </Grid>
+
+            {/* Dialog de confirmation de suppression */}
+            <Dialog open={deleteConfirmOpen} onClose={() => setDeleteConfirmOpen(false)}>
+                <DialogTitle>Supprimer la mise à jour ?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Cette action supprimera tout l'historique lié à cette mise à jour, ainsi que son fichier .exe s'il est toujours actf. Les écoles déjà à jour la conserveront, mais les autres ne pourront plus la télécharger. Voulez-vous continuer ?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDeleteConfirmOpen(false)}>Annuler</Button>
+                    <Button onClick={confirmDelete} color="error" variant="contained">Supprimer définitivement</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

@@ -15,6 +15,8 @@ export interface ClientAttributes {
     status: 'TRIAL' | 'ACTIVE' | 'EXPIRED' | 'BANNED';
     last_checkin?: Date;
     community_banned?: boolean;
+    affiliate_id?: number;
+    currency?: string;
 }
 
 export class Client extends Model<ClientAttributes> implements ClientAttributes {
@@ -31,6 +33,8 @@ export class Client extends Model<ClientAttributes> implements ClientAttributes 
     public status!: 'TRIAL' | 'ACTIVE' | 'EXPIRED' | 'BANNED';
     public last_checkin!: Date;
     public community_banned!: boolean;
+    public affiliate_id!: number;
+    public currency!: string;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -93,6 +97,15 @@ Client.init(
         community_banned: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
+        },
+        affiliate_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        currency: {
+            type: DataTypes.STRING(10),
+            allowNull: false,
+            defaultValue: 'XAF',
         },
     },
     {

@@ -108,7 +108,7 @@ Le matricule sera généré automatiquement (ex: LEU-2025-0001).
 ## 📂 Structure des fichiers
 
 ```
-leuana-school/
+bokeland-school-system/
 ├── backend/              ← API Node.js (FONCTIONNE ✅)
 │   ├── src/
 │   │   ├── controllers/  ← Logique métier
@@ -169,9 +169,9 @@ npm run create-admin
    DB_HOST=localhost
    DB_USER=root
    DB_PASS=
-   DB_NAME=leuana_school_db
+   DB_NAME=bokeland_school_db
    ```
-3. Vérifiez que la base `leuana_school_db` existe dans phpMyAdmin
+3. Vérifiez que la base `bokeland_school_db` existe dans phpMyAdmin
 
 ### Le port 5173 ou 5174 est déjà utilisé
 Vite choisira automatiquement un autre port. Regardez dans le terminal pour voir le port utilisé.
@@ -192,4 +192,4 @@ Consultez les fichiers suivants :
 
 ---
 
-**Bon développement avec Leuana School ! 🎓**
+**Bon développement avec Bokeland School System ! 🎓**

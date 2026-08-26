@@ -22,7 +22,7 @@ const upload = multer({ storage });
 const router = Router();
 
 // Admin endpoints
-router.post('/', upload.fields([{ name: 'frontendArchive', maxCount: 1 }, { name: 'backendArchive', maxCount: 1 }]), publishUpdate);
+router.post('/', upload.fields([{ name: 'installerArchive', maxCount: 1 }]), publishUpdate);
 router.get('/', getUpdates);
 
 // Client endpoints (bokeland-school-system polling / interacting)

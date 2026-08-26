@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Manuel d'utilisation - Bokeland School System</title>
+<style>
+body { font-family: "Calibri", "Segoe UI", "Arial", sans-serif; line-height: 1.6; margin: 40px; color: #333; }
+h1 { color: #5e35b1; border-bottom: 2px solid #5e35b1; padding-bottom: 8px; margin-top: 40px; font-size: 20pt; }
+h2 { color: #e65100; margin-top: 30px; border-bottom: 1px dashed #e65100; padding-bottom: 4px; font-size: 16pt; }
+h3 { color: #2c3e50; margin-top: 20px; font-size: 13pt; }
+h4 { color: #333; margin-top: 15px; font-size: 11.5pt; }
+p, li { font-size: 11pt; }
+code { font-family: "Consolas", monospace; background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; font-size: 10pt; }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; }
+th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 10.5pt; }
+th { background-color: #f2eef9; color: #5e35b1; font-weight: bold; }
+tr:nth-child(even) { background-color: #fafafa; }
+.alert { background-color: #fff8e1; border-left: 5px solid #ffb300; padding: 12px; margin: 15px 0; border-radius: 4px; }
+.alert p { margin: 0; }
+hr { border: 0; border-top: 1px solid #ccc; margin: 20px 0; }
+ul { padding-left: 20px; }
+ol { padding-left: 20px; }
+</style>
+</head>
+<body>
+<h1>MANUEL D'UTILISATION OFFICIEL</h1>
+<h2>LOGICIEL DE GESTION SCOLAIRE : BOKELAND SCHOOL SYSTEM</h2>
+<hr>
+<h2>ℹ️ INTRODUCTION</h2>
+<p>Ce manuel d'utilisation a été conçu pour guider les administrateurs, secrétaires, intendants et enseignants dans l'utilisation quotidienne du logiciel <strong>Bokeland School System</strong>. Ce système permet de centraliser la gestion administrative, pédagogique et financière de votre établissement scolaire.</p>
+<p>Pour faciliter votre lecture, les conventions visuelles suivantes sont utilisées :</p>
+<ul>
+<li><code>➕</code> <strong>Bouton d'ajout</strong> ou création d'une nouvelle entité.</li>
+<li><code>✏️</code> <strong>Bouton de modification</strong> ou édition d'une information.</li>
+<li><code>❌</code> <strong>Bouton de suppression</strong> ou d'annulation.</li>
+<li><code>💾</code> <strong>Bouton de validation</strong> ou d'enregistrement.</li>
+<li><code>🖨️</code> <strong>Bouton d'impression</strong> (bulletin, reçu, liste d'élèves).</li>
+<li><code>📤</code> <strong>Action d'exportation</strong> (extraction de données vers Excel ou ZIP).</li>
+<li><code>📥</code> <strong>Action d'importation</strong> (intégration de données depuis Excel ou ZIP).</li>
+<li><code>💵</code> <strong>Gestion financière</strong> (pensions, salaires, charges).</li>
+<li><code>📅</code> <strong>Calendrier / Emploi du temps</strong> (créneaux de cours, dates limites).</li>
+<li><code>⚠️</code> <strong>Avertissement de sécurité</strong> ou contrainte technique majeure.</li>
+</ul>
+<hr>
+<h2>CHAPITRE I : INSTALLATION ET PREMIERS PAS (WELCOME SCREEN)</h2>
+<p>L'écran d'accueil s'affiche automatiquement lors du premier démarrage du logiciel ou si aucune configuration d'établissement n'a été détectée. C'est l'assistant d'onboarding (mise en route) de l'application.</p>
+<h3>1. Choix de la langue de l'application</h3>
+<p>Au démarrage, l'assistant vous invite à définir la langue par défaut de l'interface utilisateur.</p>
+<ul>
+<li><strong>Langues disponibles</strong> : Français et English.</li>
+<li><strong>Action</strong> : Sélectionnez le bouton correspondant à la langue souhaitée, puis cliquez sur le bouton <code>Suivant</code>.</li>
+</ul>
+<h3>2. Saisie des informations de l'établissement</h3>
+<p>Cette étape permet d'initialiser les métadonnées de l'établissement qui figureront sur tous les documents officiels (reçus de paiement, bulletins de notes, listes d'élèves).</p>
+<ul>
+<li><strong>Champs requis</strong> :</li>
+<li><strong>Nom de l'établissement</strong> (ex: <em>Collège Saint-Michel</em>)</li>
+<li><strong>Adresse Email</strong> (ex: <em>contact@ecole.com</em>)</li>
+<li><strong>Numéro de Téléphone</strong> (ex: <em>690000000</em>)</li>
+<li><strong>Pays</strong> (Sélectionnez dans la liste déroulante des pays africains pré-configurés, ex : Cameroun, Côte d'Ivoire, Gabon...)</li>
+<li><strong>Localisation / Adresse</strong> (ex: <em>Douala, Cameroun</em>)</li>
+<li><strong>Action</strong> : Remplissez avec soin chaque champ du formulaire. Les champs obligatoires sont signalés par une astérisque. Cliquez sur <code>Suivant</code>.</li>
+</ul>
+<h3>3. Activation de la licence</h3>
+<p>Le logiciel s'active automatiquement avec une <strong>période d'essai gratuite de 33 jours</strong>.</p>
+<ul>
+<li><strong>Action</strong> : L'écran récapitule vos informations pour validation finale. Cliquez sur le bouton <code>Activer maintenant</code> ou <code>Activer le logiciel</code>.</li>
+<li><code>⚠️</code> <strong>Attention</strong> : Les informations saisies lors de cette phase d'onboarding sont enregistrées dans la base de données locale. Assurez-vous que l'adresse email de l'école est valide et fonctionnelle, car elle sert également d'identifiant pour les fonctionnalités de la communauté Bokeland.</li>
+</ul>
+<hr>
+<h2>CHAPITRE II : L'INTERFACE D'AUTHENTIFICATION (CONNEXION)</h2>
+<p>La sécurité de vos données scolaires est essentielle. L'interface de connexion restreint l'accès aux personnes autorisées uniquement.</p>
+<h3>1. Accès sécurisé à l'écran de connexion</h3>
+<p>Chaque utilisateur doit disposer d'un compte avec un identifiant unique (nom d'utilisateur) et un mot de passe pour accéder à la plateforme.</p>
+<h3>2. Saisie des identifiants et mot de passe</h3>
+<ul>
+<li><strong>Formulaire de connexion</strong> :</li>
+<li><strong>Nom d'utilisateur</strong> : Entrez votre nom d'utilisateur (ex: <code>admin</code>).</li>
+<li><strong>Mot de passe</strong> : Entrez votre mot de passe associé (ex: <code>Admin@123</code> pour la configuration par défaut).</li>
+<li><strong>Validation</strong> : Cliquez sur le bouton <code>Se connecter</code>.</li>
+<li><code>⚠️</code> <strong>Compte d'accès par défaut</strong> : Lors de la première installation, connectez-vous avec le nom d'utilisateur <code>admin</code> et le mot de passe <code>Admin@123</code>. <strong>Il est impératif de modifier ce mot de passe ou de créer des utilisateurs personnalisés dès votre première connexion (voir CHAPITRE XI).</strong></li>
+</ul>
+<h3>3. Gestion de la déconnexion et informations de version</h3>
+<ul>
+<li><strong>Déconnexion</strong> : Dans la barre supérieure de l'écran, cliquez sur le bouton rouge <code>Déconnexion</code> avec l'icône de sortie pour fermer votre session de travail en toute sécurité.</li>
+<li><strong>Version du logiciel</strong> : L'écran de connexion indique la version active du logiciel (ex : <em>Version 1.0.0</em>) et les mentions légales de Bokeland Group Services.</li>
+</ul>
+<h3>4. Raccourci de débogage (Outils de développement)</h3>
+<ul>
+<li>En cas de problème d'affichage (par exemple, page blanche), vous pouvez à tout moment ouvrir les outils de développement (Console Développeur) en appuyant sur la touche <code>F12</code> de votre clavier. Cela permettra aux équipes techniques de diagnostiquer et de résoudre d'éventuels problèmes de connexion ou d'affichage.</li>
+</ul>
+<hr>
+<h2>CHAPITRE III : LE TABLEAU DE BORD (DASHBOARD)</h2>
+<p>Le tableau de bord est la page d'accueil après connexion. Il offre une vue à 360 degrés sur la situation administrative, académique et financière de l'école.</p>
+<h3>1. Présentation générale et navigation</h3>
+<p>Le tableau de bord est divisé en plusieurs zones interactives :</p>
+<ul>
+<li><strong>Le menu latéral de gauche</strong> : Il permet de naviguer vers les différents modules (Élèves, Classes, Personnels, Matières, Examens, etc.) selon les autorisations de l'utilisateur connecté.</li>
+<li><strong>Le sélecteur d'année scolaire (en haut à gauche)</strong> : Affiche et permet de basculer d'une année scolaire à une autre.</li>
+<li><strong>Le bouton de Déconnexion (en haut à droite)</strong>.</li>
+</ul>
+<h3>2. Indicateurs statistiques de l'établissement</h3>
+<p>Quatre blocs de résumé affichent les totaux cumulés pour l'année scolaire en cours :</p>
+<ul>
+<li><strong>ÉLÈVES</strong> : Le nombre total d'élèves actuellement inscrits.</li>
+<li><strong>CLASSES</strong> : Le nombre total de classes créées.</li>
+<li><strong>ENSEIGNANTS</strong> : Le nombre d'enseignants enregistrés dans le personnel.</li>
+<li><strong>PAIEMENTS</strong> : Le montant total cumulé des versements de pension perçus.</li>
+</ul>
+<h3>3. Graphiques d'aperçu financier et Taux de réussite</h3>
+<ul>
+<li><strong>Aperçu Financier (Année Scolaire)</strong> : Un graphique affiche la courbe mensuelle des flux de trésorerie sur la période allant d'Août à Juillet de l'année scolaire en cours. Il compare en temps réel :</li>
+<li><strong>Total Entrées (Pensions)</strong> : Représenté en bleu/vert.</li>
+<li><strong>Total Sorties (Charges & Salaires)</strong> : Représenté en rouge.</li>
+<li><strong>Taux de Réussite</strong> : Un graphique circulaire évalue les performances académiques. Un élève est considéré en réussite s'il obtient une moyenne générale supérieure ou égale à <strong>10/20</strong> pour l'évaluation sélectionnée.</li>
+<li><strong>Filtres interactifs</strong> : Sélectionnez une évaluation (ex: <em>Séquence 1</em>) et une classe spécifique pour mettre à jour instantanément le graphique du taux de réussite.</li>
+</ul>
+<h3>4. Module de transfert automatique des données entre années scolaires</h3>
+<p>Ce module permet de migrer facilement les données d'une année scolaire (Année Source) vers une nouvelle année (Année Cible), évitant d'avoir à tout ressaisir lors de la rentrée scolaire.</p>
+<ul>
+<li><strong>Types de transferts disponibles</strong> :</li>
+<li><strong>Transfert de classes</strong> : Copie les classes configurées d'une année à l'autre.</li>
+<li><strong>Transfert du personnel administratif</strong> : Migre les comptes administratifs et les postes du personnel.</li>
+<li><strong>Transfert d'enseignants</strong> : Migre la base de données des enseignants.</li>
+<li><strong>Transfert de matières</strong> : Copie la liste des matières configurées.</li>
+<li><strong>Transfert d'élèves</strong> : Permet de faire passer les élèves admis (moyenne ≥ 10/20) ou échoués dans leurs nouvelles classes respectives dans l'année de destination.</li>
+<li><strong>Transfert des configurations de bulletin</strong> : Recopie les règles de décision de fin d'année et les grilles d'observations.</li>
+<li><strong>Procédure de transfert</strong> :</li>
+</ul>
+<p><strong>Cliquez sur le bouton correspondant au type de transfert souhaité.</strong></p>
+<p><strong>Sélectionnez l'<strong>Année Source</strong> (courante) et l'<strong>Année Cible</strong> (destination).</strong></p>
+<p><strong>Sélectionnez la classe source, cochez les éléments à transférer (ou sélectionnez "Tous").</strong></p>
+<p><strong>Pour le transfert d'élèves, sélectionnez le filtre de niveau académique : <strong>Admis (Moyenne ≥ 10/20)</strong> ou <strong>Échoués (Moyenne < 10/20)</strong>.</strong></p>
+<p><strong>Sélectionnez la classe de destination dans l'année cible.</strong></p>
+<p><strong>Cliquez sur <code>Valider le transfert</code> 💾.</strong></p>
+<h3>5. Sélecteur d'année scolaire et gestion des exercices isolés</h3>
+<p>Le système gère les années scolaires de façon hermétique : chaque année scolaire possède sa propre base de données isolée.</p>
+<ul>
+<li><strong>Changer d'année</strong> : Cliquez sur le sélecteur d'année scolaire dans le menu latéral. Sélectionnez l'année sur laquelle vous souhaitez travailler. L'interface se recharge automatiquement.</li>
+<li><strong>Ajouter une nouvelle année</strong> <code>➕</code> : Cliquez sur l'icône de création de nouvelle année (représentée par une icône plus dans le sélecteur d'année). Entrez la date de début et de fin (ex: <em>Début : 2025-09-01, Fin : 2026-06-30</em>). Cliquez sur <code>Créer</code> 💾. Le système va initialiser un nouvel environnement de données vide pour cette période.</li>
+</ul>
+<hr>
+<h2>CHAPITRE IV : GESTION DES CLASSES</h2>
+<p>Le module <strong>Classes</strong> permet de définir les structures d'accueil pédagogiques de votre établissement scolaire, de configurer le format d'immatriculation des élèves et de diviser la scolarité en tranches de versement.</p>
+<h3>1. Création, édition et suppression des classes</h3>
+<ul>
+<li><strong>Créer une classe</strong> <code>➕</code> :</li>
+</ul>
+<p><strong>Cliquez sur le bouton <code>Nouvelle classe</code> situé en haut à droite.</strong></p>
+<p><strong>Renseignez les informations de base :</strong></p>
+<ul>
+<li><strong>Libellé</strong> : Le nom de la classe (ex: <em>6ème M1</em>, <em>Terminale C</em>).</li>
+<li><strong>Niveau</strong> : Le niveau d'études (ex: <em>1</em>, <em>6</em>, <em>12</em>).</li>
+<li><strong>Année Scolaire</strong> : L'année courante (remplie automatiquement).</li>
+<li><strong>Pension (XAF ou devise configurée)</strong> : Le montant total annuel de la scolarité de cette classe.</li>
+</ul>
+<p><strong>Cliquez sur <code>Ajouter</code> 💾.</strong></p>
+<ul>
+<li><strong>Modifier une classe</strong> <code>✏️</code> : Cliquez sur l'icône de crayon bleu à côté de la classe souhaitée, modifiez ses valeurs, puis cliquez sur <code>Enregistrer</code> 💾.</li>
+<li><strong>Dupliquer une classe</strong> <code>📋</code> : Cliquez sur l'icône de copie violette (double page) pour copier instantanément la configuration de la classe (niveaux, pension, tranches de paiement, format de matricule et matières associées), à l'exception des élèves. La nouvelle classe sera automatiquement renommée en ajoutant un numéro entre parenthèses (ex : <em>6ème M1 (1)</em>) pour éviter les doublons.</li>
+<li><strong>Supprimer une classe</strong> <code>❌</code> : Cliquez sur l'icône de corbeille rouge. Un message de confirmation s'affiche. Confirmez pour supprimer.</li>
+<li><code>⚠️</code> <strong>Attention</strong> : Supprimer une classe supprime également tous les élèves qui y sont affectés ainsi que leurs notes et leurs paiements associés.</li>
+</ul>
+<h3>2. Configuration dynamique du format de matricule des élèves</h3>
+<p>Pour chaque classe, vous pouvez définir comment le matricule des élèves sera généré automatiquement lors de l'inscription.</p>
+<ul>
+<li><strong>Segments du matricule</strong> : Le matricule peut être composé de 1 à 3 segments.</li>
+<li><strong>Paramétrage de chaque segment</strong> :</li>
+<li><strong>Type</strong> : <code>Lettre</code> ou <code>Chiffre</code>.</li>
+<li><strong>Mode</strong> :</li>
+<li><code>AUTO</code> : Le système gère dynamiquement l'incrémentation (ex: <em>XX</em> générera le sigle de la classe ou de l'école ; <em>000</em> s'incrémentera de <em>001</em> à <em>999</em>).</li>
+<li><code>FIXE</code> : Vous imposez une valeur fixe (ex: <em>2025</em> pour l'année, ou <em>LEU</em> pour l'abréviation de l'établissement).</li>
+<li><strong>Aperçu</strong> : Un champ dynamique affiche en temps réel la structure de prévisualisation du matricule (ex: <code>LEU2025000</code>).</li>
+</ul>
+<h3>3. Planification des tranches de paiement (Échéanciers de pension)</h3>
+<p>Le système vous permet de découper la pension totale de la classe en plusieurs échéances obligatoires (Tranches).</p>
+<ul>
+<li><strong>Ajouter une tranche</strong> : Dans le formulaire de classe (droite), cliquez sur le bouton <code>+</code> rouge à côté du titre "Tranches de paiement".</li>
+<li><strong>Champs de la tranche</strong> :</li>
+<li><strong>Nom</strong> : Nom de l'échéance (ex: <em>Tranche 1</em>, <em>Frais d'inscription</em>, <em>Tranche 2</em>).</li>
+<li><strong>Montant (en XAF ou devise locale)</strong> : Le montant dû pour cette tranche.</li>
+<li><strong>Date limite</strong> : La date butoir à laquelle cette tranche doit être soldée.</li>
+<li><code>⚠️</code> <strong>Règle de validation critique</strong> : <strong>La somme totale de toutes les tranches configurées doit être STRICTEMENT égale au montant de la pension annuelle défini pour la classe.</strong> Le système affiche un indicateur en temps réel (ex: <code>150 000 / 150 000 XAF</code>). Si la somme ne correspond pas, un message d'erreur rouge s'affichera et empêchera la validation de la classe.</li>
+</ul>
+<hr>
+<h2>CHAPITRE V : GESTION DU PERSONNEL ET DES ENSEIGNANTS</h2>
+<p>Le module <strong>Personnel</strong> permet de lister et de gérer tous les collaborateurs qui travaillent au sein de votre établissement scolaire. Il est scindé en deux sous-onglets.</p>
+<h3>1. Enregistrement et suivi des enseignants (Sous-onglet 1)</h3>
+<p>Ce sous-onglet regroupe les enseignants responsables des différentes matières.</p>
+<ul>
+<li><strong>Ajouter un enseignant</strong> <code>➕</code> :</li>
+</ul>
+<p><strong>Cliquez sur le bouton <code>Nouvel enseignant</code>.</strong></p>
+<p><strong>Renseignez les informations de la fiche :</strong></p>
+<ul>
+<li><strong>Nom</strong> & <strong>Prénom</strong></li>
+<li><strong>Téléphone</strong> (obligatoire)</li>
+<li><strong>Adresse Email</strong> (doit être unique si l'enseignant doit se connecter)</li>
+<li><strong>Salaire (mensuel de base)</strong> : Montant de sa rémunération fixe pour le suivi des charges.</li>
+</ul>
+<p><strong>Cliquez sur <code>Ajouter</code> 💾.</strong></p>
+<ul>
+<li><strong>Modification</strong> <code>✏️</code> & <strong>Suppression</strong> <code>❌</code> : Fonctionnent via les icônes d'action en fin de ligne de tableau.</li>
+</ul>
+<h3>2. Enregistrement et suivi du personnel administratif (Sous-onglet 2)</h3>
+<p>Ce sous-onglet regroupe le personnel de bureau, d'entretien, de surveillance ou de direction (Comptables, Secrétaires, Censeurs, Veilleurs).</p>
+<ul>
+<li><strong>Ajouter un membre administratif</strong> <code>➕</code> :</li>
+</ul>
+<p><strong>Cliquez sur le bouton <code>Ajouter un poste</code>.</strong></p>
+<p><strong>Renseignez les informations :</strong></p>
+<ul>
+<li><strong>Titre / Poste</strong> : (ex: <em>Comptable</em>, <em>Secrétaire</em>, <em>Sécurité</em>).</li>
+<li><strong>Nom</strong> & <strong>Prénom</strong></li>
+<li><strong>Téléphone</strong></li>
+<li><strong>Email</strong></li>
+<li><strong>Salaire</strong> : Montant de son salaire mensuel de base.</li>
+</ul>
+<p><strong>Cliquez sur <code>Enregistrer</code> 💾.</strong></p>
+<hr>
+<h2>CHAPITRE VI : GESTION DES MATIÈRES</h2>
+<p>Le module <strong>Matières</strong> centralise les disciplines enseignées au sein de l'établissement scolaire. Chaque matière doit être paramétrée pour permettre la saisie des notes et le calcul des moyennes.</p>
+<h3>1. Ajout et modification des matières</h3>
+<ul>
+<li><strong>Ajouter une matière</strong> <code>➕</code> :</li>
+</ul>
+<p><strong>Cliquez sur <code>Nouvelle matière</code> en haut à droite.</strong></p>
+<p><strong>Saisissez les données dans le formulaire :</strong></p>
+<ul>
+<li><strong>Nom</strong> : Le libellé de la matière (ex: <em>Mathématiques</em>, <em>Langue Française</em>, <em>Physique</em>).</li>
+<li><strong>Coefficient</strong> : Poids de la matière dans le calcul des moyennes (ex: <em>4</em>, <em>2</em>).</li>
+<li><strong>Note maximale</strong> : La note de barème maximum (ex: <em>20</em>, <em>100</em>). Le système utilise par défaut <em>20</em>.</li>
+<li><strong>Catégorie</strong> : Classement de la matière (ex : <em>Sciences</em>, <em>Lettres</em>).</li>
+<li><strong>Enseignant</strong> : Sélectionnez l'enseignant titulaire dans la liste déroulante (préalablement inscrit dans le personnel).</li>
+<li><strong>Classe</strong> : Sélectionnez la classe où cette matière est enseignée.</li>
+</ul>
+<p><strong>Cliquez sur <code>Ajouter</code> 💾.</strong></p>
+<h3>2. Attribution des matières aux classes et aux enseignants</h3>
+<p>Chaque ligne du tableau de matières affiche clairement :</p>
+<ul>
+<li>Le nom de la matière.</li>
+<li>La classe associée.</li>
+<li>Le coefficient de pondération.</li>
+<li>La note maximale possible.</li>
+<li>L'enseignant responsable.</li>
+<li>La catégorie.</li>
+</ul>
+<p>Cette association est indispensable car elle détermine :</p>
+<ul>
+<li>Les matières qui s'affichent sur le bulletin d'une classe.</li>
+<li>Les matières accessibles à un enseignant spécifique sur son portail de saisie de notes (voir CHAPITRE XIV).</li>
+</ul>
+<h3>3. Création et gestion des catégories de matières</h3>
+<p>Pour organiser les bulletins de notes de manière professionnelle (ex: regrouper les matières scientifiques ensemble, les matières littéraires ensemble) :</p>
+<p><strong>Cliquez sur le bouton <code>Gérer les catégories</code> situé en haut.</strong></p>
+<p><strong>Saisissez le nom de la catégorie (ex: <em>Matières Scientifiques</em>, <em>Langues & Littérature</em>).</strong></p>
+<p><strong>Cliquez sur <code>Créer une catégorie</code> ➕.</strong></p>
+<p><strong>Pour assigner une catégorie à une matière, modifiez simplement la matière <code>✏️</code> et sélectionnez sa catégorie dans la liste déroulante.</strong></p>
+<hr>
+<h2>CHAPITRE VII : GESTION DES ÉLÈVES</h2>
+<p>Le module <strong>Élèves</strong> est le cœur administratif de l'application. Il permet de gérer les dossiers individuels des apprenants, de suivre leur scolarité et de générer les listes officielles.</p>
+<h3>1. Inscription individuelle des élèves et formulaire d'information</h3>
+<p>Pour inscrire manuellement un élève :</p>
+<p><strong>Cliquez sur le bouton <code>Nouvel élève</code> <code>➕</code> en haut à droite.</strong></p>
+<p><strong>Remplissez le formulaire d'inscription structuré :</strong></p>
+<ul>
+<li><strong>Photo de profil</strong> : Cliquez sur le cercle de la photo par défaut pour téléverser une photo d'identité au format JPG/PNG depuis votre ordinateur.</li>
+<li><strong>Nom</strong> & <strong>Prénom</strong> (obligatoires).</li>
+<li><strong>Date de naissance</strong> (sélectionnez via le calendrier).</li>
+<li><strong>Sexe</strong> (<code>M</code> ou <code>F</code>).</li>
+<li><strong>Catégorie</strong> (<code>Non redoublant(e)</code> ou <code>Redoublant(e)</code>).</li>
+<li><strong>Adresse physique</strong> (ex: <em>Douala, Bonapriso</em>).</li>
+<li><strong>Nom du Parent</strong> (le tuteur légal).</li>
+<li><strong>Téléphone du Parent</strong> (très important pour les communications).</li>
+<li><strong>Classe</strong> : Sélectionnez la classe d'affectation de l'élève.</li>
+</ul>
+<p><strong>Cliquez sur <code>Ajouter</code> 💾. Le système va alors générer automatiquement le <strong>Matricule unique</strong> de l'élève en se basant sur le format configuré pour sa classe.</strong></p>
+<h3>2. Recherche, filtres avancés et consultation</h3>
+<p>Pour retrouver rapidement un dossier d'élève :</p>
+<ul>
+<li><strong>Recherche textuelle</strong> : Entrez les premières lettres du nom, du prénom ou du matricule dans la zone de recherche.</li>
+<li><strong>Filtre par classe</strong> : Sélectionnez une classe spécifique dans la liste déroulante pour n'afficher que les élèves de cette classe.</li>
+<li><strong>Aperçu photo</strong> : Cliquez sur la miniature de la photo d'un élève dans le tableau pour afficher sa photo d'identité en grand format.</li>
+</ul>
+<h3>3. Impression de la liste des élèves</h3>
+<p>Vous pouvez imprimer un document PDF officiel contenant la liste des élèves filtrés.</p>
+<p><strong>Appliquez les filtres souhaités (ex: sélectionner la classe <em>6ème M1</em>).</strong></p>
+<p><strong>Cliquez sur le bouton <code>Imprimer</code> 🖨️.</strong></p>
+<p><strong>Une fenêtre d'aperçu s'affiche montrant le document finalisé avec le logo de votre école, l'en-tête de l'établissement, le nombre total d'élèves, et un tableau récapitulatif (Matricule, Noms, Prénoms, Sexe, Catégorie, Pension versée/totale, Contact du parent).</strong></p>
+<p><strong>Cliquez sur <code>Imprimer la sélection</code> pour envoyer le document à l'imprimante ou l'enregistrer sous format PDF.</strong></p>
+<h3>4. Génération et impression des Cartes d'Identité Scolaires</h3>
+<p>Le logiciel permet de générer des cartes d'identité scolaires officielles prêtes à l'impression pour chaque élève inscrit.</p>
+<ul>
+<li><strong>Procédure d'impression des cartes</strong> :</li>
+</ul>
+<p><strong>Dans le module <strong>Élèves</strong>, sélectionnez la classe ou cochez les élèves concernés.</strong></p>
+<p><strong>Cliquez sur le bouton <code>Carte d'identité</code> 🖨️.</strong></p>
+<p><strong>L'application génère un document contenant les cartes au format standard (avec logo de l'école, photo de l'élève, matricule, classe, filigrane et informations du tuteur).</strong></p>
+<ul>
+<li><strong>Gestion du cachet et de la signature du Directeur sur les cartes</strong> :</li>
+<li>Si la signature et le cachet du directeur ont été importés dans la page <strong>Paramètres</strong>, ils sont automatiquement superposés avec transparence en bas à droite de chaque carte d'identité.</li>
+<li><strong>Comportement en l'absence de fichier</strong> : Si la signature et le cachet n'ont pas encore été importés depuis la page Paramètres, cet emplacement <strong>reste totalement vide</strong> (aucun dessin ou symbole fictif par défaut n'est affiché).</li>
+</ul>
+<h3>5. Importation et exportation de masse</h3>
+<ul>
+<li><strong>Exporter les élèves</strong> <code>📤</code> : Cliquez sur le bouton <code>Exporter les élèves</code>. Le système télécharge instantanément un fichier Microsoft Excel (<code>eleves.xlsx</code>) contenant l'intégralité des fiches élèves de l'année ou de la classe filtrée.</li>
+<li><strong>Importer les élèves</strong> <code>📥</code> :</li>
+</ul>
+<p><strong>Cliquez sur <code>Importer les élèves</code>.</strong></p>
+<p><strong>Sélectionnez le fichier Excel contenant vos listes d'élèves.</strong></p>
+<p><strong>Le système importe les lignes et affiche un bilan : (ex: <em>Importation terminée : 25 élèves ajoutés, 2 ignorés (doublons)</em>).</strong></p>
+<ul>
+<li><code>⚠️</code> <strong>Note</strong> : Le système empêche automatiquement la création d'élèves en double en vérifiant les matricules et les combinaisons Nom/Prénom/Date de naissance.</li>
+</ul>
+<hr>
+<h2>CHAPITRE VIII : PLANIFICATIONS ET AGENDAS (EMPLOI DU TEMPS ET AGENDA ANNUEL)</h2>
+<p>Le module <strong>Planning</strong> permet de gérer l'organisation temporelle de l'établissement. Il est divisé en deux onglets distincts qui s'adaptent automatiquement au format horaire (12h/24h) défini dans les paramètres généraux.</p>
+<h3>1. Agenda par Classe (Emploi du temps hebdomadaire)</h3>
+<p>Cet onglet permet de planifier les cours hebdomadaires de chaque classe sous forme de grille interactive.</p>
+<ul>
+<li><strong>Ajouter un cours à l'emploi du temps</strong> <code>➕</code> :</li>
+</ul>
+<p><strong>Cliquez sur le bouton <code>Ajouter un planning</code> en haut à droite.</strong></p>
+<p><strong>Saisissez les données requises :</strong></p>
+<ul>
+<li><strong>Classe</strong> : Sélectionnez la classe concernée.</li>
+<li><strong>Matière</strong> : Sélectionnez la matière à planifier (seules les matières de la classe sélectionnée s'affichent).</li>
+<li><strong>Jour de la semaine</strong> : Choisissez du Lundi au Dimanche.</li>
+<li><strong>Heure de début</strong> & <strong>Heure de fin</strong> : Saisissez les heures à l'aide du sélecteur d'heure dynamique (TimePicker). <em>Note : le format de saisie (AM/PM ou 24h) correspond à votre configuration dans les paramètres.</em></li>
+</ul>
+<p><strong>Cliquez sur <code>Valider</code> 💾.</strong></p>
+<ul>
+<li><strong>Modifier ou Supprimer un cours</strong> : Cliquez directement sur la carte du cours affichée dans la grille de l'emploi du temps pour modifier ses horaires ou le supprimer <code>❌</code>.</li>
+<li><strong>Visualisation et Impression</strong> <code>🖨️</code> : Sélectionnez une classe pour charger sa grille hebdomadaire colorée. Cliquez sur le bouton <code>Imprimer</code> en haut à droite pour générer une version paysage optimisée pour l'impression ou la sauvegarde PDF.</li>
+<li><strong>Note esthétique, impression et multilinguisme</strong> : Les couleurs de fond des cours à l'écran sont douces et contrastées pour un confort visuel optimal. Lors de l'impression, l'emploi du temps est optimisé avec le logo de l'établissement en filigrane d'arrière-plan. <strong>Toutes les mentions de l'en-tête de l'emploi du temps s'adaptent instantanément à la langue de l'application</strong> : en mode Anglais, les intitulés affichent automatiquement <strong>TIMETABLE</strong>, <strong>School Year</strong>, et <strong>Class</strong> (et en Français : <strong>EMPLOI DU TEMPS</strong>, <strong>Année Scolaire</strong>, <strong>Classe</strong>).</li>
+</ul>
+<h3>2. Agenda Annuel (Calendrier des événements de l'établissement)</h3>
+<p>Cet onglet propose un calendrier global pour enregistrer les réunions, examens, congés et autres événements marquants de l'année scolaire.</p>
+<ul>
+<li><strong>Navigation et Affichage</strong> : Vous disposez de plusieurs modes de visualisation en haut à droite : <code>Mois</code>, <code>Semaine</code>, <code>Jour</code>, et <code>Liste</code>. L'affichage du calendrier et des mois (ex: <em>Août 2026</em> / <em>August 2026</em>) se synchronise automatiquement et dynamiquement avec la langue sélectionnée dans l'application.</li>
+<li><strong>Ajouter un événement</strong> <code>➕</code> : Double-cliquez sur une date ou un créneau horaire dans le calendrier, renseignez le titre de l'événement, les heures de début/fin, et cliquez sur <code>Enregistrer</code> 💾.</li>
+<li><strong>Impression de la liste des événements</strong> <code>🖨️</code> :</li>
+</ul>
+<p><strong>Basculez en mode d'affichage <strong>Liste</strong>. Les événements y sont présentés de manière chronologique, regroupés par mois.</strong></p>
+<p><strong>Cliquez sur le bouton <code>Imprimer</code> de la barre d'outils.</strong></p>
+<p><strong>Une fenêtre d'aperçu de type pop-up s'affiche (reprenant le design élégant des bulletins avec le logo et les informations de l'établissement).</strong></p>
+<p><strong>Vous pouvez fermer l'aperçu avec le bouton <code>Fermer</code> ou valider l'impression physique/PDF avec le bouton <code>Imprimer</code>.</strong></p>
+<hr>
+<h2>CHAPITRE IX : EXAMENS, NOTES ET BULLETINS DE NOTES</h2>
+<p>Ce module regroupe l'ensemble de la gestion pédagogique et des résultats des élèves. Il est structuré en plusieurs sous-onglets.</p>
+<h3>1. Planification des évaluations périodiques (Sous-onglet 1 : Évaluations)</h3>
+<p>Avant de saisir des notes, vous devez définir les périodes d'évaluation de l'année (ex: <em>Séquence 1</em>, <em>Trimestre 1</em>, <em>Contrôle Continu 1</em>).</p>
+<ul>
+<li><strong>Créer une évaluation</strong> <code>➕</code> :</li>
+</ul>
+<p><strong>Cliquez sur <code>Ajouter une évaluation</code>.</strong></p>
+<p><strong>Entrez :</strong></p>
+<ul>
+<li><strong>Nom de l'évaluation</strong> (ex: <em>Séquence 1</em>).</li>
+<li><strong>Date de début</strong> et <strong>Date de fin</strong> de la période de composition.</li>
+</ul>
+<p><strong>Cliquez sur <code>Ajouter</code> 💾.</strong></p>
+<h3>2. Saisie des notes et calcul des moyennes coefficientées (Sous-onglet 2 : Notes)</h3>
+<ul>
+<li><strong>Saisie manuelle des notes</strong> :</li>
+</ul>
+<p><strong>Sélectionnez l'<strong>Évaluation</strong>, la <strong>Classe</strong> et la <strong>Matière</strong>.</strong></p>
+<p><strong>Le tableau des élèves de la classe s'affiche.</strong></p>
+<p><strong>Entrez la note brute sur 20 (ou la note maximale définie pour la matière) pour chaque élève.</strong></p>
+<p><strong>Le système affiche automatiquement la <strong>Note Finale</strong> calculée (Note × Coefficient) et l'<strong>Observation</strong> automatique associée à cette note.</strong></p>
+<p><strong>Cliquez sur le bouton <code>Enregistrer</code> 💾 en bas du tableau pour valider les notes.</strong></p>
+<h3>3. Configuration des logiques de décision de fin d'année (Sous-onglet 3 : Configurations)</h3>
+<p>Cette fonctionnalité permet d'automatiser les décisions du conseil de classe de fin d'année (Admis, Redouble, Exclu) en se basant sur des critères de notes et d'absences.</p>
+<ul>
+<li><strong>Ajouter une règle de décision</strong> <code>➕</code> :</li>
+</ul>
+<p><strong>Dans le tableau de configuration des règles, sélectionnez la <strong>Catégorie</strong> d'élèves (<code>Non redoublant(e)</code> ou <code>Redoublant(e)</code>) dans la première colonne intitulée <strong>Catégorie</strong>.</strong></p>
+<p><strong>Saisissez l'intervalle de <strong>Moyenne de note</strong> (ex: de <em>0</em> à <em>9.99</em> pour redoublement, ou de <em>10</em> à <em>20</em> pour admission).</strong></p>
+<p><strong>Saisissez la limite d'<strong>Absence non justifiée</strong> en heures (ex: si l'élève dépasse <em>50 heures</em> d'absences non justifiées, il est exclu).</strong></p>
+<p><strong>Associez le <strong>Statut</strong> correspondant : <code>Admis(e) en classe supérieure</code>, <code>Redouble la classe</code>, ou <code>Exclu(e)</code>.</strong></p>
+<p><strong>Cliquez sur <code>Valider</code> 💾.</strong></p>
+<h3>4. Définition des observations automatiques (Sous-onglet 4 : Observations)</h3>
+<p>Configurez les appréciations qui s'affichent automatiquement en regard des notes de l'élève (ex: <em>Médiocre</em>, <em>Assez Bien</em>, <em>Excellent</em>).</p>
+<ul>
+<li><strong>Ajouter une tranche d'appréciation</strong> :</li>
+</ul>
+<p><strong>Saisissez la <strong>Valeur minimale</strong> et la <strong>Valeur maximale</strong> de la note (ex : de <em>12</em> à <em>13.99</em>).</strong></p>
+<p><strong>Saisissez l'<strong>Observation</strong> correspondante (ex : <em>Assez bien</em>).</strong></p>
+<p><strong>Cliquez sur <code>Valider</code> 💾.</strong></p>
+<h3>5. Impression des bulletins de notes (Sous-onglet 5 : Impression)</h3>
+<p>Vous pouvez générer et imprimer les bulletins périodiques (trimestriels/séquentiels) ou annuels.</p>
+<ul>
+<li><strong>Impression périodique</strong> :</li>
+</ul>
+<p><strong>Sélectionnez l'<strong>Évaluation</strong> et la <strong>Classe</strong>.</strong></p>
+<p><strong>La liste des élèves s'affiche. Cochez les élèves dont vous souhaitez imprimer le bulletin (ou cliquez sur "Tout sélectionner").</strong></p>
+<p><strong>Cliquez sur <code>Imprimer la sélection</code> 🖨️. Le système génère le bulletin officiel avec le relevé de notes détaillé, les coefficients, le total des points, la moyenne générale de l'élève, son rang dans la classe, le bilan des absences et la décision finale.</strong></p>
+<ul>
+<li><strong>Impression annuelle</strong> : Sélectionnez le sous-onglet <strong>Note Annuelle</strong> pour générer les bulletins de synthèse de fin d'année intégrant les moyennes cumulées de toutes les évaluations et la décision du conseil de classe.</li>
+</ul>
+<hr>
+<h2>CHAPITRE X : GESTION DES PENSIONS (PAIEMENTS)</h2>
+<p>Le module <strong>Pensions</strong> permet de suivre la santé financière de votre école en enregistrant les paiements de scolarité des élèves.</p>
+<h3>1. Enregistrement des versements et attribution automatique</h3>
+<p>Le système intègre une logique intelligente de répartition des paiements selon les tranches de scolarité configurées dans la classe.</p>
+<p><strong>Dans le sous-onglet <strong>ENREGISTREMENT (individuel)</strong>, sélectionnez la <strong>Classe</strong> et l'<strong>Élève</strong>.</strong></p>
+<p><strong>Cliquez sur <code>Valider</code> 💾 pour charger le dossier financier de l'élève.</strong></p>
+<p><strong>Le système affiche un résumé comptable en temps réel :</strong></p>
+<ul>
+<li><strong>Pension Totale</strong> due pour sa classe.</li>
+<li><strong>Déjà Payé</strong> : Somme de ses versements passés.</li>
+<li><strong>Reste à Payer</strong> : Solde restant dû.</li>
+</ul>
+<p><strong>Pour enregistrer un versement :</strong></p>
+<ul>
+<li>Saisissez le <strong>Montant</strong> versé (ex: <em>50 000 XAF</em>).</li>
+<li>Sélectionnez la <strong>Date</strong> du paiement.</li>
+<li>Le système affiche instantanément un <strong>Aperçu de la répartition</strong> (ex: <em>Tranche 1 (SOLDÉE) + Tranche 2 (Partiel)</em>). Le système comble automatiquement les tranches dans l'ordre chronologique de leurs dates limites.</li>
+</ul>
+<p><strong>Cliquez sur le bouton <code>Valider</code> 💾 pour enregistrer définitivement le versement.</strong></p>
+<h3>2. Gestion des Réductions / Remises de pension</h3>
+<p>Pour les élèves bénéficiant de bourses ou de remises spéciales, le système permet d'appliquer une réduction en pourcentage sur leur scolarité annuelle.</p>
+<ul>
+<li><strong>Appliquer une réduction</strong> :</li>
+</ul>
+<p><strong>Une fois l'élève validé dans le sous-onglet <strong>ENREGISTREMENT</strong>, cliquez sur le bouton <code>Modifier</code> à côté de l'étiquette <strong>Réduction / Remise</strong> dans le bloc récapitulatif.</strong></p>
+<p><strong>Saisissez le motif de la réduction (ex: <em>Bourse d'excellence</em>, <em>Enfant du personnel</em>) et le pourcentage de réduction (entre 0 et 100%).</strong></p>
+<p><strong>Cliquez sur <code>Enregistrer</code> 💾. La pension nette et le reste à payer de l'élève sont automatiquement recalculés.</strong></p>
+<ul>
+<li><code>⚠️</code> <strong>Comportement des tranches avec réduction</strong> : Lorsqu'une réduction est appliquée, le montant de la remise est <strong>déduit en priorité sur la dernière tranche configurée</strong> (et remonte sur les précédentes si le montant de la réduction excède la dernière tranche). Cela permet de préserver l'intégralité des tranches initiales (comme les frais d'inscription ou la première tranche).</li>
+</ul>
+<h3>3. Impression des reçus de pension</h3>
+<p>Une fois le versement enregistré ou lors de la consultation du dossier d'un élève :</p>
+<p><strong>Cliquez sur le bouton <code>Imprimer le reçu</code> 🖨️.</strong></p>
+<p><strong>Le système génère un reçu officiel au format <strong>A5 Paysage</strong>, idéal pour une impression rapide sur papier standard.</strong></p>
+<p><strong>Le reçu affiche le logo et les contacts de l'établissement, le numéro de reçu unique, les détails de l'élève (y compris la pension brute, le pourcentage de réduction, la pension nette), le montant versé, le solde restant à payer, un tableau récapitulatif de tous ses versements et les blocs de signature ("Le Directeur", "Le Comptable").</strong></p>
+<h3>3. Consultation du journal des versements et filtres</h3>
+<p>Le sous-onglet <strong>JOURNAL (des paiements)</strong> permet de suivre l'historique complet de toutes les transactions de l'école.</p>
+<ul>
+<li><strong>Filtres de recherche</strong> :</li>
+<li><strong>Période</strong> : Sélectionnez une Date de début et une Date de fin pour n'afficher que les paiements reçus durant cet intervalle.</li>
+<li><strong>Classe</strong> : Filtrez les versements pour une classe en particulier.</li>
+<li><strong>Recherche rapide</strong> : Tapez le nom d'un élève pour retrouver son historique.</li>
+<li>Le système calcule et affiche dynamiquement en bas de page le <strong>Total versé filtré</strong> (ex: <em>Total versé filtré : 1 250 000 XAF</em>).</li>
+</ul>
+<h3>4. Exportation Excel du journal</h3>
+<ul>
+<li>Cliquez sur le bouton <code>Exporter en Excel</code> 📤 pour télécharger le journal des paiements affiché. Cela génère un fichier compatible avec tous les tableurs comptables.</li>
+</ul>
+<hr>
+<h2>CHAPITRE XI : GESTION DES ABSENCES (PRÉSENCES)</h2>
+<p>Ce module permet de saisir et de suivre l'assiduité des élèves au cours de l'année scolaire. Les heures d'absences injustifiées ont un impact direct sur la décision de fin d'année (exclusion).</p>
+<h3>1. Enregistrement des absences</h3>
+<p>Pour signaler une absence :</p>
+<p><strong>Cliquez sur le bouton <code>Ajouter une absence</code> <code>➕</code>.</strong></p>
+<p><strong>Saisissez les informations du formulaire :</strong></p>
+<ul>
+<li><strong>Date</strong> de l'absence.</li>
+<li><strong>Classe</strong> de l'élève.</li>
+<li><strong>Élève</strong> concerné.</li>
+<li><strong>Motif</strong> : Sélectionnez <code>Absence justifiée</code> ou <code>Absence non justifiée</code>.</li>
+<li><strong>Heure</strong> : L'heure à laquelle l'absence a débuté.</li>
+<li><strong>Durée (en Minutes)</strong> : Entrez la durée de l'absence (ex: <em>120 minutes</em> pour 2 heures de cours manquées).</li>
+<li><strong>Contexte</strong> : Description du motif (ex : <em>Certificat médical fourni</em>, <em>Non présenté en classe de Physique</em>).</li>
+</ul>
+<p><strong>Cliquez sur <code>Enregistrer</code> 💾.</strong></p>
+<h3>2. Suivi et bilans d'heures d'absences</h3>
+<p>Dans le tableau des absences, vous pouvez filtrer la liste des enregistrements par classe ou par élève pour consulter le décompte global.</p>
+<ul>
+<li>Le système additionne automatiquement les minutes d'absence et les convertit en heures pour le bulletin trimestriel et annuel.</li>
+<li>Les absences justifiées sont comptabilisées séparément des absences non justifiées.</li>
+</ul>
+<h3>3. Impression des rapports d'absences</h3>
+<ul>
+<li>Cliquez sur le bouton <code>Imprimer</code> 🖨️ dans le module absences.</li>
+<li>Le système génère un rapport officiel listant les élèves absents de la classe sélectionnée, avec le détail des heures justifiées et non justifiées.</li>
+</ul>
+<h3>4. Génération et impression de la Fiche d'Appel Journalière (Daily Roll Call Sheet)</h3>
+<p>En plus du suivi individuel, le système permet de générer des fiches de présence quotidiennes à faire remplir manuellement par les enseignants en classe.</p>
+<ul>
+<li><strong>Générer une fiche d'appel</strong> :</li>
+</ul>
+<p><strong>Dans le module <strong>Présences</strong>, cliquez sur le bouton <code>Fiche d'appel</code> (ou <code>Roll Call</code> selon la langue active) situé en haut.</strong></p>
+<p><strong>Sélectionnez la <strong>Classe</strong> et le <strong>Jour</strong> de la semaine souhaités dans les sélecteurs.</strong></p>
+<p><strong>Cliquez sur le bouton de génération pour afficher l'aperçu avant impression.</strong></p>
+<ul>
+<li><strong>Caractéristiques du document imprimé</strong> :</li>
+<li><strong>Mise en page optimisée</strong> : La fiche est au format paysage, ce qui offre un espace de lecture optimal. Elle comporte un en-tête complet avec le nom de l'établissement, l'année scolaire en cours, la classe et le jour.</li>
+<li><strong>Grille des cours</strong> : Elle présente la liste alphabétique des élèves de la classe à gauche, et les matières/créneaux horaires sur les colonnes de droite.</li>
+<li><strong>Optimisation de l'espace</strong> : Pour garantir que la fiche tienne sur une seule page A4 et reste lisible, l'en-tête de chaque matière est orienté verticalement, et les espaces superflus (notamment l'écart entre le nom des enseignants, les heures et les matières) ont été minimisés. De plus, la colonne de numérotation a été retirée pour rapprocher les noms des élèves des heures de cours.</li>
+<li><strong>Filigrane officiel</strong> : Le logo de votre établissement s'affiche automatiquement en filigrane (arrière-plan transparent) au centre du document pour authentifier la fiche.</li>
+<li><strong>Multilinguisme (i18n)</strong> : Toutes les expressions et labels du document s'adaptent instantanément en Français ou en Anglais selon la langue choisie dans l'application.</li>
+</ul>
+<hr>
+<h2>CHAPITRE XII : CHARGES ET PAIEMENT DES SALAIRES</h2>
+<p>Le module <strong>Charges</strong> gère la comptabilité des sorties de fonds de l'établissement (dépenses). Il est divisé en deux sous-onglets distincts.</p>
+<h3>1. Enregistrement des charges diverses de l'établissement (Sous-onglet 1 : Charges Diverses)</h3>
+<p>Ce volet permet d'enregistrer les frais courants de fonctionnement de l'établissement.</p>
+<ul>
+<li><strong>Enregistrer une charge</strong> <code>➕</code> :</li>
+</ul>
+<p><strong>Cliquez sur le bouton <code>Nouvelle charge</code>.</strong></p>
+<p><strong>Renseignez :</strong></p>
+<ul>
+<li><strong>Date</strong> de la dépense.</li>
+<li><strong>Titre</strong> de la charge (ex: <em>Facture électricité</em>, <em>Achat rames de papier</em>).</li>
+<li><strong>Montant</strong> de la dépense.</li>
+<li><strong>Description</strong> (ex: <em>Achat de 5 rames pour le secrétariat</em>).</li>
+</ul>
+<p><strong>Cliquez sur <code>Enregistrer</code> 💾.</strong></p>
+<ul>
+<li>Les charges s'affichent sous forme de tableau et peuvent être modifiées <code>✏️</code> ou supprimées <code>❌</code>.</li>
+</ul>
+<h3>2. Paiement et suivi mensuel des salaires du personnel (Sous-onglet 2 : Salaires)</h3>
+<p>Ce volet permet d'enregistrer le paiement des rémunérations de vos collaborateurs.</p>
+<ul>
+<li><strong>Enregistrer un paiement de salaire</strong> <code>➕</code> :</li>
+</ul>
+<p><strong>Cliquez sur <code>Nouveau salaire</code>.</strong></p>
+<p><strong>Renseignez le formulaire :</strong></p>
+<ul>
+<li><strong>Date de paiement</strong>.</li>
+<li><strong>Type de personnel</strong> : Sélectionnez <code>Enseignant</code> ou <code>Administration</code>.</li>
+<li><strong>Personne</strong> : Sélectionnez l'employé dans la liste (les noms s'affichent selon le type de personnel sélectionné). Le système charge automatiquement son salaire de base configuré.</li>
+<li><strong>Description</strong> (ex: <em>Salaire du mois de Mai 2026</em>).</li>
+<li><strong>Montant</strong> (pré-rempli avec possibilité de modification s'il y a des primes ou retenues).</li>
+</ul>
+<p><strong>Cliquez sur <code>Enregistrer</code> 💾.</strong></p>
+<ul>
+<li>Le système affiche l'historique complet des salaires versés et met à jour instantanément la courbe des dépenses sur le tableau de bord.</li>
+</ul>
+<hr>
+<h2>CHAPITRE XIII : CONFIGURATIONS GÉNÉRALES ET DONNÉES</h2>
+<p>Le module <strong>Paramètres</strong> permet d'ajuster le comportement global du logiciel et de gérer les données de l'application.</p>
+<h3>1. Paramètres d'identité de l'école et En-têtes personnalisés</h3>
+<p>Dans cette section, vous pouvez personnaliser l'application aux couleurs de votre établissement.</p>
+<ul>
+<li><strong>Informations Générales</strong> :</li>
+<li><strong>Nom de l'établissement</strong> : S'affiche sur tous les documents officiels.</li>
+<li><strong>Logo de l'établissement</strong> : Cliquez sur le logo pour téléverser une image de format carré (taille recommandée : 111 × 111 px). Ce logo apparaîtra sur les bulletins, reçus, cartes d'accès et listes d'élèves.</li>
+<li><strong>Site Internet</strong> / <strong>Adresse physique</strong> / <strong>Téléphone</strong> / <strong>Email</strong> : Coordonnées figurant dans les en-têtes et les reçus.</li>
+<li><strong>Format de date</strong> (ex: <em>DD/MM/YYYY</em> pour 25/12/2025).</li>
+<li><strong>Format horaire</strong> (ex: <em>24h</em> ou <em>12h</em>) : Configure globalement l'affichage des heures (grilles de planning, listes d'absences, formulaires de saisie).</li>
+<li><strong>Devise principale</strong> : Devise monétaire utilisée pour les frais scolaires, les reçus et les bilans financiers (ex: <em>XAF</em>, <em>EUR</em>, <em>USD</em>).</li>
+<li><strong>Ministère de tutelle</strong> : Saisissez le ministère officiel (ex : <em>Ministère des Enseignements Secondaires</em>) pour l'en-tête officiel des bulletins et certificats.</li>
+<li><strong>Nom du Directeur</strong> : Saisissez le nom du directeur pour l'insérer automatiquement au-dessus de sa zone de signature.</li>
+<li>Cliquez sur <code>Enregistrer</code> 💾 après modification.</li>
+</ul>
+<ul>
+<li><strong>En-tête personnalisé des documents (A4)</strong> :</li>
+</ul>
+<p>Si vous préférez utiliser un en-tête graphique (contenant vos propres logos, polices et mentions) plutôt que l'en-tête textuel par défaut du système :</p>
+<p><strong>Activez l'option <strong>Utiliser un entête personnalisé (image)</strong> via l'interrupteur (Switch).</strong></p>
+<p><strong>Cliquez sur la zone d'importation en pointillé.</strong></p>
+<p><strong>Sélectionnez votre fichier image. <strong>L'image d'entête doit être de dimensions 2480 × 591 px</strong>.</strong></p>
+<p><strong>Une fois importée, cette image couvrira automatiquement toute la largeur supérieure de vos bulletins de notes (A4) et de vos certificats de scolarité.</strong></p>
+<p><strong>Vous pouvez supprimer l'image de l'en-tête à tout moment en cliquant sur l'icône de corbeille rouge <code>❌</code> apparaissant sur l'image pour revenir à l'en-tête textuel standard.</strong></p>
+<ul>
+<li><strong>Pied de page personnalisé des documents (A4)</strong> :</li>
+</ul>
+<p>De même, vous pouvez activer un pied de page graphique pour vos bulletins et certificats :</p>
+<p><strong>Activez l'option <strong>Utiliser un pied de page personnalisé (image)</strong>.</strong></p>
+<p><strong>Cliquez sur la zone d'importation et choisissez une image de <strong>2480 × 300 px</strong>.</strong></p>
+<p><strong>Pour supprimer l'image et désactiver cette option, cliquez sur l'icône de corbeille rouge <code>❌</code>.</strong></p>
+<ul>
+<li><strong>Signatures et Cachets des documents</strong> :</li>
+</ul>
+<p>Vous pouvez importer les images de signatures et de cachets pour la Direction (Directeur) et la Comptabilité (Comptable). Ces images seront automatiquement insérées sur les bulletins, reçus de paiement et certificats de scolarité.</p>
+<ul>
+<li><strong>Importation</strong> : Cliquez sur la zone d'importation correspondante pour charger le fichier image.</li>
+<li><strong>Suppression</strong> <code>❌</code> : Cliquez sur l'icône de corbeille rouge (trash icon) située sur l'image importée pour supprimer définitivement le fichier physique du serveur. Une boîte de dialogue de confirmation personnalisée s'affichera pour valider l'action, réinitialisant ainsi le champ correspondant dans la base de données après confirmation.</li>
+</ul>
+<ul>
+<li><strong>Personnalisation pédagogique (Terme "Catégorie")</strong> :</li>
+<li><strong>Modifier le terme</strong> : Vous pouvez modifier l'appellation générique "Catégorie" de matière (par exemple pour utiliser "Domaine" ou "Module") en tapant la nouvelle valeur dans le champ dédié.</li>
+<li><strong>Affichage de la colonne</strong> : Choisissez si la colonne de catégorie doit être affichée ou masquée sur le bulletin de notes via le sélecteur d'affichage.</li>
+</ul>
+<h3>2. Sauvegarde et restauration des données (Gestion des Données)</h3>
+<p>Pour sécuriser vos données contre toute panne informatique, il est fortement conseillé de faire des sauvegardes régulières.</p>
+<ul>
+<li><strong>Exporter les données (Sauvegarde)</strong> <code>📤</code> :</li>
+<li><strong>Format ZIP (Recommandé et Intégral)</strong> : Exporte et importe l'intégralité du système dans une archive compressée autonome. La sauvegarde et la restauration ZIP prennent en considération :</li>
+<li><strong>Toutes les informations et fichiers de la page « Paramètres »</strong> : Nom de l'école, coordonnées, devise, langue, en-têtes et pieds de page graphiques personnalisés, logo, drapeau, signatures et cachets électroniques (Directeur et Comptable).</li>
+<li><strong>Les dossiers des Élèves et leurs photos</strong> : Fiches des élèves, photos de profil individuelles et éléments requis pour l'impression des cartes d'identité scolaires.</li>
+<li><strong>Les Pensions et Tranches par classe</strong> : Montants de pension annuelle et tranches de versement configurées pour chaque classe.</li>
+<li><strong>Le journal des Paiements enregistrés</strong> : L'historique complet des reçus, paiements de pension, tranches réglées et modes de règlement.</li>
+<li><strong>Les informations du Planning (Agendas)</strong> : L'agenda hebdomadaire des cours par classe (emplois du temps) et l'agenda annuel des événements.</li>
+<li><strong>Toutes les photos de profil des Utilisateurs</strong> : Photos de profil des administrateurs, secrétaires, intendants, enseignants et personnels.</li>
+<li><code>⚠️</code> <em>Note sur la restauration</em> : Lors de l'importation d'un fichier ZIP, l'état de la licence active de la machine hôte est automatiquement préservé.</li>
+<li><strong>Format EXCEL</strong> : Exporte les tables sous forme de feuilles Excel.</li>
+<li><strong>Sauvegarde Cloud automatisée (Google Drive)</strong> :</li>
+</ul>
+<p>Pour sécuriser au maximum vos données, le logiciel intègre une fonctionnalité de sauvegarde automatique sur Google Drive.</p>
+<ul>
+<li><strong>Connexion au compte Google</strong> :</li>
+</ul>
+<p><strong>Dans l'onglet <strong>Sauvegarde Google Drive</strong> des paramètres, cliquez sur <code>Se connecter avec Google</code>.</strong></p>
+<p><strong>Une fenêtre s'ouvre pour vous permettre de vous authentifier et d'autoriser Bokeland School System à accéder à votre espace de stockage Drive (un dossier nommé <code>BokelandSchoolSystem_Backups</code> sera créé automatiquement).</strong></p>
+<ul>
+<li><strong>Configuration de la fréquence automatique</strong> :</li>
+</ul>
+<p>Vous pouvez programmer le système pour qu'il effectue des sauvegardes automatiques en arrière-plan :</p>
+<ul>
+<li><strong>Activé / Désactivé</strong> : Activez l'option à l'aide de l'interrupteur.</li>
+<li><strong>Fréquence</strong> : Choisissez entre <code>Quotidienne</code> (sauvegarde chaque jour), <code>Hebdomadaire</code> (sélectionnez le jour de la semaine) ou <code>Mensuelle</code> (sélectionnez le jour du mois).</li>
+<li><strong>Heure de sauvegarde</strong> : Configurez l'heure à laquelle le backup automatique doit se déclencher. Le format horaire (12h/24h) s'adapte à votre configuration générale.</li>
+<li><strong>Sauvegarde manuelle</strong> :</li>
+</ul>
+<p>À tout moment, vous pouvez lancer une sauvegarde instantanée en cliquant sur le bouton <code>Lancer une sauvegarde</code>. Une barre de progression s'affiche pour suivre l'état de la copie.</p>
+<ul>
+<li><strong>Liste des sauvegardes et restauration cloud</strong> :</li>
+</ul>
+<p>Le système affiche l'historique de toutes les sauvegardes stockées sur votre Google Drive avec leur date de création et leur taille. Vous pouvez restaurer la base de données à l'état d'une sauvegarde en cliquant sur le bouton <code>Restaurer</code> en regard du fichier concerné.</p>
+<ul>
+<li><code>⚠️</code> <strong>Attention</strong> : La restauration d'une sauvegarde cloud remplace l'intégralité des données courantes de l'application. Assurez-vous d'avoir fait une sauvegarde locale avant toute opération.</li>
+<li><strong>Importer des données (Restauration)</strong> <code>📥</code> :</li>
+</ul>
+<p><strong>Cliquez sur <code>Importer des données</code>.</strong></p>
+<p><strong>Sélectionnez le fichier de sauvegarde (ZIP ou Excel).</strong></p>
+<p><strong>Une boîte de dialogue s'affiche pour résoudre les conflits si des données existent déjà :</strong></p>
+<ul>
+<li><em>Ignorer les doublons</em> : N'importe pas les enregistrements ayant le même identifiant.</li>
+<li><em>Mettre à jour les existants</em> : Écrase les anciennes données par celles du fichier d'import.</li>
+<li><em>Créer des doublons</em> : Crée un nouvel enregistrement pour chaque ligne du fichier d'import.</li>
+</ul>
+<h3>3. Zone de danger</h3>
+<p>Cette option sensible est réservée aux administrateurs réseau.</p>
+<ul>
+<li><strong>Supprimer les données</strong> <code>❌</code> : Cette option permet de vider l'intégralité de la base de données pour l'année scolaire en cours (efface élèves, classes, notes, paiements).</li>
+<li><code>⚠️</code> <strong>Attention</strong> : Cette action est définitive et irréversible. Une double confirmation est requise par le système pour valider l'effacement.</li>
+</ul>
+<hr>
+<h2>CHAPITRE XIV : PORTAIL DÉDIÉ AUX ENSEIGNANTS</h2>
+<p>Le logiciel dispose d'un espace de travail simplifié et sécurisé réservé exclusivement aux enseignants pour la saisie des notes de leurs élèves.</p>
+<h3>1. Accès sécurisé au portail enseignant</h3>
+<p>Lorsqu'un utilisateur se connecte avec le rôle <strong>Enseignant</strong>, le système le redirige automatiquement vers une interface épurée, sans accès aux données financières, comptables, ou administratives de l'école.</p>
+<ul>
+<li>Il ne voit que les classes et les matières qui lui ont été explicitement affectées par l'administrateur.</li>
+</ul>
+<h3>2. Saisie directe des notes par matière/classe</h3>
+<p><strong>Sélectionnez la <strong>Classe</strong> dans le menu latéral.</strong></p>
+<p><strong>Les matières attribuées à l'enseignant dans cette classe s'affichent sous forme d'onglets horizontaux en haut de l'écran. Cliquez sur la matière souhaitée.</strong></p>
+<p><strong>Sélectionnez la séquence ou l'<strong>Évaluation</strong> dans le menu déroulant.</strong></p>
+<p><strong>Cliquez sur le bouton orange <code>Valider</code> 💾 pour charger la grille de saisie des notes.</strong></p>
+<p><strong>Saisissez les notes de chaque élève directement dans la colonne <em>Note</em>.</strong></p>
+<p><strong>La note finale coefficientée et l'appréciation correspondante s'affichent instantanément en mode aperçu.</strong></p>
+<p><strong>Cliquez sur le bouton orange <code>Enregistrer</code> 💾 situé sous le tableau pour soumettre les notes à la direction.</strong></p>
+<h3>3. Importation et exportation des notes via des gabarits Excel</h3>
+<p>Pour les enseignants qui préfèrent travailler hors ligne sur Excel :</p>
+<ul>
+<li><strong>Exporter le gabarit</strong> <code>📤</code> : Après avoir sélectionné la classe et l'évaluation, cliquez sur le bouton vert <code>Export</code>. Le logiciel télécharge un fichier Excel pré-configuré contenant la liste des élèves (Noms, Prénoms) et une colonne de note vide.</li>
+<li><strong>Saisie sur Excel</strong> : L'enseignant remplit les notes sur son ordinateur à l'aide de Microsoft Excel ou de tout autre tableur.</li>
+<li><strong>Importer les notes</strong> <code>📥</code> :</li>
+</ul>
+<p><strong>Connectez-vous sur le portail enseignant, sélectionnez la classe, la matière et l'évaluation.</strong></p>
+<p><strong>Cliquez sur le bouton bleu <code>Import</code>.</strong></p>
+<p><strong>Sélectionnez le fichier Excel rempli.</strong></p>
+<p><strong>Le logiciel charge instantanément les notes dans le tableau. L'enseignant peut vérifier les notes importées à l'écran, puis cliquer sur <code>Enregistrer</code> 💾 pour valider.</strong></p>
+<hr>
+<h2>CHAPITRE XV : ASSISTANCE, COMMUNAUTÉ ET LICENCE</h2>
+<p>Ce chapitre regroupe les fonctionnalités de support, d'animation réseau et de gestion commerciale du logiciel.</p>
+<h3>1. Communauté Bokeland (Messagerie instantanée)</h3>
+<p>Le logiciel intègre un espace de réseau social professionnel nommé <strong>Communauté</strong>.</p>
+<ul>
+<li><strong>Objectif</strong> : Permet aux différents établissements utilisant le logiciel Bokeland School System d'échanger des messages, de partager des bonnes pratiques et de collaborer.</li>
+<li><strong>Fonctionnement</strong> : Cet onglet affiche un fil de discussion instantané partagé. Les messages s'affichent en temps réel avec le logo et le nom de l'école émettrice. Un badge de notification rouge s'affiche sur l'onglet <code>Communauté</code> du menu latéral pour vous signaler les messages non lus.</li>
+</ul>
+<h3>2. Suggestions d'améliorations et vidéos tutoriels</h3>
+<ul>
+<li><strong>Boîte à suggestions</strong> : Un formulaire en bas du tableau de bord vous permet d'envoyer directement vos idées d'amélioration ou vos rapports d'anomalies aux équipes techniques de Bokeland Group Services. Entrez votre nom, email, votre message et cliquez sur <code>Envoyer</code> 💾.</li>
+<li><strong>Tutoriels Vidéos</strong> : Un lien d'accès rapide est disponible sur le tableau de bord pour ouvrir une bibliothèque de vidéos de formation sur la manipulation du logiciel étape par étape.</li>
+</ul>
+<h3>3. Prolongation d'abonnement et paiement Mobile Money</h3>
+<p>Le bandeau supérieur ou inférieur de l'application indique en temps réel la validité de votre licence (ex: <em>MODE ESSAI : 12 jours restants</em>).</p>
+<ul>
+<li><strong>Renouveler / Prolonger sa licence</strong> :</li>
+</ul>
+<p><strong>Cliquez sur le lien <code>Renouveler ici</code> ou <code>Prolongez dès maintenant</code> affiché dans le bandeau de licence.</strong></p>
+<p><strong>Une fenêtre d'offre s'affiche (ex : <em>Prolongez pour 365 jours à 100 000 XAF</em>).</strong></p>
+<p><strong>Sélectionnez votre Devise et votre <strong>Pays de destination</strong> (l'API gère officiellement 19 pays d'Afrique : <em>Cameroun, Gabon, Congo-Brazzaville, RDC, RCA, Tchad, Guinée Équatoriale, Côte d'Ivoire, Sénégal, Mali, Burkina Faso, Bénin, Togo, Niger, Guinée-Conakry, Burundi, Comores, Djibouti, etc.</em>).</strong></p>
+<p><strong>Sélectionnez l'opérateur Mobile Money (MTN, Orange Money, Wave, Airtel, Moov, Lumicash, etc.) et saisissez votre numéro de téléphone.</strong></p>
+<p><strong>Cliquez sur le bouton <code>Payer Maintenant</code>. Dans l'application de bureau Electron, une fenêtre sécurisée TouchPay / Swychr s'ouvre automatiquement au premier plan. Un bouton <code>Rouvrir la page de paiement</code> vous permet de refaire apparaître la fenêtre à tout moment si vous la réduisez.</strong></p>
+<p><strong>Validez la transaction sur votre téléphone mobile en saisissant votre code secret PIN.</strong></p>
+<p><strong>Dès confirmation du paiement, la licence du logiciel est validée et prolongée instantanément.</strong></p>
+<hr>
+<h2>CHAPITRE XVI : UTILISATION EN RÉSEAU LOCAL (MULTI-POSTES)</h2>
+<p>Le logiciel <strong>Bokeland School System</strong> est conçu pour fonctionner en réseau local (intranet) au sein de votre établissement scolaire. Cela permet à plusieurs utilisateurs (secrétaires, intendants, enseignants, directeurs) d'accéder simultanément au système à partir de différents ordinateurs connectés au même réseau (Wi-Fi ou câble Ethernet).</p>
+<h3>1. Architecture du réseau local</h3>
+<ul>
+<li><strong>Le poste Serveur</strong> : C'est l'ordinateur principal sur lequel le logiciel a été installé (avec la base de données locale). C'est cet ordinateur qui héberge les données et fait tourner l'application.</li>
+<li><strong>Les postes Clients</strong> : Ce sont les autres ordinateurs de l'école (bureau du directeur, salle des profs, secrétariat). Ils n'ont pas besoin d'installer le logiciel ; ils s'y connectent via leur navigateur web (Google Chrome, Microsoft Edge, etc.).</li>
+</ul>
+<h3>2. Récupérer l'adresse IP du serveur</h3>
+<p>Pour que les postes clients puissent se connecter, ils doivent connaître l'adresse IP du poste Serveur sur le réseau local.</p>
+<p><strong>Sur le poste <strong>Serveur</strong>, ouvrez le menu Démarrer de Windows, tapez <code>cmd</code> et ouvrez l'<strong>Invite de commandes</strong>.</strong></p>
+<p><strong>Tapez la commande suivante et appuyez sur Entrée :</strong></p>
+<p>```cmd</p>
+<p>ipconfig</p>
+<p>```</p>
+<p><strong>Repérez la ligne <strong>Adresse IPv4</strong> sous votre carte réseau active (ex: <code>192.168.1.50</code> ou <code>10.0.0.15</code>). Notez cette adresse IP.</strong></p>
+<h3>3. Connexion depuis un autre ordinateur (Client)</h3>
+<p><strong>Assurez-vous que l'ordinateur client est connecté au <strong>même réseau Wi-Fi ou réseau filaire</strong> que le serveur.</strong></p>
+<p><strong>Ouvrez un navigateur internet (Chrome ou Edge de préférence).</strong></p>
+<p><strong>Dans la barre d'adresse (tout en haut), saisissez l'adresse IP du serveur suivie de <code>:5006</code> (le port de communication de l'application), puis appuyez sur Entrée.</strong></p>
+<ul>
+<li><strong>Exemple d'adresse</strong> : <code>http://192.168.1.50:5006</code></li>
+</ul>
+<p><strong>L'interface de connexion de Bokeland School System s'affiche. Connectez-vous avec vos identifiants habituels.</strong></p>
+<h3>4. Recommandations et Sécurité en Réseau Local</h3>
+<ul>
+<li><code>⚠️</code> <strong>IP Statique</strong> : Il est fortement recommandé de configurer le poste serveur avec une adresse IP locale fixe (statique) dans les paramètres Windows ou sur votre routeur. Si l'adresse IP locale change (ce qui arrive parfois au redémarrage de la box internet), les postes clients devront saisir la nouvelle adresse IP pour se connecter.</li>
+<li><code>⚠️</code> <strong>Pare-feu Windows</strong> : Lors de la première utilisation réseau, Windows Defender ou votre antivirus peut afficher un message vous demandant d'autoriser l'application à communiquer sur les réseaux privés. Veillez à cocher la case pour autoriser l'accès, sinon le pare-feu bloquera les connexions entrantes des autres ordinateurs.</li>
+<li><strong>Veille du serveur</strong> : Le poste Serveur doit rester allumé et actif pour que les autres ordinateurs puissent accéder au logiciel. S'il se met en veille ou s'éteint, l'accès sera coupé.</li>
+</ul>
+</body>
+</html>

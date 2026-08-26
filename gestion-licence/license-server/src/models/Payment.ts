@@ -5,6 +5,7 @@ export class Payment extends Model {
     public id!: number;
     public client_id!: number;
     public amount!: number;
+    public currency!: string;
     public payment_date!: Date;
     public payment_method!: string;
     public transaction_id!: string;
@@ -34,6 +35,11 @@ Payment.init(
         amount: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
+        },
+        currency: {
+            type: DataTypes.STRING(10),
+            allowNull: false,
+            defaultValue: 'XAF',
         },
         payment_date: {
             type: DataTypes.DATE,

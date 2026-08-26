@@ -780,6 +780,11 @@ export const createPayPalOrder = async (req: Request, res: Response) => {
             }
         );
 
+        if (orderRes.data && orderRes.data.id) {
+            payment.transaction_id = orderRes.data.id;
+            await payment.save();
+        }
+
         res.json({
             orderID: orderRes.data.id,
             external_reference: externalRef,
@@ -817,6 +822,10 @@ export const capturePayPalOrder = async (req: Request, res: Response) => {
             }
             if (!payment) {
                 payment = await Payment.findOne({ where: { transaction_id: orderID } });
+            }
+            const refId = captureRes.data.purchase_units?.[0]?.reference_id;
+            if (!payment && refId) {
+                payment = await Payment.findOne({ where: { external_reference: refId } });
             }
 
             if (payment) {

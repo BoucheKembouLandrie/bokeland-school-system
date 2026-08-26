@@ -299,7 +299,7 @@ const FinancesPage = () => {
                                 <InputLabel>Devise</InputLabel>
                                 <Select value={currencyFilter} label="Devise" onChange={(e) => setCurrencyFilter(e.target.value)}>
                                     <MenuItem value=""><em>Toutes</em></MenuItem>
-                                    {['XAF','XOF','GNF','CDF','BIF','KMF','DJF','SCR'].map(c => (<MenuItem key={c} value={c}>{c}</MenuItem>))}
+                                    {['XAF','XOF','GNF','CDF','BIF','KMF','DJF','SCR','USD','EUR'].map(c => (<MenuItem key={c} value={c}>{c}</MenuItem>))}
                                 </Select>
                             </FormControl>
                         </Box>

@@ -45,6 +45,17 @@ interface RevenueSummary {
 
 const COLORS = ['#7C6EF1', '#2DD4BF', '#FBBF24', '#F87171'];
 
+const METHOD_LABELS: { [key: string]: string } = {
+    'paypal': 'PayPal',
+    'paypal_card': 'Carte Bancaire (PayPal)',
+    'orange_money': 'Orange Money',
+    'mtn_momopay': 'MTN Mobile Money',
+    'wave': 'Wave',
+    'airtel_money': 'Airtel Money',
+    'manual': 'Paiement Manuel',
+};
+
+
 const FinancesPage = () => {
     const [payments, setPayments] = useState<Payment[]>([]);
     const [summary, setSummary] = useState<RevenueSummary>({ total_revenue: 0, payment_count: 0, average_payment: 0, method_breakdown: {}, by_currency: {} });
@@ -59,7 +70,7 @@ const FinancesPage = () => {
 
     // ── available methods derived from data ──
     const availableMethods = useMemo(() => {
-        const methods = new Set(payments.map(p => p.payment_method).filter(Boolean));
+        const methods = new Set(['paypal', 'paypal_card', 'orange_money', 'mtn_momopay', 'wave', 'airtel_money', 'manual', ...payments.map(p => p.payment_method).filter(Boolean)]);
         return Array.from(methods);
     }, [payments]);
 
@@ -299,7 +310,7 @@ const FinancesPage = () => {
                                 <InputLabel>Devise</InputLabel>
                                 <Select value={currencyFilter} label="Devise" onChange={(e) => setCurrencyFilter(e.target.value)}>
                                     <MenuItem value=""><em>Toutes</em></MenuItem>
-                                    {['XAF','XOF','GNF','CDF','BIF','KMF','DJF','SCR','USD','EUR'].map(c => (<MenuItem key={c} value={c}>{c}</MenuItem>))}
+                                    {['XAF','XOF','GNF','CDF','BIF','KMF','DJF','SCR','USD'].map(c => (<MenuItem key={c} value={c}>{c}</MenuItem>))}
                                 </Select>
                             </FormControl>
                         </Box>
@@ -310,7 +321,7 @@ const FinancesPage = () => {
                                 <Select value={paymentMethod} label="Méthode" onChange={(e) => setPaymentMethod(e.target.value)}>
                                     <MenuItem value=""><em>Toutes</em></MenuItem>
                                     {availableMethods.map(m => (
-                                        <MenuItem key={m} value={m}>{m}</MenuItem>
+                                        <MenuItem key={m} value={m}>{METHOD_LABELS[m] || m}</MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
@@ -434,7 +445,7 @@ const FinancesPage = () => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <Chip label={payment.payment_method} size="small" sx={{ bgcolor: 'rgba(124,110,241,0.15)', color: '#7C6EF1', fontWeight: 600, fontSize: '0.75rem' }} />
+                                            <Chip label={METHOD_LABELS[payment.payment_method] || payment.payment_method} size="small" sx={{ bgcolor: payment.payment_method?.includes('paypal') ? 'rgba(0,112,186,0.2)' : 'rgba(124,110,241,0.15)', color: payment.payment_method?.includes('paypal') ? '#38BDF8' : '#7C6EF1', fontWeight: 600, fontSize: '0.75rem' }} />
                                         </TableCell>
                                         <TableCell>
                                             <Chip label={`+${payment.days_added}j`} size="small" sx={{ bgcolor: 'rgba(45,212,191,0.12)', color: '#2DD4BF', fontWeight: 700, fontSize: '0.75rem' }} />

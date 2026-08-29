@@ -695,9 +695,9 @@ export const downloadInvoice = async (req: Request, res: Response) => {
 
 
 // ─── PAYPAL INTEGRATION ─────────────────────────────────────────────────────
-const PAYPAL_MODE = process.env.PAYPAL_MODE || 'sandbox';
-const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID || 'BAAyhtOEaQEKdqQcUNtpaj3VIG-TKNwB7-XHhi-_03aKfq9kqJnQQozEYRmZ9DIU_vUZd9hasvTmaPjkEA';
-const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET || 'EDVAbfRsAi43S4N6m2NxOjFO0KJwteckRMCbX62rNEIVkas5yBqLc-BbDGKDdAwBgbW-1OC09Apnzr6s';
+const PAYPAL_MODE = process.env.PAYPAL_MODE || 'live';
+const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID || 'BAAo2_MS_B_UngldExvbSFYvhW8f42ln-j_tibgPMf0QQsmcR2oGjxSxAg6whnTfZv7d0Y9IHRe_-WnepE';
+const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET || 'EHw3qEIavarcI3RiszmDhqv0zzS_AdTZZpeVVnmEMBfzlIVKfyn_GaJHj1WikhL3TJ-1jJ3M2bIxI6LT';
 
 const PAYPAL_BASE_URL = PAYPAL_MODE === 'live'
     ? 'https://api-m.paypal.com'

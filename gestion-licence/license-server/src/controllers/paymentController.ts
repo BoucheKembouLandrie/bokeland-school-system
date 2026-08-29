@@ -729,6 +729,10 @@ export const createPayPalOrder = async (req: Request, res: Response) => {
         if (!client && email) {
             client = await Client.findOne({ where: { email } });
         }
+        if (client && machine_id && !client.machine_id) {
+            client.machine_id = machine_id;
+            await client.save();
+        }
         if (!client) {
             client = await Client.create({
                 school_name: school_name || 'Bokeland Client',
